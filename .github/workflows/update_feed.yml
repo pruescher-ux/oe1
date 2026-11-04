@@ -29,7 +29,7 @@ jobs:
 
       - name: Feed & Webseite generieren
         run: |
-          python3 oe1_rss.py -d 7
+          python3 oe1_rss.py -d 30
 
       - name: Änderungen ins Repository committen
         run: |
