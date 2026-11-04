@@ -5,7 +5,8 @@
 Holt das Sendeprogramm der ORF Audio-API ab, filtert nach den in config.yaml
 definierten Sendungen und generiert:
 1. feed.xml   - Reiner Text/Artikel-RSS-Feed für jeden RSS-Reader (NetNewsWire, Feedly, Reeder etc.)
-2. index.html - Übersichtliche, ansprechende Tages-/Wochen-Übersichtswebseite
+2. index.html - Übersichtliche, ansprechende Webseite mit Zeitraum-Wahl (3, 7, 14, 30 Tage),
+                Volltextsuche und Sendungsfiltern.
 
 Benötigt nur die Python 3 Standardbibliothek (kein pip install nötig).
 """
@@ -35,7 +36,7 @@ def parse_yaml_config(path):
             "link": "https://pruescher-ux.github.io/oe1/",
             "language": "de-AT",
         },
-        "days_back": 7,
+        "days_back": 30,
         "output_feed": "feed.xml",
         "output_html": "index.html",
         "shows": [],
@@ -109,7 +110,7 @@ USER_AGENT = (
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
 
-REQUEST_DELAY = 0.2  # seconds between API requests
+REQUEST_DELAY = 0.15  # seconds between API requests
 
 
 def api_get(url):
@@ -168,13 +169,10 @@ def parse_topics_and_meta(subtitle, description):
     if not clean_sub:
         return topics, meta_info
 
-    # 1. Separated by '+++' (e.g. Europa-Journal)
     if "+++" in clean_sub:
         parts = [p.strip() for p in clean_sub.split("+++") if p.strip()]
         for p in parts:
             topics.append(p)
-
-    # 2. Separated by <br> (e.g. Radiokolleg, Kulturjournal)
     elif re.search(r"<br\s*/?>", raw_sub, re.IGNORECASE):
         parts = [clean_html(p) for p in re.split(r"<br\s*/?>", raw_sub, flags=re.IGNORECASE)]
         for p in parts:
@@ -184,8 +182,6 @@ def parse_topics_and_meta(subtitle, description):
                 meta_info.append(p)
             else:
                 topics.append(p)
-
-    # 3. Single text with contributors
     else:
         guest_match = re.search(r"(Gäste:|Mit:|Moderation:|Gestaltung:)(.*)", clean_sub, re.IGNORECASE)
         if guest_match:
@@ -209,7 +205,6 @@ def build_item_content(program_title, episode_title, subtitle, detail_desc):
     et = (episode_title or "").strip()
     is_generic = (not et) or (pt and et.lower() == pt.lower())
 
-    # Build title
     if is_generic:
         if len(topics) > 1:
             short_topics = []
@@ -276,7 +271,6 @@ def generate_rss_xml(items, feed_config):
         if item.get("pub_date"):
             lines.append('      <pubDate>{}</pubDate>'.format(item["pub_date"]))
 
-        # Build clean description for RSS readers
         desc_html = []
         if item.get("topics"):
             if len(item["topics"]) > 1:
@@ -308,7 +302,7 @@ def generate_rss_xml(items, feed_config):
 
 
 # ---------------------------------------------------------------------------
-# HTML Web Magazine Generator
+# HTML Web Magazine Generator (mit Zeitraum-Auswahl & Volltextsuche)
 # ---------------------------------------------------------------------------
 
 GERMAN_DAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
@@ -322,8 +316,7 @@ def format_german_date(dt):
 
 
 def generate_web_html(items, feed_config, show_patterns):
-    """Builds a beautiful responsive HTML magazine grouped by day with filter pills."""
-    # Group items by date string (YYYY-MM-DD)
+    """Builds an interactive responsive HTML magazine with time period selector & live search."""
     days_dict = {}
     all_shows = set()
 
@@ -331,7 +324,11 @@ def generate_web_html(items, feed_config, show_patterns):
         dt = item.get("pub_date_dt")
         date_key = dt.strftime("%Y-%m-%d") if dt else "Unbekannt"
         if date_key not in days_dict:
-            days_dict[date_key] = {"date": dt, "items": []}
+            days_dict[date_key] = {
+                "date": dt,
+                "days_ago": item.get("days_ago", 0),
+                "items": []
+            }
         days_dict[date_key]["items"].append(item)
         if item.get("show_name"):
             all_shows.add(item["show_name"])
@@ -352,11 +349,12 @@ def generate_web_html(items, feed_config, show_patterns):
       :root {
         --primary: #c62828;
         --primary-light: #ffcdd2;
-        --bg: #f5f6f8;
+        --primary-hover: #b71c1c;
+        --bg: #f7f8fa;
         --card-bg: #ffffff;
-        --text: #212121;
-        --text-muted: #666666;
-        --border: #e0e0e0;
+        --text: #1f2937;
+        --text-muted: #6b7280;
+        --border: #e5e7eb;
       }
       * { box-sizing: border-box; }
       body {
@@ -370,75 +368,118 @@ def generate_web_html(items, feed_config, show_patterns):
       header {
         background: #ffffff;
         border-bottom: 2px solid var(--primary);
-        padding: 24px 20px;
+        padding: 20px 20px 14px;
         position: sticky;
         top: 0;
         z-index: 100;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       }
       .header-content {
-        max-width: 900px;
+        max-width: 950px;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 16px;
+        gap: 12px;
       }
       h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 700; }
-      .header-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+      .header-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .search-box {
+        padding: 7px 14px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        font-size: 0.88rem;
+        width: 220px;
+        outline: none;
+        transition: border 0.15s ease;
+      }
+      .search-box:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(198,40,40,0.15); }
       .rss-badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         background: #f57c00;
         color: #ffffff;
-        padding: 6px 14px;
+        padding: 7px 14px;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 600;
         text-decoration: none;
       }
       .rss-badge:hover { background: #e65100; }
-      .filter-bar {
-        max-width: 900px;
-        margin: 16px auto 0;
+      .controls-bar {
+        max-width: 950px;
+        margin: 14px auto 0;
         display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .filter-group {
+        display: flex;
+        align-items: center;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
+      }
+      .group-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin-right: 4px;
+        min-width: 65px;
       }
       .pill {
-        background: #eeeeee;
+        background: #f3f4f6;
         border: 1px solid var(--border);
         border-radius: 16px;
-        padding: 4px 12px;
+        padding: 4px 11px;
         font-size: 0.82rem;
         cursor: pointer;
-        color: #424242;
+        color: #4b5563;
         user-select: none;
         transition: all 0.15s ease;
       }
-      .pill:hover { background: #e0e0e0; }
+      .pill:hover { background: #e5e7eb; }
       .pill.active {
         background: var(--primary);
         color: #ffffff;
         border-color: var(--primary);
+        font-weight: 600;
+      }
+      .time-pill.active {
+        background: #2563eb;
+        border-color: #2563eb;
+      }
+      .stats-bar {
+        max-width: 950px;
+        margin: 14px auto 0;
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        display: flex;
+        justify-content: space-between;
       }
       main {
-        max-width: 900px;
-        margin: 30px auto;
+        max-width: 950px;
+        margin: 24px auto;
         padding: 0 16px;
       }
       .day-section {
-        margin-bottom: 40px;
+        margin-bottom: 36px;
       }
       .day-title {
         font-size: 1.25rem;
         font-weight: 700;
-        margin-bottom: 16px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #d0d0d0;
-        color: #333333;
+        margin-bottom: 14px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #d1d5db;
+        color: #111827;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -447,13 +488,13 @@ def generate_web_html(items, feed_config, show_patterns):
         background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 18px 20px;
+        padding: 16px 20px;
         margin-bottom: 14px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         transition: box-shadow 0.2s ease;
       }
       .broadcast-card:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
       }
       .card-meta {
         display: flex;
@@ -464,7 +505,7 @@ def generate_web_html(items, feed_config, show_patterns):
       }
       .show-badge {
         background: var(--primary-light);
-        color: #b71c1c;
+        color: #991b1b;
         font-size: 0.78rem;
         font-weight: 700;
         padding: 2px 8px;
@@ -473,31 +514,31 @@ def generate_web_html(items, feed_config, show_patterns):
         letter-spacing: 0.5px;
       }
       .broadcast-time {
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         color: var(--text-muted);
       }
       .broadcast-title {
         font-size: 1.15rem;
         font-weight: 700;
-        margin: 4px 0 12px;
-        color: #111111;
+        margin: 4px 0 10px;
+        color: #111827;
         line-height: 1.35;
       }
       .topics-list {
-        background: #fafafa;
+        background: #f9fafb;
         border-left: 3px solid var(--primary);
-        padding: 10px 14px 10px 28px;
+        padding: 10px 14px 10px 24px;
         margin: 12px 0;
         border-radius: 0 6px 6px 0;
       }
       .topics-list strong {
         display: block;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         color: var(--primary);
         margin-bottom: 6px;
-        margin-left: -14px;
+        margin-left: -10px;
       }
       .topics-list ul {
         margin: 0;
@@ -505,10 +546,11 @@ def generate_web_html(items, feed_config, show_patterns):
         list-style: none;
       }
       .topics-list li {
-        font-size: 0.95rem;
+        font-size: 0.94rem;
         margin-bottom: 6px;
         position: relative;
         padding-left: 14px;
+        color: #1f2937;
       }
       .topics-list li::before {
         content: "•";
@@ -519,38 +561,46 @@ def generate_web_html(items, feed_config, show_patterns):
       }
       .contributors {
         font-size: 0.88rem;
-        color: #4a4a4a;
+        color: #374151;
         margin: 8px 0;
-        padding: 6px 10px;
-        background: #f0f4f8;
+        padding: 6px 12px;
+        background: #f3f4f6;
         border-radius: 4px;
       }
       .description-text {
         font-size: 0.92rem;
-        color: #444444;
-        margin-top: 10px;
+        color: #4b5563;
+        margin-top: 8px;
         line-height: 1.5;
       }
       .card-footer {
-        margin-top: 12px;
-        padding-top: 10px;
-        border-top: 1px solid #f0f0f0;
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid #f3f4f6;
         display: flex;
         justify-content: flex-end;
       }
       .oe1-link {
-        font-size: 0.85rem;
+        font-size: 0.84rem;
         color: var(--primary);
         text-decoration: none;
         font-weight: 600;
       }
       .oe1-link:hover { text-decoration: underline; }
+      .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        display: none;
+      }
       footer {
         text-align: center;
         padding: 40px 20px;
         color: var(--text-muted);
         font-size: 0.85rem;
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid var(--border);
+        background: #ffffff;
       }
       footer a { color: var(--primary); text-decoration: none; }
     """)
@@ -563,37 +613,73 @@ def generate_web_html(items, feed_config, show_patterns):
     html.append('    <div class="header-content">')
     html.append('      <div>')
     html.append('        <h1>🎙 Ö1 Themen-Monitor</h1>')
-    html.append('        <div class="header-sub">Tägliche Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>')
+    html.append('        <div class="header-sub">Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>')
     html.append('      </div>')
-    html.append('      <a href="feed.xml" class="rss-badge" target="_blank" title="In RSS-Reader abonnieren">')
-    html.append('        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.46-4.44-9.9-9.9-9.9z"/></svg>')
-    html.append('        RSS-Feed')
-    html.append('      </a>')
+    html.append('      <div class="header-actions">')
+    html.append('        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Thema / Begriff suchen..." oninput="applyAllFilters()">')
+    html.append('        <a href="feed.xml" class="rss-badge" target="_blank" title="In RSS-Reader abonnieren">')
+    html.append('          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.46-4.44-9.9-9.9-9.9z"/></svg>')
+    html.append('          RSS-Feed')
+    html.append('        </a>')
+    html.append('      </div>')
     html.append('    </div>')
 
-    # Filter Bar
-    html.append('    <div class="filter-bar">')
-    html.append('      <button class="pill active" onclick="filterShow(\'all\', this)">Alle Sendungen ({})</button>'.format(len(items)))
+    # Controls Bar (Timeframe & Shows)
+    html.append('    <div class="controls-bar">')
+
+    # 1. Timeframe selection
+    html.append('      <div class="filter-group">')
+    html.append('        <span class="group-label">Zeitraum:</span>')
+    html.append('        <button class="pill time-pill" data-days="3" onclick="setTimeframe(3, this)">Letzte 3 Tage</button>')
+    html.append('        <button class="pill time-pill" data-days="7" onclick="setTimeframe(7, this)">Letzte 7 Tage</button>')
+    html.append('        <button class="pill time-pill active" data-days="14" onclick="setTimeframe(14, this)">Letzte 14 Tage (2 Wochen)</button>')
+    html.append('        <button class="pill time-pill" data-days="30" onclick="setTimeframe(30, this)">Voller Monat (30 Tage)</button>')
+    html.append('      </div>')
+
+    # 2. Show selection
+    html.append('      <div class="filter-group">')
+    html.append('        <span class="group-label">Sendung:</span>')
+    html.append('        <button class="pill show-pill active" data-show="all" onclick="setShowFilter(\'all\', this)">Alle Sendungen</button>')
     for s in sorted_shows:
         count = sum(1 for it in items if it.get("show_name") == s)
-        html.append('      <button class="pill" onclick="filterShow(\'{}\', this)">{} ({})</button>'.format(escape(s), escape(s), count))
+        html.append('        <button class="pill show-pill" data-show="{}" onclick="setShowFilter(\'{}\', this)">{}</button>'.format(
+            escape(s), escape(s), escape(s)
+        ))
+    html.append('      </div>')
+
+    html.append('    </div>')
+
+    # Stats
+    html.append('    <div class="stats-bar">')
+    html.append('      <span id="counterText">Lade Beiträge...</span>')
     html.append('    </div>')
     html.append('  </header>')
 
     # Main content
     html.append('  <main>')
+    html.append('    <div id="noResults" class="no-results">Keine passenden Sendungen für diese Auswahl gefunden.</div>')
 
     for date_key in sorted_dates:
         day_data = days_dict[date_key]
         dt = day_data["date"]
+        days_ago = day_data["days_ago"]
         date_title = format_german_date(dt) if dt else date_key
 
-        html.append('    <section class="day-section" data-date="{}">'.format(date_key))
+        html.append('    <section class="day-section" data-date="{}" data-days-ago="{}">'.format(date_key, days_ago))
         html.append('      <h2 class="day-title">📅 {}</h2>'.format(escape(date_title)))
 
         for item in day_data["items"]:
             show_name = item.get("show_name", "")
-            html.append('      <article class="broadcast-card" data-show="{}">'.format(escape(show_name)))
+            search_corpus = " ".join([
+                item.get("title", ""),
+                " ".join(item.get("topics", [])),
+                " ".join(item.get("meta_info", [])),
+                item.get("description", "")
+            ]).lower()
+
+            html.append('      <article class="broadcast-card" data-show="{}" data-days-ago="{}" data-search="{}">'.format(
+                escape(show_name), days_ago, escape(search_corpus)
+            ))
             html.append('        <div class="card-meta">')
             html.append('          <span class="show-badge">{}</span>'.format(escape(show_name)))
             if item.get("time_str"):
@@ -602,7 +688,6 @@ def generate_web_html(items, feed_config, show_patterns):
 
             html.append('        <h3 class="broadcast-title">{}</h3>'.format(escape(item["title"])))
 
-            # Topics box
             if item.get("topics"):
                 html.append('        <div class="topics-list">')
                 if len(item["topics"]) > 1:
@@ -616,16 +701,13 @@ def generate_web_html(items, feed_config, show_patterns):
                     html.append('          <div>{}</div>'.format(escape(item["topics"][0])))
                 html.append('        </div>')
 
-            # Contributors
             if item.get("meta_info"):
                 for m in item["meta_info"]:
                     html.append('        <div class="contributors">👥 {}</div>'.format(escape(m)))
 
-            # Description
             if item.get("description"):
                 html.append('        <div class="description-text">{}</div>'.format(escape(item["description"])))
 
-            # Link
             if item.get("link"):
                 html.append('        <div class="card-footer">')
                 html.append('          <a href="{}" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>'.format(escape(item["link"])))
@@ -639,39 +721,97 @@ def generate_web_html(items, feed_config, show_patterns):
 
     # Footer
     html.append('  <footer>')
-    html.append('    <p>Zuletzt aktualisiert: {} Uhr (UTC)</p>'.format(datetime.now(timezone.utc).strftime("%d.%m.%Y um %H:%M")))
+    html.append('    <p>Aktualisiert: {} Uhr (UTC)</p>'.format(datetime.now(timezone.utc).strftime("%d.%m.%Y um %H:%M")))
     html.append('    <p>Datenquelle: <a href="https://oe1.orf.at" target="_blank">Österreich 1 / ORF Audio-API</a></p>')
     html.append('  </footer>')
 
-    # Quick interactive JS filtering
+    # Interactive Client-Side JavaScript
     html.append("""
   <script>
-    function filterShow(showName, button) {
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      button.classList.add('active');
+    let currentTimeframe = 14; // Default: 14 days
+    let currentShow = 'all';
 
+    // Restore saved timeframe if available
+    try {
+      const savedTf = localStorage.getItem('oe1_timeframe');
+      if (savedTf) {
+        currentTimeframe = parseInt(savedTf, 10);
+        document.querySelectorAll('.time-pill').forEach(btn => {
+          if (parseInt(btn.getAttribute('data-days'), 10) === currentTimeframe) {
+            document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+          }
+        });
+      }
+    } catch(e) {}
+
+    function setTimeframe(days, button) {
+      currentTimeframe = days;
+      try { localStorage.setItem('oe1_timeframe', days); } catch(e) {}
+      document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('active'));
+      button.classList.add('active');
+      applyAllFilters();
+    }
+
+    function setShowFilter(showName, button) {
+      currentShow = showName;
+      document.querySelectorAll('.show-pill').forEach(p => p.classList.remove('active'));
+      button.classList.add('active');
+      applyAllFilters();
+    }
+
+    function applyAllFilters() {
+      const searchQuery = (document.getElementById('searchInput').value || '').trim().toLowerCase();
       const cards = document.querySelectorAll('.broadcast-card');
       const sections = document.querySelectorAll('.day-section');
+      let visibleCount = 0;
 
       cards.forEach(card => {
-        if (showName === 'all' || card.getAttribute('data-show') === showName) {
+        const daysAgo = parseInt(card.getAttribute('data-days-ago'), 10);
+        const cardShow = card.getAttribute('data-show');
+        const cardSearch = card.getAttribute('data-search') || '';
+
+        const matchTime = daysAgo < currentTimeframe;
+        const matchShow = (currentShow === 'all' || cardShow === currentShow);
+        const matchSearch = (!searchQuery || cardSearch.includes(searchQuery));
+
+        if (matchTime && matchShow && matchSearch) {
           card.style.display = 'block';
+          visibleCount++;
         } else {
           card.style.display = 'none';
         }
       });
 
-      // Hide empty day sections
+      // Show/hide date sections
       sections.forEach(sec => {
-        const visibleCards = sec.querySelectorAll('.broadcast-card[style="display: block;"], .broadcast-card:not([style*="display: none"])');
-        // Check actual visibility
+        const daysAgo = parseInt(sec.getAttribute('data-days-ago'), 10);
+        if (daysAgo >= currentTimeframe) {
+          sec.style.display = 'none';
+          return;
+        }
         let hasVisible = false;
         sec.querySelectorAll('.broadcast-card').forEach(c => {
           if (c.style.display !== 'none') hasVisible = true;
         });
         sec.style.display = hasVisible ? 'block' : 'none';
       });
+
+      // Update counter
+      const counter = document.getElementById('counterText');
+      if (counter) {
+        counter.innerText = `${visibleCount} Sendungsbeiträge (Zeitraum: ${currentTimeframe} Tage)`;
+      }
+
+      // No results message
+      const noRes = document.getElementById('noResults');
+      if (noRes) {
+        noRes.style.display = (visibleCount === 0) ? 'block' : 'none';
+      }
     }
+
+    // Run filters on load
+    applyAllFilters();
   </script>
     """)
     html.append('</body>')
@@ -681,21 +821,15 @@ def generate_web_html(items, feed_config, show_patterns):
 
 
 # ---------------------------------------------------------------------------
-# Main
+# Main Execution
 # ---------------------------------------------------------------------------
 
 def main():
     parser = argparse.ArgumentParser(description="Ö1 Themen-Monitor & RSS-Generator")
-    parser.add_argument("-c", "--config", default=None,
-                        help="Pfad zur config.yaml")
-    parser.add_argument("-d", "--days", type=int, default=None,
-                        help="Anzahl Tage rückwirkend")
-    parser.add_argument("-o", "--output-feed", default=None,
-                        help="Pfad für feed.xml")
-    parser.add_argument("--output-html", default=None,
-                        help="Pfad für index.html")
-    parser.add_argument("-v", "--verbose", action="store_true",
-                        help="Ausführliche Konsolenausgabe")
+    parser.add_argument("-c", "--config", default=None, help="Pfad zur config.yaml")
+    parser.add_argument("-d", "--days", type=int, default=None, help="Anzahl Tage rückwirkend")
+    parser.add_argument("-o", "--output-feed", default=None, help="Pfad für feed.xml")
+    parser.add_argument("--output-html", default=None, help="Pfad für index.html")
     args = parser.parse_args()
 
     script_dir = Path(__file__).parent.resolve()
@@ -723,7 +857,7 @@ def main():
 
     print("📰  Ö1 Themen-Monitor & RSS Generator")
     print("    Überwachte Sendungen: {}".format(len(show_patterns)))
-    print("    Zeitraum:             {} Tage zurück".format(days_back))
+    print("    Zeitraum:             {} Tage rückwirkend".format(days_back))
     print("    Ausgabe RSS:          {}".format(output_feed))
     print("    Ausgabe Webseite:     {}".format(output_html))
     print()
@@ -731,10 +865,10 @@ def main():
     all_items = []
     today = datetime.now(timezone(timedelta(hours=1)))  # CET
 
-    for i in range(days_back):
-        day = today - timedelta(days=i)
+    for days_ago in range(days_back):
+        day = today - timedelta(days=days_ago)
         day_str = day.strftime("%Y%m%d")
-        print("📅 Lade {} ...".format(day.strftime('%d.%m.%Y')), end=" ", flush=True)
+        print("📅 Lade {} (-{}d) ...".format(day.strftime('%d.%m.%Y'), days_ago), end=" ", flush=True)
 
         broadcasts = fetch_broadcasts_for_day(day_str)
         matched = 0
@@ -751,7 +885,6 @@ def main():
             subtitle = bc.get("subtitle") or ""
             raw_desc = bc.get("description") or ""
 
-            # Broadcast time
             pub_date_str = ""
             pub_date_dt = None
             time_str = ""
@@ -764,7 +897,6 @@ def main():
                     dt = datetime.fromisoformat(start.replace("Z", "+00:00"))
                     pub_date_str = format_datetime(dt)
                     pub_date_dt = dt
-                    # Local Austrian time
                     local_start = dt.astimezone(timezone(timedelta(hours=1)))
                     time_str = local_start.strftime("%H:%M Uhr")
                     if end:
@@ -777,7 +909,6 @@ def main():
             if bc.get("link") and bc["link"].get("url"):
                 link = bc["link"]["url"]
 
-            # Detail fetch for rich description
             detail_desc = raw_desc
             if bc.get("id"):
                 detail = fetch_broadcast_detail(bc["id"])
@@ -804,12 +935,12 @@ def main():
                 "pub_date": pub_date_str,
                 "pub_date_dt": pub_date_dt,
                 "time_str": time_str,
+                "days_ago": days_ago,
             }
             all_items.append(item)
 
-        print("{} Sendungen gefunden (von {})".format(matched, len(broadcasts)))
+        print("{} Treffer (von {} Sendungen)".format(matched, len(broadcasts)))
 
-    # Sort newest first
     all_items.sort(key=lambda x: x.get("pub_date_dt") or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
 
     print("\n✅ Gesamt: {} Sendungsbeiträge erfasst".format(len(all_items)))

@@ -11,8 +11,8 @@ feed:
   link: "https://pruescher-ux.github.io/oe1/"
   language: "de-AT"
 
-# Wie viele Tage rückwirkend die Themen geladen werden sollen (Standard: 7 Tage)
-days_back: 7
+# Wie viele Tage rückwirkend die Themen geladen werden sollen (maximal 30 Tage)
+days_back: 30
 
 # Dateinamen für den Feed und die Webseite
 output_feed: "feed.xml"
