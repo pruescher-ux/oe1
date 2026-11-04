@@ -1,0 +1,42 @@
+# Ö1 Custom RSS Feed - Konfiguration
+# ====================================
+# Hier trägst du die Sendungen ein, die im Feed erscheinen sollen.
+# Der "match" wird case-insensitiv gegen den programTitle UND den
+# link.text der API geprüft (Substring-Match).
+
+feed:
+  title: "Mein Ö1 Feed"
+  description: "Ausgewählte Ö1 Sendungen"
+  link: "https://oe1.orf.at"
+  language: "de-AT"
+
+# Anzahl Tage rückwirkend abfragen (max ~30, ORF hält ca. 30 Tage vor)
+days_back: 7
+
+# Ausgabedatei
+output_file: "feed.xml"
+
+# Sendungen - jeder "match" String wird als case-insensitiver Substring
+# gegen programTitle und link.text geprüft
+shows:
+  - match: "Gedanken für den Tag"
+  - match: "Gedanken"
+    # Achtung: matcht auch "Gedanken für den Tag" - ist gewollt,
+    # fängt auch die Samstagsausgabe "Gedanken" ab
+  - match: "Punkt eins"
+  - match: "Science Arena"
+  - match: "matrix"
+  - match: "doublecheck"
+  - match: "#doublecheck"
+  - match: "Diagonal"
+  - match: "Ambiente"
+  - match: "Europa-Journal"
+  - match: "Journal-Panorama"
+    # Matcht auch "Journal-Panorama - Klartext"
+  - match: "Klartext"
+  - match: "Radiokolleg"
+  - match: "Ex libris"
+  - match: "Radiogeschichten"
+  - match: "Passagen"
+  - match: "Dimensionen"
+  - match: "Im Fokus"
