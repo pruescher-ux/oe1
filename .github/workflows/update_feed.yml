@@ -1,4 +1,4 @@
-name: Update Ö1 RSS Feed
+name: Update Ö1 RSS Feed & Website
 
 on:
   schedule:
@@ -27,18 +27,18 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: RSS Feed generieren
+      - name: Feed & Webseite generieren
         run: |
-          python3 oe1_rss.py -d 7 -o feed.xml
+          python3 oe1_rss.py -d 7
 
-      - name: Feed ins Repository committen
+      - name: Änderungen ins Repository committen
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add feed.xml
+          git add feed.xml index.html
           if git diff --staged --quiet; then
             echo "Keine neuen Sendungen vorhanden."
           else
-            git commit -m "Aktualisiere Ö1 Feed [skip ci]"
+            git commit -m "Aktualisiere Ö1 Themen & Feed [skip ci]"
             git push
           fi

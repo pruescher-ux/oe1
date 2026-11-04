@@ -1,28 +1,29 @@
-# Ö1 Custom RSS Feed - Konfiguration
-# ====================================
-# Hier trägst du die Sendungen ein, die im Feed erscheinen sollen.
-# Der "match" wird case-insensitiv gegen den programTitle UND den
-# link.text der API geprüft (Substring-Match).
+# Ö1 Themen-Monitor - Konfiguration
+# =======================================================
+# Du kannst diese Liste jederzeit um neue Sendungen erweitern!
+# Trage einfach unter 'shows' eine neue Zeile mit:
+#   - match: "Name der Sendung"
+# ein. Die Groß-/Kleinschreibung spielt keine Rolle (z. B. "radiokolleg" findet "Radiokolleg").
 
 feed:
-  title: "Mein Ö1 Feed"
-  description: "Ausgewählte Ö1 Sendungen"
-  link: "https://oe1.orf.at"
+  title: "Ö1 Themen-Übersicht"
+  description: "Tägliche Themen und Schwerpunkte ausgewählter Ö1-Sendungen"
+  link: "https://pruescher-ux.github.io/oe1/"
   language: "de-AT"
 
-# Anzahl Tage rückwirkend abfragen (max ~30, ORF hält ca. 30 Tage vor)
+# Wie viele Tage rückwirkend die Themen geladen werden sollen (Standard: 7 Tage)
 days_back: 7
 
-# Ausgabedatei
-output_file: "feed.xml"
+# Dateinamen für den Feed und die Webseite
+output_feed: "feed.xml"
+output_html: "index.html"
 
-# Sendungen - jeder "match" String wird als case-insensitiver Substring
-# gegen programTitle und link.text geprüft
+# =======================================================
+# Deine überwachten Sendungen:
+# =======================================================
 shows:
-  - match: "Gedanken für den Tag"
   - match: "Gedanken"
-    # Achtung: matcht auch "Gedanken für den Tag" - ist gewollt,
-    # fängt auch die Samstagsausgabe "Gedanken" ab
+  - match: "Gedanken für den Tag"
   - match: "Punkt eins"
   - match: "Science Arena"
   - match: "matrix"
@@ -32,7 +33,6 @@ shows:
   - match: "Ambiente"
   - match: "Europa-Journal"
   - match: "Journal-Panorama"
-    # Matcht auch "Journal-Panorama - Klartext"
   - match: "Klartext"
   - match: "Radiokolleg"
   - match: "Ex libris"

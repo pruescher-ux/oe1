@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
 """
-Ö1 Custom RSS Feed Generator
-=============================
-Fragt die ORF Audio-API ab, filtert nach konfigurierten Sendungen,
-extrahiert konkrete Themen/Schwerpunkte und erzeugt eine valide
-RSS 2.0 XML-Datei mit Podcast-Enclosures.
+Ö1 Themen-Monitor & RSS-Generator
+==================================
+Holt das Sendeprogramm der ORF Audio-API ab, filtert nach den in config.yaml
+definierten Sendungen und generiert:
+1. feed.xml   - Reiner Text/Artikel-RSS-Feed für jeden RSS-Reader (NetNewsWire, Feedly, Reeder etc.)
+2. index.html - Übersichtliche, ansprechende Tages-/Wochen-Übersichtswebseite
 
-Verwendung:
-    python3 oe1_rss.py                    # nutzt config.yaml im selben Verzeichnis
-    python3 oe1_rss.py -c /pfad/config.yaml
-    python3 oe1_rss.py --days 14          # überschreibt days_back aus config
-    python3 oe1_rss.py -o /pfad/feed.xml  # überschreibt output_file aus config
-
-Benötigt nur die Python-Standardbibliothek (kein pip install nötig).
+Benötigt nur die Python 3 Standardbibliothek (kein pip install nötig).
 """
 
 import argparse
@@ -24,24 +19,25 @@ import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
-from html import unescape
+from html import escape, unescape
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Config
+# Config Parser
 # ---------------------------------------------------------------------------
 
 def parse_yaml_config(path):
-    """Parse our simple YAML config without external dependencies."""
+    """Simple YAML parser without external dependencies."""
     config = {
         "feed": {
-            "title": "Mein Ö1 Feed",
-            "description": "Ausgewählte Ö1 Sendungen",
-            "link": "https://oe1.orf.at",
+            "title": "Ö1 Themen-Übersicht",
+            "description": "Tägliche Themen ausgewählter Ö1-Sendungen",
+            "link": "https://pruescher-ux.github.io/oe1/",
             "language": "de-AT",
         },
         "days_back": 7,
-        "output_file": "oe1_custom_feed.xml",
+        "output_feed": "feed.xml",
+        "output_html": "index.html",
         "shows": [],
     }
 
@@ -70,8 +66,12 @@ def parse_yaml_config(path):
                 config["days_back"] = int(val)
                 current_section = None
                 continue
-            elif key == "output_file":
-                config["output_file"] = val
+            elif key in ("output_feed", "output_file"):
+                config["output_feed"] = val
+                current_section = None
+                continue
+            elif key == "output_html":
+                config["output_html"] = val
                 current_section = None
                 continue
 
@@ -109,11 +109,11 @@ USER_AGENT = (
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
 
-REQUEST_DELAY = 0.25  # seconds between API requests
+REQUEST_DELAY = 0.2  # seconds between API requests
 
 
 def api_get(url):
-    """Fetch JSON from the ORF Audio API."""
+    """Fetch JSON from ORF Audio API."""
     req = urllib.request.Request(url, headers={
         "User-Agent": USER_AGENT,
         "Accept": "application/json",
@@ -136,7 +136,7 @@ def fetch_broadcasts_for_day(date_str):
 
 
 def fetch_broadcast_detail(broadcast_id):
-    """Fetch full detail (including streams) for a single broadcast."""
+    """Fetch detailed metadata for a single broadcast."""
     time.sleep(REQUEST_DELAY)
     url = "{}/broadcast/{}".format(API_BASE, broadcast_id)
     data = api_get(url)
@@ -146,11 +146,11 @@ def fetch_broadcast_detail(broadcast_id):
 
 
 # ---------------------------------------------------------------------------
-# Topic Extraction & Text Processing
+# Content & Topic Extraction
 # ---------------------------------------------------------------------------
 
 def clean_html(text):
-    """Remove HTML tags and decode entities."""
+    """Strip HTML tags and unescape entities."""
     if not text:
         return ""
     clean = re.sub(r"<[^>]+>", " ", text)
@@ -158,37 +158,34 @@ def clean_html(text):
 
 
 def parse_topics_and_meta(subtitle, description):
-    """
-    Extract concrete topics, subtopics, and contributors from subtitle / description.
-    """
+    """Extract individual topics, subtopics, and contributors."""
     raw_sub = subtitle or ""
     clean_sub = clean_html(raw_sub)
-    
+
     topics = []
     meta_info = []
 
     if not clean_sub:
         return topics, meta_info
 
-    # 1. Shows like Europa-Journal separate items with '+++'
+    # 1. Separated by '+++' (e.g. Europa-Journal)
     if "+++" in clean_sub:
         parts = [p.strip() for p in clean_sub.split("+++") if p.strip()]
         for p in parts:
             topics.append(p)
 
-    # 2. Shows like Radiokolleg (omnibus) or Kulturjournal separate items with <br>
+    # 2. Separated by <br> (e.g. Radiokolleg, Kulturjournal)
     elif re.search(r"<br\s*/?>", raw_sub, re.IGNORECASE):
         parts = [clean_html(p) for p in re.split(r"<br\s*/?>", raw_sub, flags=re.IGNORECASE)]
         for p in parts:
             if not p:
                 continue
-            # Check if this line is a moderator or contributor
             if re.match(r"^(Moderation|Gestaltung|Gäste|Mit):", p, re.IGNORECASE):
                 meta_info.append(p)
             else:
                 topics.append(p)
 
-    # 3. Single subtitle string with possible 'Gäste:' or 'Mit:'
+    # 3. Single text with contributors
     else:
         guest_match = re.search(r"(Gäste:|Mit:|Moderation:|Gestaltung:)(.*)", clean_sub, re.IGNORECASE)
         if guest_match:
@@ -202,31 +199,22 @@ def parse_topics_and_meta(subtitle, description):
     return topics, meta_info
 
 
-def build_episode_title_and_notes(program_title, episode_title, subtitle, detail_desc):
-    """
-    Builds a clear, informative episode title listing the actual topics,
-    and structured shownotes (HTML & plain text).
-    """
+def build_item_content(program_title, episode_title, subtitle, detail_desc):
+    """Creates a clear title, structured topic list, and rich text."""
     topics, meta_info = parse_topics_and_meta(subtitle, detail_desc)
-    
-    clean_sub = clean_html(subtitle)
     clean_desc = clean_html(detail_desc)
+    clean_sub = clean_html(subtitle)
 
     pt = (program_title or "").strip()
     et = (episode_title or "").strip()
-
-    # Determine if episode_title is just the generic show name (e.g. "Radiokolleg")
     is_generic = (not et) or (pt and et.lower() == pt.lower())
 
-    # --- Title construction ---
+    # Build title
     if is_generic:
         if len(topics) > 1:
-            # Multi-topic show: create a concise list of the subtopic headlines
             short_topics = []
             for t in topics:
-                # Strip out 'Gestaltung: ...' or 'Mit: ...' from the title
-                t_short = re.split(r"Gestaltung:|Mit:|Gäste:|Moderation:", t, flags=re.IGNORECASE)[0].strip()
-                t_short = t_short.rstrip(".")
+                t_short = re.split(r"Gestaltung:|Mit:|Gäste:|Moderation:", t, flags=re.IGNORECASE)[0].strip().rstrip(".")
                 if t_short:
                     short_topics.append(t_short)
             display_title = "{}: {}".format(pt or et, " | ".join(short_topics))
@@ -235,67 +223,20 @@ def build_episode_title_and_notes(program_title, episode_title, subtitle, detail
         else:
             display_title = pt or et
     else:
-        # We have a specific episode title
-        # Check if subtitle adds a specific concrete subtopic
         if topics and len(topics) == 1:
-            subtopic = topics[0]
-            # Strip trailing period and contributors
-            subtopic_clean = re.split(r"Gäste:|Mit:|Gestaltung:|Moderation:", subtopic, flags=re.IGNORECASE)[0].strip().rstrip(".")
-            # If subtopic isn't already contained in episode_title and is concise
-            if (subtopic_clean
-                    and subtopic_clean.lower() not in et.lower()
-                    and len(subtopic_clean) > 3
-                    and len(subtopic_clean) < 75):
-                display_title = "{}: {} – {}".format(pt, et, subtopic_clean) if pt else "{} – {}".format(et, subtopic_clean)
+            subtopic = re.split(r"Gäste:|Mit:|Gestaltung:|Moderation:", topics[0], flags=re.IGNORECASE)[0].strip().rstrip(".")
+            if subtopic and subtopic.lower() not in et.lower() and len(subtopic) > 3 and len(subtopic) < 75:
+                display_title = "{}: {} – {}".format(pt, et, subtopic) if pt else "{} – {}".format(et, subtopic)
             else:
                 display_title = "{}: {}".format(pt, et) if pt else et
         else:
             display_title = "{}: {}".format(pt, et) if pt else et
 
-    # --- Structured Shownotes construction ---
-    # HTML version
-    html_parts = []
-    text_parts = []
-
-    if len(topics) > 1:
-        html_parts.append("<p><strong>📌 Themen dieser Sendung:</strong></p>")
-        html_parts.append("<ul>")
-        text_parts.append("📌 THEMEN DIESER SENDUNG:")
-        for t in topics:
-            html_parts.append("  <li>{}</li>".format(escape_xml(t)))
-            text_parts.append("  • {}".format(t))
-        html_parts.append("</ul>")
-        text_parts.append("")
-    elif len(topics) == 1 and topics[0]:
-        html_parts.append("<p><strong>📌 Thema:</strong> {}</p>".format(escape_xml(topics[0])))
-        text_parts.append("📌 THEMA: {}".format(topics[0]))
-        text_parts.append("")
-
-    if meta_info:
-        for m in meta_info:
-            html_parts.append("<p><strong>👥 </strong>{}</p>".format(escape_xml(m)))
-            text_parts.append("👥 {}".format(m))
-        text_parts.append("")
-
-    if html_parts:
-        html_parts.append("<hr/>")
-
-    # Add the detailed description text
-    if detail_desc:
-        html_parts.append(detail_desc)
-        text_parts.append(clean_desc)
-    elif clean_sub and len(topics) <= 1:
-        html_parts.append("<p>{}</p>".format(escape_xml(clean_sub)))
-        text_parts.append(clean_sub)
-
-    final_html = "\n".join(html_parts)
-    final_text = "\n".join(text_parts).strip()
-
-    return display_title, final_text, final_html
+    return display_title, topics, meta_info, clean_desc or clean_sub
 
 
 def matches_show(broadcast, show_patterns):
-    """Check if a broadcast matches any of the configured show patterns."""
+    """Match broadcast against user's configured show list."""
     program_title = (broadcast.get("programTitle") or "").lower()
     link_text = ""
     if broadcast.get("link"):
@@ -310,129 +251,433 @@ def matches_show(broadcast, show_patterns):
 
 
 # ---------------------------------------------------------------------------
-# Stream & Media
+# RSS 2.0 Feed Generator (News / Article Feed)
 # ---------------------------------------------------------------------------
 
-def get_audio_url(broadcast_detail):
-    """Extract progressive MP3 URL from a broadcast detail."""
-    streams = broadcast_detail.get("streams", [])
-    if not streams:
-        return None, 0
-
-    first = streams[0]
-    urls = first.get("urls", {})
-    audio_url = urls.get("progressive", "")
-
-    if audio_url:
-        audio_url = re.sub(r"\{[^}]*\}", "", audio_url)
-        audio_url = audio_url.rstrip("&")
-
-    total_duration = sum(s.get("duration", 0) for s in streams)
-    return audio_url if audio_url else None, total_duration
-
-
-def get_image_url(broadcast):
-    """Get the best image URL from a broadcast."""
-    images = broadcast.get("images", [])
-    if not images:
-        return None
-
-    img = images[0]
-    versions = img.get("versions", [])
-    if not versions:
-        return None
-
-    for v in versions:
-        if "square" in v.get("path", ""):
-            return v["path"]
-    return versions[0].get("path")
-
-
-# ---------------------------------------------------------------------------
-# RSS Generation
-# ---------------------------------------------------------------------------
-
-def escape_xml(text):
-    """Escape special XML characters."""
-    if not text:
-        return ""
-    text = text.replace("&", "&amp;")
-    text = text.replace("<", "&lt;")
-    text = text.replace(">", "&gt;")
-    text = text.replace('"', "&quot;")
-    return text
-
-
-def build_rss_string(items, feed_config):
-    """Build RSS 2.0 XML as a string with podcast extensions."""
+def generate_rss_xml(items, feed_config):
+    """Builds clean, standard-compliant RSS 2.0 text/news feed."""
     lines = []
     lines.append('<?xml version="1.0" encoding="utf-8"?>')
-    lines.append('<rss version="2.0"')
-    lines.append('  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"')
-    lines.append('  xmlns:content="http://purl.org/rss/1.0/modules/content/"')
-    lines.append('  xmlns:atom="http://www.w3.org/2005/Atom">')
+    lines.append('<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">')
     lines.append('  <channel>')
-    lines.append('    <title>{}</title>'.format(escape_xml(feed_config["title"])))
-    lines.append('    <description>{}</description>'.format(escape_xml(feed_config["description"])))
-    lines.append('    <link>{}</link>'.format(escape_xml(feed_config["link"])))
-    lines.append('    <language>{}</language>'.format(escape_xml(feed_config["language"])))
-    lines.append('    <generator>oe1-custom-rss</generator>')
-    lines.append('    <lastBuildDate>{}</lastBuildDate>'.format(
-        format_datetime(datetime.now(timezone.utc))
-    ))
-
-    items.sort(key=lambda x: x.get("pub_date_dt") or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+    lines.append('    <title>{}</title>'.format(escape(feed_config["title"])))
+    lines.append('    <description>{}</description>'.format(escape(feed_config["description"])))
+    lines.append('    <link>{}</link>'.format(escape(feed_config["link"])))
+    lines.append('    <language>{}</language>'.format(escape(feed_config["language"])))
+    lines.append('    <lastBuildDate>{}</lastBuildDate>'.format(format_datetime(datetime.now(timezone.utc))))
+    lines.append('    <generator>oe1-themen-monitor</generator>')
 
     for item in items:
         lines.append('    <item>')
-        lines.append('      <title>{}</title>'.format(escape_xml(item["title"])))
-
-        if item.get("description"):
-            lines.append('      <description>{}</description>'.format(escape_xml(item["description"])))
-
-        if item.get("content_html"):
-            lines.append('      <content:encoded><![CDATA[{}]]></content:encoded>'.format(
-                item["content_html"]
-            ))
-
+        lines.append('      <title>{}</title>'.format(escape(item["title"])))
         if item.get("link"):
-            lines.append('      <link>{}</link>'.format(escape_xml(item["link"])))
-
-        lines.append('      <guid isPermaLink="false">{}</guid>'.format(escape_xml(item["guid"])))
-
+            lines.append('      <link>{}</link>'.format(escape(item["link"])))
+        lines.append('      <guid isPermaLink="false">{}</guid>'.format(escape(item["guid"])))
         if item.get("pub_date"):
             lines.append('      <pubDate>{}</pubDate>'.format(item["pub_date"]))
 
-        if item.get("audio_url"):
-            duration_sec = item.get("duration_ms", 0) / 1000
-            est_size = str(int(duration_sec * 16000))
-            lines.append('      <enclosure url="{}" type="audio/mpeg" length="{}" />'.format(
-                escape_xml(item["audio_url"]), est_size
-            ))
+        # Build clean description for RSS readers
+        desc_html = []
+        if item.get("topics"):
+            if len(item["topics"]) > 1:
+                desc_html.append("<p><strong>📌 Themen dieser Sendung:</strong></p><ul>")
+                for t in item["topics"]:
+                    desc_html.append("  <li>{}</li>".format(escape(t)))
+                desc_html.append("</ul>")
+            else:
+                desc_html.append("<p><strong>📌 Thema:</strong> {}</p>".format(escape(item["topics"][0])))
 
-        if item.get("duration_ms"):
-            duration_sec = int(item["duration_ms"] / 1000)
-            hours = duration_sec // 3600
-            minutes = (duration_sec % 3600) // 60
-            seconds = duration_sec % 60
-            lines.append('      <itunes:duration>{:02d}:{:02d}:{:02d}</itunes:duration>'.format(
-                hours, minutes, seconds
-            ))
+        if item.get("meta_info"):
+            for m in item["meta_info"]:
+                desc_html.append("<p><strong>👥 </strong>{}</p>".format(escape(m)))
 
-        if item.get("image_url"):
-            lines.append('      <itunes:image href="{}" />'.format(escape_xml(item["image_url"])))
+        if item.get("description"):
+            desc_html.append("<p>{}</p>".format(escape(item["description"])))
 
-        if item.get("show_name"):
-            lines.append('      <itunes:subtitle>{}</itunes:subtitle>'.format(
-                escape_xml(item["show_name"])
-            ))
+        if item.get("link"):
+            desc_html.append('<p><a href="{}">🔗 Zur Sendung auf oe1.ORF.at</a></p>'.format(escape(item["link"])))
 
+        content_str = "\n".join(desc_html)
+        lines.append('      <description><![CDATA[{}]]></description>'.format(content_str))
+        lines.append('      <content:encoded><![CDATA[{}]]></content:encoded>'.format(content_str))
         lines.append('    </item>')
 
     lines.append('  </channel>')
     lines.append('</rss>')
-
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# HTML Web Magazine Generator
+# ---------------------------------------------------------------------------
+
+GERMAN_DAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
+GERMAN_MONTHS = ["", "Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
+
+def format_german_date(dt):
+    """Format datetime as German string, e.g. 'Mittwoch, 04. November 2026'."""
+    day_name = GERMAN_DAYS[dt.weekday()]
+    month_name = GERMAN_MONTHS[dt.month]
+    return "{}, {:02d}. {} {}".format(day_name, dt.day, month_name, dt.year)
+
+
+def generate_web_html(items, feed_config, show_patterns):
+    """Builds a beautiful responsive HTML magazine grouped by day with filter pills."""
+    # Group items by date string (YYYY-MM-DD)
+    days_dict = {}
+    all_shows = set()
+
+    for item in items:
+        dt = item.get("pub_date_dt")
+        date_key = dt.strftime("%Y-%m-%d") if dt else "Unbekannt"
+        if date_key not in days_dict:
+            days_dict[date_key] = {"date": dt, "items": []}
+        days_dict[date_key]["items"].append(item)
+        if item.get("show_name"):
+            all_shows.add(item["show_name"])
+
+    sorted_dates = sorted(days_dict.keys(), reverse=True)
+    sorted_shows = sorted(list(all_shows))
+
+    html = []
+    html.append('<!DOCTYPE html>')
+    html.append('<html lang="de">')
+    html.append('<head>')
+    html.append('  <meta charset="utf-8">')
+    html.append('  <meta name="viewport" content="width=device-width, initial-scale=1.0">')
+    html.append('  <title>Ö1 Themen-Übersicht</title>')
+    html.append('  <link rel="alternate" type="application/rss+xml" title="Ö1 Themen RSS" href="feed.xml">')
+    html.append('  <style>')
+    html.append("""
+      :root {
+        --primary: #c62828;
+        --primary-light: #ffcdd2;
+        --bg: #f5f6f8;
+        --card-bg: #ffffff;
+        --text: #212121;
+        --text-muted: #666666;
+        --border: #e0e0e0;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        line-height: 1.55;
+      }
+      header {
+        background: #ffffff;
+        border-bottom: 2px solid var(--primary);
+        padding: 24px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .header-content {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 700; }
+      .header-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+      .rss-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f57c00;
+        color: #ffffff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .rss-badge:hover { background: #e65100; }
+      .filter-bar {
+        max-width: 900px;
+        margin: 16px auto 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .pill {
+        background: #eeeeee;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 4px 12px;
+        font-size: 0.82rem;
+        cursor: pointer;
+        color: #424242;
+        user-select: none;
+        transition: all 0.15s ease;
+      }
+      .pill:hover { background: #e0e0e0; }
+      .pill.active {
+        background: var(--primary);
+        color: #ffffff;
+        border-color: var(--primary);
+      }
+      main {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 16px;
+      }
+      .day-section {
+        margin-bottom: 40px;
+      }
+      .day-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #d0d0d0;
+        color: #333333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .broadcast-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        transition: box-shadow 0.2s ease;
+      }
+      .broadcast-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      }
+      .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .show-badge {
+        background: var(--primary-light);
+        color: #b71c1c;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .broadcast-time {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+      .broadcast-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 4px 0 12px;
+        color: #111111;
+        line-height: 1.35;
+      }
+      .topics-list {
+        background: #fafafa;
+        border-left: 3px solid var(--primary);
+        padding: 10px 14px 10px 28px;
+        margin: 12px 0;
+        border-radius: 0 6px 6px 0;
+      }
+      .topics-list strong {
+        display: block;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--primary);
+        margin-bottom: 6px;
+        margin-left: -14px;
+      }
+      .topics-list ul {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+      }
+      .topics-list li {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        position: relative;
+        padding-left: 14px;
+      }
+      .topics-list li::before {
+        content: "•";
+        color: var(--primary);
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+      }
+      .contributors {
+        font-size: 0.88rem;
+        color: #4a4a4a;
+        margin: 8px 0;
+        padding: 6px 10px;
+        background: #f0f4f8;
+        border-radius: 4px;
+      }
+      .description-text {
+        font-size: 0.92rem;
+        color: #444444;
+        margin-top: 10px;
+        line-height: 1.5;
+      }
+      .card-footer {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .oe1-link {
+        font-size: 0.85rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .oe1-link:hover { text-decoration: underline; }
+      footer {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        border-top: 1px solid #e0e0e0;
+      }
+      footer a { color: var(--primary); text-decoration: none; }
+    """)
+    html.append('  </style>')
+    html.append('</head>')
+    html.append('<body>')
+
+    # Header
+    html.append('  <header>')
+    html.append('    <div class="header-content">')
+    html.append('      <div>')
+    html.append('        <h1>🎙 Ö1 Themen-Monitor</h1>')
+    html.append('        <div class="header-sub">Tägliche Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>')
+    html.append('      </div>')
+    html.append('      <a href="feed.xml" class="rss-badge" target="_blank" title="In RSS-Reader abonnieren">')
+    html.append('        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.46-4.44-9.9-9.9-9.9z"/></svg>')
+    html.append('        RSS-Feed')
+    html.append('      </a>')
+    html.append('    </div>')
+
+    # Filter Bar
+    html.append('    <div class="filter-bar">')
+    html.append('      <button class="pill active" onclick="filterShow(\'all\', this)">Alle Sendungen ({})</button>'.format(len(items)))
+    for s in sorted_shows:
+        count = sum(1 for it in items if it.get("show_name") == s)
+        html.append('      <button class="pill" onclick="filterShow(\'{}\', this)">{} ({})</button>'.format(escape(s), escape(s), count))
+    html.append('    </div>')
+    html.append('  </header>')
+
+    # Main content
+    html.append('  <main>')
+
+    for date_key in sorted_dates:
+        day_data = days_dict[date_key]
+        dt = day_data["date"]
+        date_title = format_german_date(dt) if dt else date_key
+
+        html.append('    <section class="day-section" data-date="{}">'.format(date_key))
+        html.append('      <h2 class="day-title">📅 {}</h2>'.format(escape(date_title)))
+
+        for item in day_data["items"]:
+            show_name = item.get("show_name", "")
+            html.append('      <article class="broadcast-card" data-show="{}">'.format(escape(show_name)))
+            html.append('        <div class="card-meta">')
+            html.append('          <span class="show-badge">{}</span>'.format(escape(show_name)))
+            if item.get("time_str"):
+                html.append('          <span class="broadcast-time">🕒 {}</span>'.format(escape(item["time_str"])))
+            html.append('        </div>')
+
+            html.append('        <h3 class="broadcast-title">{}</h3>'.format(escape(item["title"])))
+
+            # Topics box
+            if item.get("topics"):
+                html.append('        <div class="topics-list">')
+                if len(item["topics"]) > 1:
+                    html.append('          <strong>Themen dieser Sendung:</strong>')
+                    html.append('          <ul>')
+                    for t in item["topics"]:
+                        html.append('            <li>{}</li>'.format(escape(t)))
+                    html.append('          </ul>')
+                else:
+                    html.append('          <strong>Thema:</strong>')
+                    html.append('          <div>{}</div>'.format(escape(item["topics"][0])))
+                html.append('        </div>')
+
+            # Contributors
+            if item.get("meta_info"):
+                for m in item["meta_info"]:
+                    html.append('        <div class="contributors">👥 {}</div>'.format(escape(m)))
+
+            # Description
+            if item.get("description"):
+                html.append('        <div class="description-text">{}</div>'.format(escape(item["description"])))
+
+            # Link
+            if item.get("link"):
+                html.append('        <div class="card-footer">')
+                html.append('          <a href="{}" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>'.format(escape(item["link"])))
+                html.append('        </div>')
+
+            html.append('      </article>')
+
+        html.append('    </section>')
+
+    html.append('  </main>')
+
+    # Footer
+    html.append('  <footer>')
+    html.append('    <p>Zuletzt aktualisiert: {} Uhr (UTC)</p>'.format(datetime.now(timezone.utc).strftime("%d.%m.%Y um %H:%M")))
+    html.append('    <p>Datenquelle: <a href="https://oe1.orf.at" target="_blank">Österreich 1 / ORF Audio-API</a></p>')
+    html.append('  </footer>')
+
+    # Quick interactive JS filtering
+    html.append("""
+  <script>
+    function filterShow(showName, button) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      button.classList.add('active');
+
+      const cards = document.querySelectorAll('.broadcast-card');
+      const sections = document.querySelectorAll('.day-section');
+
+      cards.forEach(card => {
+        if (showName === 'all' || card.getAttribute('data-show') === showName) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Hide empty day sections
+      sections.forEach(sec => {
+        const visibleCards = sec.querySelectorAll('.broadcast-card[style="display: block;"], .broadcast-card:not([style*="display: none"])');
+        // Check actual visibility
+        let hasVisible = false;
+        sec.querySelectorAll('.broadcast-card').forEach(c => {
+          if (c.style.display !== 'none') hasVisible = true;
+        });
+        sec.style.display = hasVisible ? 'block' : 'none';
+      });
+    }
+  </script>
+    """)
+    html.append('</body>')
+    html.append('</html>')
+
+    return "\n".join(html)
 
 
 # ---------------------------------------------------------------------------
@@ -440,15 +685,17 @@ def build_rss_string(items, feed_config):
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Ö1 Custom RSS Feed Generator")
+    parser = argparse.ArgumentParser(description="Ö1 Themen-Monitor & RSS-Generator")
     parser.add_argument("-c", "--config", default=None,
-                        help="Pfad zur config.yaml (Standard: config.yaml im Script-Verzeichnis)")
+                        help="Pfad zur config.yaml")
     parser.add_argument("-d", "--days", type=int, default=None,
-                        help="Anzahl Tage rückwirkend (überschreibt Config)")
-    parser.add_argument("-o", "--output", default=None,
-                        help="Ausgabe-Datei (überschreibt Config)")
+                        help="Anzahl Tage rückwirkend")
+    parser.add_argument("-o", "--output-feed", default=None,
+                        help="Pfad für feed.xml")
+    parser.add_argument("--output-html", default=None,
+                        help="Pfad für index.html")
     parser.add_argument("-v", "--verbose", action="store_true",
-                        help="Ausführliche Ausgabe")
+                        help="Ausführliche Konsolenausgabe")
     args = parser.parse_args()
 
     script_dir = Path(__file__).parent.resolve()
@@ -461,20 +708,24 @@ def main():
     config = parse_yaml_config(str(config_path))
 
     days_back = args.days if args.days is not None else config["days_back"]
-    output_file = args.output if args.output else config["output_file"]
+    output_feed = args.output_feed if args.output_feed else config["output_feed"]
+    output_html = args.output_html if args.output_html else config["output_html"]
     show_patterns = config["shows"]
 
     if not show_patterns:
         print("❌ Keine Sendungen in der Config definiert!", file=sys.stderr)
         sys.exit(1)
 
-    if not os.path.isabs(output_file):
-        output_file = str(script_dir / output_file)
+    if not os.path.isabs(output_feed):
+        output_feed = str(script_dir / output_feed)
+    if not os.path.isabs(output_html):
+        output_html = str(script_dir / output_html)
 
-    print("🎙  Ö1 Custom RSS Feed Generator")
-    print("   Sendungen: {} konfiguriert".format(len(show_patterns)))
-    print("   Zeitraum:  {} Tage zurück".format(days_back))
-    print("   Ausgabe:   {}".format(output_file))
+    print("📰  Ö1 Themen-Monitor & RSS Generator")
+    print("    Überwachte Sendungen: {}".format(len(show_patterns)))
+    print("    Zeitraum:             {} Tage zurück".format(days_back))
+    print("    Ausgabe RSS:          {}".format(output_feed))
+    print("    Ausgabe Webseite:     {}".format(output_html))
     print()
 
     all_items = []
@@ -500,112 +751,80 @@ def main():
             subtitle = bc.get("subtitle") or ""
             raw_desc = bc.get("description") or ""
 
-            # Parse dates
+            # Broadcast time
             pub_date_str = ""
             pub_date_dt = None
+            time_str = ""
+
             start = bc.get("niceTime") or bc.get("scheduledStart") or bc.get("start")
+            end = bc.get("scheduledEnd") or bc.get("end")
+
             if start:
                 try:
                     dt = datetime.fromisoformat(start.replace("Z", "+00:00"))
                     pub_date_str = format_datetime(dt)
                     pub_date_dt = dt
+                    # Local Austrian time
+                    local_start = dt.astimezone(timezone(timedelta(hours=1)))
+                    time_str = local_start.strftime("%H:%M Uhr")
+                    if end:
+                        dt_end = datetime.fromisoformat(end.replace("Z", "+00:00")).astimezone(timezone(timedelta(hours=1)))
+                        time_str = "{} – {} Uhr".format(local_start.strftime("%H:%M"), dt_end.strftime("%H:%M"))
                 except (ValueError, AttributeError):
                     pass
 
-            # Link & image
             link = ""
             if bc.get("link") and bc["link"].get("url"):
                 link = bc["link"]["url"]
 
-            image_url = get_image_url(bc)
-
-            # Audio & Detail
-            audio_url = None
-            duration_ms = bc.get("duration", 0)
+            # Detail fetch for rich description
             detail_desc = raw_desc
-
-            if bc.get("isOnDemand") and bc.get("id"):
+            if bc.get("id"):
                 detail = fetch_broadcast_detail(bc["id"])
                 if detail:
-                    audio_url, stream_duration = get_audio_url(detail)
-                    if stream_duration:
-                        duration_ms = stream_duration
                     if detail.get("description"):
                         detail_desc = detail["description"]
                     if not subtitle and detail.get("subtitle"):
                         subtitle = detail["subtitle"]
 
-            # Only include items that actually have on-demand audio
-            if not audio_url:
-                continue
-
-            # Build topic-enriched title and description
-            display_title, plain_desc, rich_html = build_episode_title_and_notes(
+            display_title, topics, meta_info, clean_desc = build_item_content(
                 program_title, episode_title, subtitle, detail_desc
             )
-
-            if args.verbose:
-                print("\n     🔊 {}".format(display_title), flush=True)
 
             matched += 1
 
             item = {
                 "title": display_title,
-                "show_name": program_title,
-                "description": plain_desc,
-                "content_html": rich_html,
+                "show_name": program_title or episode_title,
+                "topics": topics,
+                "meta_info": meta_info,
+                "description": clean_desc,
                 "link": link,
-                "guid": "oe1-{}".format(bc.get('id', '')),
+                "guid": "oe1-{}".format(bc.get("id", "")),
                 "pub_date": pub_date_str,
                 "pub_date_dt": pub_date_dt,
-                "audio_url": audio_url,
-                "duration_ms": duration_ms,
-                "image_url": image_url,
+                "time_str": time_str,
             }
             all_items.append(item)
 
-        print("{} Treffer (von {} Sendungen)".format(matched, len(broadcasts)))
+        print("{} Sendungen gefunden (von {})".format(matched, len(broadcasts)))
 
-    print("\n✅ {} Beiträge mit Audio gefunden".format(len(all_items)))
+    # Sort newest first
+    all_items.sort(key=lambda x: x.get("pub_date_dt") or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
 
-    if not all_items:
-        print("⚠  Keine passenden Sendungen gefunden. Prüfe deine Config!", file=sys.stderr)
+    print("\n✅ Gesamt: {} Sendungsbeiträge erfasst".format(len(all_items)))
 
-    # Build RSS
-    rss_xml = build_rss_string(all_items, config["feed"])
-
-    with open(output_file, "w", encoding="utf-8") as f:
+    # 1. Write RSS Feed
+    rss_xml = generate_rss_xml(all_items, config["feed"])
+    with open(output_feed, "w", encoding="utf-8") as f:
         f.write(rss_xml)
+    print("📄 RSS-Feed geschrieben: {}".format(output_feed))
 
-    print("📄 Feed geschrieben: {}".format(output_file))
-
-    # Stats
-    shows_found = set()
-    for item in all_items:
-        if item.get("show_name"):
-            shows_found.add(item["show_name"])
-
-    if shows_found:
-        print("\n📻 Gefundene Sendungen:")
-        for s in sorted(shows_found):
-            count = sum(1 for it in all_items if it.get("show_name") == s)
-            print("   • {} ({}x)".format(s, count))
-
-    # Check for configured shows with no matches
-    unmatched = []
-    for pattern in show_patterns:
-        found = False
-        for item in all_items:
-            p = pattern.lower()
-            if p in (item.get("show_name") or "").lower():
-                found = True
-                break
-        if not found:
-            unmatched.append(pattern)
-
-    if unmatched:
-        print("\n⚠  Keine Treffer für: {}".format(', '.join(unmatched)))
-        print("   (Möglicherweise in den letzten {} Tagen nicht gesendet)".format(days_back))
+    # 2. Write Web HTML
+    web_html = generate_web_html(all_items, config["feed"], show_patterns)
+    with open(output_html, "w", encoding="utf-8") as f:
+        f.write(web_html)
+    print("🌐 Webseite geschrieben:  {}".format(output_html))
 
 
 if __name__ == "__main__":

@@ -3,89 +3,1130 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mein Ö1 Podcast Feed</title>
+  <title>Ö1 Themen-Übersicht</title>
+  <link rel="alternate" type="application/rss+xml" title="Ö1 Themen RSS" href="feed.xml">
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      max-width: 650px;
-      margin: 40px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-      color: #222;
-      background: #fdfdfd;
-    }
-    h1 { color: #d32f2f; margin-bottom: 8px; }
-    .card {
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 24px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      margin: 20px 0;
-    }
-    .btn {
-      display: inline-block;
-      background: #d32f2f;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-      margin-right: 10px;
-      margin-top: 10px;
-    }
-    .btn:hover { background: #b71c1c; }
-    .url-box {
-      background: #f5f5f5;
-      padding: 12px;
-      border-radius: 6px;
-      font-family: monospace;
-      word-break: break-all;
-      margin-top: 12px;
-      user-select: all;
-    }
-    ul { padding-left: 20px; }
-    li { margin-bottom: 4px; }
+
+      :root {
+        --primary: #c62828;
+        --primary-light: #ffcdd2;
+        --bg: #f5f6f8;
+        --card-bg: #ffffff;
+        --text: #212121;
+        --text-muted: #666666;
+        --border: #e0e0e0;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        line-height: 1.55;
+      }
+      header {
+        background: #ffffff;
+        border-bottom: 2px solid var(--primary);
+        padding: 24px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .header-content {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 700; }
+      .header-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+      .rss-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f57c00;
+        color: #ffffff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .rss-badge:hover { background: #e65100; }
+      .filter-bar {
+        max-width: 900px;
+        margin: 16px auto 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .pill {
+        background: #eeeeee;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 4px 12px;
+        font-size: 0.82rem;
+        cursor: pointer;
+        color: #424242;
+        user-select: none;
+        transition: all 0.15s ease;
+      }
+      .pill:hover { background: #e0e0e0; }
+      .pill.active {
+        background: var(--primary);
+        color: #ffffff;
+        border-color: var(--primary);
+      }
+      main {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 16px;
+      }
+      .day-section {
+        margin-bottom: 40px;
+      }
+      .day-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #d0d0d0;
+        color: #333333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .broadcast-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        transition: box-shadow 0.2s ease;
+      }
+      .broadcast-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      }
+      .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .show-badge {
+        background: var(--primary-light);
+        color: #b71c1c;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .broadcast-time {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+      .broadcast-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 4px 0 12px;
+        color: #111111;
+        line-height: 1.35;
+      }
+      .topics-list {
+        background: #fafafa;
+        border-left: 3px solid var(--primary);
+        padding: 10px 14px 10px 28px;
+        margin: 12px 0;
+        border-radius: 0 6px 6px 0;
+      }
+      .topics-list strong {
+        display: block;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--primary);
+        margin-bottom: 6px;
+        margin-left: -14px;
+      }
+      .topics-list ul {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+      }
+      .topics-list li {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        position: relative;
+        padding-left: 14px;
+      }
+      .topics-list li::before {
+        content: "•";
+        color: var(--primary);
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+      }
+      .contributors {
+        font-size: 0.88rem;
+        color: #4a4a4a;
+        margin: 8px 0;
+        padding: 6px 10px;
+        background: #f0f4f8;
+        border-radius: 4px;
+      }
+      .description-text {
+        font-size: 0.92rem;
+        color: #444444;
+        margin-top: 10px;
+        line-height: 1.5;
+      }
+      .card-footer {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .oe1-link {
+        font-size: 0.85rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .oe1-link:hover { text-decoration: underline; }
+      footer {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        border-top: 1px solid #e0e0e0;
+      }
+      footer a { color: var(--primary); text-decoration: none; }
+    
   </style>
 </head>
 <body>
-
-  <h1>🎙 Mein persönlicher Ö1 Podcast Feed</h1>
-  <p>Automatisch aktualisierter RSS-Feed für ausgewählte Ö1-Sendungen mit konkreten Themen und MP3-Direktstreams.</p>
-
-  <div class="card">
-    <h3>📡 Feed-Adresse</h3>
-    <p>Kopiere diesen Link und füge ihn in deiner Podcast-App ein (z. B. <em>Apple Podcasts, Pocket Casts, Overcast, AntennaPod</em>):</p>
-    <div class="url-box" id="feed-url">Lade Adresse...</div>
-    <a href="#" class="btn" id="sub-btn">In Podcast-App öffnen</a>
-  </div>
-
-  <div class="card">
-    <h3>📻 Enthaltene Sendungen</h3>
-    <ul>
-      <li>Gedanken / Gedanken für den Tag</li>
-      <li>Punkt eins</li>
-      <li>Science Arena</li>
-      <li>matrix - computer & neue medien</li>
-      <li>#doublecheck (Medienmagazin)</li>
-      <li>Diagonal</li>
-      <li>Ambiente - von der Kunst des Reisens</li>
-      <li>Europa-Journal</li>
-      <li>Journal-Panorama & Klartext</li>
-      <li>Radiokolleg</li>
-      <li>Ex libris</li>
-      <li>Radiogeschichten</li>
-      <li>Passagen</li>
-      <li>Dimensionen</li>
-      <li>Im Fokus - Religion und Ethik</li>
-    </ul>
-  </div>
+  <header>
+    <div class="header-content">
+      <div>
+        <h1>🎙 Ö1 Themen-Monitor</h1>
+        <div class="header-sub">Tägliche Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>
+      </div>
+      <a href="feed.xml" class="rss-badge" target="_blank" title="In RSS-Reader abonnieren">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.46-4.44-9.9-9.9-9.9z"/></svg>
+        RSS-Feed
+      </a>
+    </div>
+    <div class="filter-bar">
+      <button class="pill active" onclick="filterShow('all', this)">Alle Sendungen (53)</button>
+      <button class="pill" onclick="filterShow('Ambiente - von der Kunst des Reisens', this)">Ambiente - von der Kunst des Reisens (2)</button>
+      <button class="pill" onclick="filterShow('Diagonal', this)">Diagonal (2)</button>
+      <button class="pill" onclick="filterShow('Digital.Leben', this)">Digital.Leben (1)</button>
+      <button class="pill" onclick="filterShow('Dimensionen', this)">Dimensionen (4)</button>
+      <button class="pill" onclick="filterShow('Europa-Journal', this)">Europa-Journal (1)</button>
+      <button class="pill" onclick="filterShow('Ex libris', this)">Ex libris (1)</button>
+      <button class="pill" onclick="filterShow('Gedanken', this)">Gedanken (1)</button>
+      <button class="pill" onclick="filterShow('Gedanken für den Tag', this)">Gedanken für den Tag (6)</button>
+      <button class="pill" onclick="filterShow('Im Fokus - Religion und Ethik', this)">Im Fokus - Religion und Ethik (2)</button>
+      <button class="pill" onclick="filterShow('Journal-Panorama', this)">Journal-Panorama (3)</button>
+      <button class="pill" onclick="filterShow('Journal-Panorama - Klartext', this)">Journal-Panorama - Klartext (1)</button>
+      <button class="pill" onclick="filterShow('Passagen', this)">Passagen (1)</button>
+      <button class="pill" onclick="filterShow('Punkt eins', this)">Punkt eins (5)</button>
+      <button class="pill" onclick="filterShow('Radiogeschichten', this)">Radiogeschichten (4)</button>
+      <button class="pill" onclick="filterShow('Radiokolleg', this)">Radiokolleg (16)</button>
+      <button class="pill" onclick="filterShow('Science Arena', this)">Science Arena (2)</button>
+      <button class="pill" onclick="filterShow('matrix - computer &amp; neue medien', this)">matrix - computer &amp; neue medien (1)</button>
+    </div>
+  </header>
+  <main>
+    <section class="day-section" data-date="2026-11-04">
+      <h2 class="day-title">📅 Mittwoch, 04. November 2026</h2>
+      <article class="broadcast-card" data-show="Science Arena">
+        <div class="card-meta">
+          <span class="show-badge">Science Arena</span>
+          <span class="broadcast-time">🕒 00:05 – 01:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Science Arena: (Wiederholung von Montag 16.05 Uhr)</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>(Wiederholung von Montag 16.05 Uhr)</div>
+        </div>
+        <div class="description-text">(Wiederholung von Montag 16.05 Uhr)</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/sciencearena_wh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 22:08 – 23:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Kinder und Sport (3) Die richtige Sportart für mein Kind | Aus erster Hand: Innovationen aus Afrika (3) Mobilität | Die neue Schlager-Welle (3) Der Party-Schlager und ihre Fans</h3>
+        <div class="topics-list">
+          <strong>Themen dieser Sendung:</strong>
+          <ul>
+            <li>Kinder und Sport (3) Die richtige Sportart für mein Kind. Gestaltung: Margit Atzler</li>
+            <li>Aus erster Hand: Innovationen aus Afrika (3) Mobilität. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana</li>
+            <li>Die neue Schlager-Welle (3) Der Party-Schlager und ihre Fans. Gestaltung: Noel Kriznik</li>
+          </ul>
+        </div>
+        <div class="description-text">Kinder und Sport (3) Die richtige Sportart für mein Kind. Gestaltung: Margit Atzler Aus erster Hand: Innovationen aus Afrika (3) Mobilität. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana Die neue Schlager-Welle (3) Der Party-Schlager und ihre Fans. Gestaltung: Noel Kriznik</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokollegwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Passagen">
+        <div class="card-meta">
+          <span class="show-badge">Passagen</span>
+          <span class="broadcast-time">🕒 21:00 – 21:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Passagen: &quot;Iba de gaunz oamen Leit&quot;</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Das literarische Erbe von Christine Nöstlinger - vertont von Musikschaffenden unterschiedlicher Genres</div>
+        </div>
+        <div class="description-text">Christine Nöstlinger hat in den 1970ern mit ihren Gedichten &quot;Iba de gaunz oamen Leit&quot; einen Klassiker der Mundart-Literatur geschaffen. Kurt Schwertsik verarbeitete ausgewählte Texte dieser Bände bereits 1983 zu Chansons. Anlässlich des 90. Geburtstags der österreichischen Schriftstellerin beauftragte CrossNova nun weitere Musikschaffende unterschiedlicher Genres, die Gedichte Nöstlingers zu vertonen. Mitschnitt aus dem Großen Sendeesaal des ORF RadioKulturhauses vom 16.10.2026</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/passagen" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Dimensionen">
+        <div class="card-meta">
+          <span class="show-badge">Dimensionen</span>
+          <span class="broadcast-time">🕒 19:05 – 19:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Dimensionen: Orthorexie – Wenn gesunde Ernährung krank macht</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Wenn gesunde Ernährung krank macht</div>
+        </div>
+        <div class="description-text">Die &quot;Orthorexia nervosa&quot; wurde erstmals 1997 von dem amerikanischen Mediziner Steven Bratman beschrieben. Im Unterschied zur klassischen Magersucht - der Anorexia nervosa - stehen bei dieser Essstörung aber nicht Kalorienzählen und Gewichtsreduktion im Vordergrund, sondern das zwanghafte Verhalten, nur mehr gesunde Lebensmittel zu sich zu nehmen. Denn die rigide Fokussierung auf einzelne Nährstoffe oder eine Diätform zu Mangelerscheinungen und Gesundheitsschäden führen. Zudem geht ein Leben im Zeichen &quot;perfekter&quot; Nahrungszufuhr oft auf Kosten sozialer Kontakte und des psychischen Wohlbefindens, ganz zu schweigen vom Genuss. Von Daphne Hruby</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/dimensionen" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Journal-Panorama - Klartext">
+        <div class="card-meta">
+          <span class="show-badge">Journal-Panorama - Klartext</span>
+          <span class="broadcast-time">🕒 18:25 – 18:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Journal-Panorama - Klartext: Nach den Midterm-Wahlen in den USA – Eine Diskussion mit Expert:innen</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Eine Diskussion mit Expert:innen</div>
+        </div>
+        <div class="description-text">Die Kongresswahlen in den USA sind geschlagen, das gesamte Repräsentantenhaus sowie ein Drittel des Senats wurden neu gewählt. Was bedeuten die Wahlergebnisse und die zu erwartenden Verluste der Republikaner für die restlichen zwei Jahre von Donald Trumps Amtszeit im Weißen Haus? Welche Folgen sind für die Kriege im Iran und in der Ukraine, für Europa und die Weltwirtschaft zu erwarten? Und haben die Demokraten nun Aufwind?</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/journalpanorama" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Im Fokus - Religion und Ethik">
+        <div class="card-meta">
+          <span class="show-badge">Im Fokus - Religion und Ethik</span>
+          <span class="broadcast-time">🕒 16:05 – 17:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Im Fokus - Religion und Ethik: Der lange Weg zur &quot;Ehre der Altäre&quot; – Mit diesem Thema im Fokus: Wie katholische Heilige gemacht werden</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Mit diesem Thema im Fokus: Wie katholische Heilige gemacht werden</div>
+        </div>
+        <div class="description-text">Letztlich sind unter Umständen sogar zwei &quot;Wunder&quot; erforderlich: Die römisch-katholische Kirche achtet sehr genau darauf, wer offiziell als &quot;selig&quot; oder &quot;heilig&quot; verehrt werden darf. Jeder Selig- oder Heiligsprechung geht daher ein langwieriger, im Kirchenrecht penibel geregelter Prozess voraus, der Jahrzehnte, manchmal sogar Jahrhunderte dauern kann. Erst nach der offiziellen Selig- oder Heiligsprechung bekommt er oder sie einen eigenen Festtag, erst dann darf ihm oder ihr eine Kirche geweiht werden - und erst dann darf sein oder ihr Bildnis über einem Altar angebracht werden. Davon ist auch die Wendung abgeleitet, dass durch die Selig- oder Heiligsprechung ein Mensch zur &quot;Ehre der Altäre&quot; erhoben wird. Die ersten Heiligen waren die Märtyrerinnen und Märtyrer der frühen Kirchen - also Menschen, die für ihren Glauben blutig verfolgt oder sogar getötet worden sind. In diesen Fällen ist bis heute kein &quot;Wunder&quot;, keine medizinisch nicht erklärbare Heilung, für die Selig- oder Heiligsprechung erforderlich. Allerdings ist auch der Nachweis des Martyriums oft schwierig. Später wurden auch andere vorbildliche Persönlichkeiten verehrt. Eine regulierte Überprüfung ihrer Heiligkeit beginnt sich erst im zweiten Jahrtausend zu entwickeln. Bis dahin war &quot;heilig&quot;, wer vom glaubenden Volk als &quot;heilig&quot; verehrt worden ist. Viele große Heilige - wie zum Beispiel Nikolaus und Barbara - sind also nie heiliggesprochen worden. - Gestaltung: Markus Veinfurter</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/imfokus" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Punkt eins">
+        <div class="card-meta">
+          <span class="show-badge">Punkt eins</span>
+          <span class="broadcast-time">🕒 13:00 – 13:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Punkt eins: Lame Duck im Lake America – Nach den US-Wahlen: Die Neuaufstellung der US-Demokratie</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Nach den US-Wahlen: Die Neuaufstellung der US-Demokratie</div>
+        </div>
+        <div class="contributors">👥 Gäste: Prof. Dr. Claudia Brühwiler, Dozentin für amerikanisches politisches Denken und Kultur, Universität St. Gallen &amp; Alexandra Lieben, stv. Direktorin, Ronald W. Burkle Center for International Relations, UCLA. Moderation: Xaver Forthuber. Anrufe 0800 22 69 79 | punkteins(at)orf.at</div>
+        <div class="description-text">Eine &quot;blaue Welle&quot; fegte von gestern auf heute über die USA und über die Partei des regierenden Präsidenten Donald Trump hinweg. Bei den Zwischenwahlen haben die Demokraten mit voraussichtlich 250 der 435 Sitze im Repräsentantenhaus eine deutliche Mehrheit errungen; und auch im Senat, wo alle zwei Jahre ein Drittel der Mandate neu vergeben wird, könnten demokratische Kandidat:innen sich bis zu 53 der 100 Sitze sichern. Fest steht bereits, dass sie dabei auch konservative Hochburgen erobert haben. In South Carolina hat nach Medienberichten die Demokratin Annie Andrews überraschend gegen die Republikanerin Darline Graham gewonnen; zuletzt hatte der Bundesstaat vor 28 Jahren eine demokratische Senatorin nach Washington entsandt. In Texas setzte sich nach drei Jahrzehnten ungebrochener republikanischer Herrschaft der Demokrat James Talarico gegen den Ken Paxton durch, der bis zuletzt massiv von Trump persönlich unterstützt worden war. In Georgia, das bei der Präsidentschaftswahl 2024 mehrheitlich Trump gewählt hatte, wurde Jon Osoff zum Sieger erklärt. Der charismatische Politiker war im Wahlkampf mit kämpferischer, aber mitreißender Rhetorik aufgefallen, mit der er den Untergriffen der Republikaner die Stirn bot. Er gilt jetzt als ernsthafter Anwärter auf die Präsidentschaftskandidatur. Und in Michigan setzt sich laut Prognosen mehrerer US-Sender der Demokrat Abdul El-Sayed durch. Er wird damit der erste muslimische Senator der US-Geschichte. Eine Denkzettelwahl für den Präsidenten, der bis jetzt mit Mehrheiten in beiden Kammern und wenig Widerstand seiner Abgeordneten praktisch durchregieren konnte. &quot;Seine&quot; Kandidat:innen mussten empfindliche Niederlagen hinnehmen: durch Talarico, den er als Freak beschimpft, oder El-Sayed, den er mit rassistischen Attacken überzogen hatte. Persönliche und zutiefst untergriffige Attacken, Vermischung von Parteifunktionen und Regierungsämtern, Fake News und taktische Verwirrspiele haben den Wahlkampf eines zutiefst gespaltenen Landes geprägt. Dass die &quot;Midterms&quot; immer auch eine Abstimmung über den aktuellen Präsidenten sind, ist kein Geheimnis; Donald Trump hat diesmal sogar selbst dazu aufgerufen, entsprechend zu wählen. Indessen treffen seine Kriegs- und Zollpolitik die US-Amerikaner:innen dort, wo es spürbar wehtut: Die steigenden Lebenshaltungskosten und Treibstoffpreise standen kurz vor der Wahl ganz oben auf der Liste der Wähler:innenmotive. Trump selbst hatte die Wahl zu einer Abstimmung über seine Amtsführung erklärt; die Umfragen, die seine Zustimmungswerte seit geraumer Zeit im Sinkflug sehen, bezeichnete er wiederholt als Fake News. &quot;Tut mir einen Gefallen und tut so, als ob ich auf dem Wahlzettel stünde&quot;, hatte er wiederholt vor seinen Anhänger:innen gesagt. In einer ersten Reaktion nach Bekanntwerden der wahrscheinlichen Wahlergebnisse wies er die Verantwortung jetzt wieder von sich: &quot;Ich stand nicht auf dem Wahlzettel.&quot; Den Demokraten gratulierte der Präsident zu ihrem Sieg und versprach, mit ihnen &quot;zusammenzuarbeiten&quot;, er kündigte aber auch an, von seinem Vetorecht Gebrauch zu machen. Wieder deutlich mehr Kritik und Kontrolle der Exekutive durch das Parlament, das war im Kern das Ziel der Demokraten. Kann sich die angeschlagene US-Demokratie also wieder erholen - auf institutioneller Ebene und auf gesellschaftlicher? Was haben die Wahlen verändert, was nicht? Wer und was stand in den verschiedenen Bundesstaaten auf dem Wahlzettel, und wofür haben sich die Amerikaner:innen entschieden? Xaver Forthuber analysiert die US-Midterms mit seinen Gästen: Claudia Brühwiler ist Professorin für politische Theorie und Amerikastudien an der Universität St. Gallen; sie lehrt und forscht unter anderem über Politik und politische Kultur in den USA. Die österreichische Soziologin und Konfliktforscherin Alexandra Lieben lebt seit Jahrzehnten in den USA; sie ist stellvertretedne Direktorin des Zentrums für internationale Beziehungen an der Universität von Los Angeles und außerdem Präsidentin von ASciNA (Austrian Scientists &amp; Scholars in North America). Reden Sie mit: Rufen Sie in der Sendung an unter 0800 22 69 79 oder schreiben Sie ein E-Mail an punkteins(at)orf.at</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiogeschichten">
+        <div class="card-meta">
+          <span class="show-badge">Radiogeschichten</span>
+          <span class="broadcast-time">🕒 11:05 – 11:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiogeschichten: Neue Texte – Neue Texte: &quot;Augustnebel&quot;. Von Michael Dangl. Es liest der Autor</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Neue Texte: &quot;Augustnebel&quot;. Von Michael Dangl. Es liest der Autor.</div>
+        </div>
+        <div class="description-text">Sommer in Italien. Drückende Schwüle hängt über dem Land. Drei Männer werden dem Tod begegnen. Der Arbeiter Dumitru verbringt einen freien Nachmittag an den Ufern des Po, nach dem üppigen Picknick döst er in der Sonne, während seine sechsjährige Tochter mit dem Ball spielt, den er ihr kürzlich geschenkt hat. Der übergewichtige Alberto hasst den Sommer. Er lebt, arbeitslos und alleinstehend, mit seiner pflegebedürftigen Mutter in einer Zweizimmerwohnung am Rande Veronas zusammen; nur eine halbe Stunde am Tag kann er, befreit von ihren ständigen Beleidigungen, allein verbringen. Der Schlosser Giancarlo trinkt mittags Bier in einem einfachen Lokal. Sein Vater, der agile Franco, wollte einem Freund im Maisfeld unweit des Taglio-Kanals mit dem Traktor helfen, Giancarlo kann ihn nicht erreichen. Josefstadt-Schauspieler Michael Dangl veröffentlichte vor seinem Buch &quot;Orangen für Dostojewskij&quot; drei Romane und, in der 7. Auflage, den Bestseller &quot;Grado - abseits der Pfade&quot;. Außerdem das Buch &quot;Anfisa, zu Dir - Brief an meine Tochter&quot;. 2022 erschien sein erster Poesie-Band &quot;Hymnos an den Süden&quot;, zuletzt 2025 sein Johann-Strauß-Roman &quot;Der Walzermacher&quot;. &quot;Augustnebel&quot; ist eine noch unveröffentlichte Kurzgeschichte des Autors und Schauspielers.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:45 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Die Neue Schlager-Welle (3) – Der Party-Schlager und seine Fans</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Der Party-Schlager und seine Fans</div>
+        </div>
+        <div class="description-text">In den 2000er Jahren entstand eine neue Form des Schlagers: der Partyschlager. Eingängige Schlagertexte treffen dabei auf elektronische Tanzmusik - eine Stilrichtung, die heute auf Partys, Festen und in Zelten besonders gefragt ist. Ist es das positive Gefühl, das diese Musik in krisenhaften Zeiten vermittelt? Oder liegt die Antwort näher, als man denkt? Fans erzählen, was einen Partyschlager für sie ausmacht und warum er so gut funktioniert. Gestaltung: Noel Kriznik</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:30 – 09:45 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Aus erster Hand: Innovationen aus Afrika (3) – Mobilität</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Mobilität</div>
+        </div>
+        <div class="description-text">Viel Innovation passiert auf dem südlichen Kontinent. So entsteht zum Beispiel in Ghana ein Markt für elektrisch betriebene Fahrzeuge, unter anderem auch in Zusammenarbeit mit österreichischen Unternehmen und im Senegal probt ein Dorf die partizipative Zusammenarbeit und teilt sich einen gemeinsam angeschafften Traktor. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:05 – 09:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Kinder brauchen Sport (3) – Die richtige Sportart für mein Kind</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Die richtige Sportart für mein Kind</div>
+        </div>
+        <div class="description-text">Die Möglichkeiten für Kinder und Jugendliche für sportliche Betätigung sind niederschwellig - es braucht in der Regel nur ein bisschen Eigeninitiative und natürlich die organisatorische und finanzielle Unterstützung des familiären Umfelds. Welche Sportart Kinder für sich entdecken hängt von vielen Faktoren ab. Neben gemeinsamen Familiensportarten spielt die mediale Repräsentation eine wichtige Rolle. Das macht Fußball unter Burschen nach wie vor zu einem recht gut zugänglichen Dauerbrenner. Die gelebte Sportkultur in den Vereinen, in Trainings und bei Wettkämpfen hängt untrennbar mit Werten zusammen, die Kindern und Jugendlichen vermittelt werden. Die Vereine bieten die strukturellen Rahmenbedingungen für regelmäßigen Sport - mit ihren hauptsächlich ehrenamtlichen Mitarbeiter:innen. Kinder und Jugendliche mit Behinderung stehen vor besonders großen Herausforderungen. Oft haben Eltern und Betreuungspersonen Angst, dass &quot;etwas passieren&quot; könnte. Initiativen wie die Multisportwoche für Blinde- und Sehbehinderte bieten vielen Kinder und Familien einen ersten Einstieg in die Vielfalt der körperlichen Betätigungen - in einem geschützten Umfeld. Gerade für Kinder mit einer körperlichen Einschränkung ist Sport mindestens so wichtig wie für körperlich gesunde Kinder. Im klassischen Turnen werden motorische Grundfähigkeiten, Ausdauer, Kraft und Schnelligkeit in einem klar strukturierten Setting trainiert. Von diesen körperlichen Kompetenzen sind viele Kinder heute weit entfernt. Bewegung als Teil der Bildungslandschaft gerät immer mehr in den Hintergrund. Rufe nach der &quot;täglichen Bewegungseinheit&quot; gibt es schon lange. Initiativen wie TBE (tägliche Bewegungseinheit) oder &quot;Ugotchi&quot; (der Sportunion) sollen LehrerInnen Bewegungs-Anregungen für alle Altersstufen mitgeben. Gestaltung: Margit Atzler</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Gedanken für den Tag">
+        <div class="card-meta">
+          <span class="show-badge">Gedanken für den Tag</span>
+          <span class="broadcast-time">🕒 06:57 – 07:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Gedanken für den Tag: Voodoo in Benin – Sechs Stimmen, sechs Perspektiven</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Sechs Stimmen, sechs Perspektiven</div>
+        </div>
+        <div class="description-text">Das Voodoo stammt ursprünglich aus Benin, dem ehemaligen Dahomey, und stammt aus dem Erstaunen der Menschen, die sich gefragt haben, wer hat uns geschaffen, wer sind wir, wo gehen wir hin, was machen wir hier? Und in diesem Sinne haben sie sich dann gedacht, ja, es muss irgendjemanden geben, der die Welt erschaffen hat. Und dann haben sie ihn Mau genannt, das heißt in der Fon-Sprache Gott. Auf Yoruba ist es Olorun zum Beispiel. Zu Beginn war das Voodoo nicht nur eine Religion, sondern auch eine Kultur, eine Tradition. Jeder und jede, der oder die in Benin geboren ist, hat in seiner Familie einen Zug zum Voodoo. Und beim Voodoo denken die Leute, wir haben einen Gott. Aber wir haben auch viele Repräsentanten, viele Vertreter von diesem Gott. Die Voodoo-Religion ist keine polytheistische Religion, sondern eine monotheistische Religion. Und die Menschen glauben an Ahnen-Kult zum Beispiel. Unsere Verstorbenen sind nicht weg, die sind da. Die Menschen in Europa oder im Westen, wenn sie von Voodoo hören, haben Angst. Da denken sie, das muss was Grausames sein. Man denkt sofort an Voodoo-Puppen und so weiter und so fort. Aber zu Beginn gab es keine Voodoo-Puppen. Weder in Dahomey noch in Togo oder Ghana. Also, die Geschichte ist entstanden nach dem Sklavenhandel, weil viele Sklaven damals von Benin über die Gorée-Insel und Senegal nach Brasilien oder nach Amerika oder Portugal, Frankreich, per Schiff gebracht wurden, durften diese Sklaven ihre Statuetten oder ihre Schnitzereien nicht mitbringen, die für sie die Gottheiten repräsentierten. Die hatten keine andere Möglichkeit, als mit den Puppen ihren neuen Chefs und Meister zu spielen. Oder nicht zu spielen, sondern als Repräsentant oder Vertreter ihrer Gottheiten zu halten. Und dadurch ist dann die Praxis, mit Puppen zu reden oder zu beten, entstanden. Man spricht heute von Voodoo-Puppen, um jemandem zu schaden, der mir etwas angetan hätte. Aber man braucht, wenn man von Voodoo hört, keine Angst zu haben. Voodoo ist eine friedliche Religion. Es leben über 50 Prozent der Bevölkerung in Benin als Voodoo-Anhänger. Aber es bestehen keine Schwierigkeiten, miteinander zu leben. Die verschiedenen Religionen, die es in Benin gibt, die leben nebeneinander ohne Probleme. Und wenn das Voodoo so grausam furchtbar wäre, gäbe es keine Menschen mehr in Benin oder in den Ländern, wo Voodoo als Tradition und Religion praktiziert wird.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/gedankenfuerdentag" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+    </section>
+    <section class="day-section" data-date="2026-11-03">
+      <h2 class="day-title">📅 Dienstag, 03. November 2026</h2>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 22:08 – 23:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Kinder und Sport (1) Spaßfaktor Sport | Aus erster Hand: Innovationen aus Afrika (2) Ökologie | Die neue Schlager-Welle (2) Was Schlager von Volksmusik unterscheidet</h3>
+        <div class="topics-list">
+          <strong>Themen dieser Sendung:</strong>
+          <ul>
+            <li>Kinder und Sport (1) Spaßfaktor Sport. Gestaltung: Margit Atzler</li>
+            <li>Aus erster Hand: Innovationen aus Afrika (2) Ökologie. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana</li>
+            <li>Die neue Schlager-Welle (2) Was Schlager von Volksmusik unterscheidet. Gestaltung: Noel Kriznik</li>
+          </ul>
+        </div>
+        <div class="description-text">Kinder und Sport (1) Spaßfaktor Sport. Gestaltung: Margit Atzler Aus erster Hand: Innovationen aus Afrika (2) Ökologie. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana Die neue Schlager-Welle (2) Was Schlager von Volksmusik unterscheidet. Gestaltung: Noel Kriznik</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokollegwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Dimensionen">
+        <div class="card-meta">
+          <span class="show-badge">Dimensionen</span>
+          <span class="broadcast-time">🕒 19:05 – 19:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Dimensionen: Heiß begehrt im Kalten Krieg – Österreichs Nachkriegswissenschaft</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Österreichs Nachkriegswissenschaft</div>
+        </div>
+        <div class="description-text">Nach Kriegsende bemühten sich die Siegermächte immer vehementer auch um österreichische Wissenschaftler*innen. Besonders gefragt waren Experten aus der Raketen- und Luftfahrttechnik, Medizin, Chemie und Physik. Ein US-Geheimdokument von 1949 enthält mehrere Listen mit Namen österreichischer Forscher:innen, darunter so prominente wie Lise Meitner, Wolfgang Pauli und Erwin Schrödinger, die sich zum damaligen Zeitpunkt nicht in Österreich befanden. Ihre Rückkehr sollte, so hieß es, um jeden Preis verhindert werden. Die US-Alliierten befürchteten, dass militärisch relevantes Wissen in die Hände der Sowjets fallen könnte. Tausende Spezialisten waren bereits aus der sowjetischen Zone Deutschlands in die UdSSR deportiert worden. (Wh. v. 10. 09. 2025)</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/dimensionen" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Journal-Panorama">
+        <div class="card-meta">
+          <span class="show-badge">Journal-Panorama</span>
+          <span class="broadcast-time">🕒 18:25 – 18:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Journal-Panorama: Der Ungarn-Aufstand 1956 und seine Folgen für Österreich – Dieser Tage jähren sich der Aufstand und seine Niederschlagung zum 70. Mal</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Dieser Tage jähren sich der Aufstand und seine Niederschlagung zum 70. Mal.</div>
+        </div>
+        <div class="description-text">Ende Oktober 1956 erhob sich die ungarische Bevölkerung gegen die kommunistische Diktatur und die sowjetische Besatzung. Der landesweite bewaffnete Widerstand wurde von der Sowjetunion brutal niedergewalzt, am 4. November marschierte die Rote Armee ein. 3.000 Menschen wurden getötet, rund 200.000 Ungar:innen flohen ins Ausland, die meisten von ihnen nach Österreich. Der Aufstand und die Flüchtlinge haben sich auch hierzulande tief ins kollektive Gedächtnis eingeprägt. Österreich war erst 1955 wieder ein souveräner Staat geworden, die Neutralität stand auf dem Prüfstand, und die mehrfach bekundete Solidarität mit der ungarischen Bevölkerung wurde in Moskau mit Argusaugen beobachtet und auch kritisiert. Wir fassen eine Veranstaltung im Heeresgeschichtlichen Museum in Wien zusammen und sprechen mit der Zeithistorikerin Barbara Stelzl-Marx über den Ungarn-Aufstand und was er nach 70 Jahren noch für uns bedeutet. Gestaltung: Astrid Plank und Elisa Vass</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/journalpanorama" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Punkt eins">
+        <div class="card-meta">
+          <span class="show-badge">Punkt eins</span>
+          <span class="broadcast-time">🕒 13:00 – 13:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Punkt eins: Afrikas sprachliche Vielfalt – Identität, Sprachpolitik und Mehrsprachigkeit im Alltag</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Identität, Sprachpolitik und Mehrsprachigkeit im Alltag</div>
+        </div>
+        <div class="contributors">👥 Gäste: Sandra Krampelhuber, Filmemacherin, Kuratorin &quot;Cinéma Africain&quot;; Melane Nkounkolo, Sängerin und Afrikawissenschaftlerin; Dr. Daniel Romuald Bitouh, Literatur- und Kulturwissenschaftler. Moderation: Marina Wetzlmaier. Anrufe 0800 22 69 79 | punkteins(at)orf.at</div>
+        <div class="description-text">Sprachen sind ihre Leidenschaft, sagt die Sängerin Melane Nkounkolo. Aufgewachsen ist sie in Nordrhein-Westfalen, aber sie betrachtet auch das Herkunftsland ihrer Eltern, die Republik Kongo, als ihre Heimat. Sie singt vorwiegend in der Nationalsprache Lingala, eine von etwa fünfzig Sprachen, die in der Republik Kongo vorkommen - in einem Land mit etwa 6,5 Millionen Einwohner:innen. Lingala wird ebenso in der Demokratischen Republik Kongo, aber auch in Teilen der Zentralafrikanischen Republik und Angolas gesprochen. Die Zahl der Sprecher:innen wird auf 70 Millionen geschätzt. Afrika ist der Kontinent mit der größten linguistischen Vielfalt. Schätzungen reichen von 1.500 bis 3.000 Sprachen. Mit jeder seien verschiedene Konzepte und Vorstellungen verknüpft, sagt Melane Nkounkolo, die Afrikawissenschaften studiert hat. Gleichzeitig ist laut UNESCO jede zehnte afrikanische Sprache gefährdet. Sie werden nicht mehr an die nächsten Generationen weitergegeben und drohen zu verschwinden - mit ihnen auch Wissen und Traditionen. Die UNESCO hebt hervor, wie wichtig es sei, Muttersprachen stärker in die Schulbildung zu integrieren. Oft wird nach wie vor in den ehemaligen Kolonialsprachen, wie Französisch und Englisch, unterrichtet. Ebenso dominieren sie in der Politik, Verwaltung und in Medien. Als großer Verfechter für den Erhalt von Muttersprachen, galt der kenianische Schriftsteller Ngugi wa Thiong&#x27;o, der ab den späten 19070ern ausschließlich auf Gikuyu publizierte. Afrikanische Sprachen zu fördern verstand er als Akt der Dekolonisierung und Ermächtigung. Im Alltag sind die Menschen oft mehrsprachig. Eindrücke davon geben Filme, die von 4. bis 7. November im Rahmen des internationalen Filmfestivals Cinéma Africain in Linz präsentiert werden. Laut Kuratorin Sandra Krampelhuber sind im Programm 13 Sprachen vertreten. Welche offiziellen Bestrebungen gibt es, die sprachliche Vielfalt in Afrika zu erhalten? Wo liegen die Herausforderungen? Wie werden Sprachen in der Diaspora weitergegeben? Welche Rolle spielen dabei Kultur, Musik, Film und Literatur? Darüber spricht Marina Wetzlmaier mit der Filmemacherin Sandra Krampelhuber, der Sängerin Melane Nkounkolo und mit Daniel Romuald Bitouh, Obmann des Kulturvereins Afrieurotext, der eine Buchhandlung in Wien betreibt. Sprachliche Vielfalt werde auch dort &quot;großgeschrieben&quot;, sagt er. Reden Sie mit: Rufen Sie in der Sendung an unter 0800 22 69 79 oder schreiben Sie ein E-Mail an punkteins(at)orf.at.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiogeschichten">
+        <div class="card-meta">
+          <span class="show-badge">Radiogeschichten</span>
+          <span class="broadcast-time">🕒 11:05 – 11:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiogeschichten: Moderne Arbeitswelten</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>&quot;Tokyo Girls Club&quot;. Von Asako Yuzuki. Aus dem Japanischen übersetzt von Ursula Gräfe. Es liest Madiha Kelling Bergner.</div>
+        </div>
+        <div class="description-text">Eriko hat einen prestigeträchtigen Job in einer Handelsfirma und ein makelloses Leben, doch unter dieser Oberfläche verbirgt sich eine alles verzehrende Einsamkeit. Sie ist fasziniert von Shoko, einer Hausfrau, die wie eine Katze in den Tag hineinlebt und in ihrem Lifestyle-Blog &quot;Tagebuch einer nutzlosen Ehefrau&quot; von ihrem hausfrauenunüblichen Alltag berichtet. Als die beiden sich zufällig kennenlernen, entsteht eine besondere Verbindung, die jedoch eine toxische Wendung nimmt, als Shoko plötzlich aufhört zu bloggen und verschwindet. Sie geraten in einen Strudel der Besessenheit, der eine Spur der Verwüstung hinterlässt. Asako Yuzuki wurde 1981 in Tokio geboren. Sie wurde für ihr Schreiben vielfach ausgezeichnet, zuletzt mit dem Noma-Verlagskulturpreis. Ihr Roman &quot;Butter&quot; ist in Japan ein Bestseller und verkaufte sich allein in Japan 200.000 mal. Er erscheint weltweit in zahlreichen Sprachen und gewann 2025 den British Book Award. &quot;Tokyo Girls Club&quot; wurde mit dem Yamamoto Shugoro Preis ausgezeichnet.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:45 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Die Neue Schlager-Welle (2) – Was Schlager von Volksmusik unterscheidet</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Was Schlager von Volksmusik unterscheidet</div>
+        </div>
+        <div class="description-text">Wie der Heimatfilm sollte auch die Schlagermusik eine Heile-Welt-Gefühl vermitteln und damit die Nachwirkungen des Zweiten Weltkriegs mildern. Die Themen waren entsprechend: ewige Liebe, Familie, Freundschaft, Heimat. Moderne Schlagerkünstlerinnen und -künstler greifen diese Werte auf und vereinnahmen dabei mitunter auch Elemente der Volksmusik. Stichwort: &quot;Volks-Rock&#x27;n&#x27;Roller&quot;. Mit welcher Absicht? Und wo verläuft die Grenze zwischen Brauchtum, Inszenierung und Kommerz? Gestaltung: Noel Kriznik</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:30 – 09:45 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Aus erster Hand: Innovationen aus Afrika (2) – Ökologie</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Ökologie</div>
+        </div>
+        <div class="description-text">Unsere afrikanischen Korrespondentinnen und Korrespondenten berichten über ein Aufforstungsprojekt an der Küste Guineas, durch das die Mangrovenwälder wieder hergestellt werden und die Fischerei gestärkt wird. In Mosambik widmen sich junge Unternehmerinnen und Unternehmern dem Plastikmüll: Sie entfernen ihn aus der Umwelt und wandeln ihn in Rohstoffe um. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:05 – 09:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Kinder brauchen Sport (2) – Spaßfaktor Sport</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Spaßfaktor Sport</div>
+        </div>
+        <div class="description-text">&quot;Leibesübungen&quot; hieß das Unterrichtsfach vor ein paar Jahrzehnten, heute ist es &quot;Bewegung und Sport&quot;. Was hierbei vermittelt werden soll verändert sich im Lauf der Jahre - und hängt nicht unwesentlich mit den politischen Hintergründen zusammen. Der klassische Turnunterricht hat seinen Ursprung in der militärischen Disziplinierung mit Ansprüchen an körperliche Fitness in der Armee. Je nach Persönlichkeit eignen sich bestimmte Sportarten für Kinder besser als andere. In der Regel tun sich Kinder mit ADHS schwerer, ihren Platz auf dem Fußballfeld zu finden - dafür kann Klettern die Konzentration und Selbstwahrnehmung schulen. Manche Ergotherapeut:innen und Psycholog:innen bieten gezielt Therapieklettern an. Trendsportarten haben sich meist aus einer Jugend-Protestkultur entwickelt haben: Skateboarding zum Beispiel oder Ski-Freestyle und Parkours / Freerunning. Kinder und Jugendliche messen sich nicht zwingend in Wettkämpfen, sondern legen sich die Latte selbst. Im Vordergrund steht der Spaß an der Bewegung - in unterschiedlich herausfordernden Settings. Wenn eine Trendsportart olympisch wird - wie jüngst Ski-Freestyle - schafft das Strukturen, die wieder einen Rahmen vorgeben und berufliche Möglichkeiten ausweiten aber auch den reinen Spaßfaktor am Sport beeinflussen. Gestaltung: Margit Atzler</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Gedanken für den Tag">
+        <div class="card-meta">
+          <span class="show-badge">Gedanken für den Tag</span>
+          <span class="broadcast-time">🕒 06:57 – 07:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Gedanken für den Tag: Ohne Medien keine Demokratie – Sechs Stimmen, sechs Perspektiven</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Sechs Stimmen, sechs Perspektiven</div>
+        </div>
+        <div class="description-text">Tatsächlich gibt es eine ganz einfache und sehr wichtige Idee, die man sich gut merken sollte. Es kann keine Demokratie ohne verlässliche Medien geben. Denn es gibt keine Demokratie ohne Debatte. Und es kann keine Debatte geben, wenn es keinen Raum für Debatten gibt. Und dieser Raum für Debatten sind die Medien. Grundsätzlich gehen wir von der Annahme aus, dass jede Gesellschaft informiert werden muss. Wenn wir das sagen, sprechen wir implizit natürlich von einer demokratischen Gesellschaft. Aber man kann auch davon ausgehen, dass eine nichtdemokratische Gesellschaft, zum Beispiel eine Gesellschaft unter einer Diktatur, ebenso Informationen braucht wie eine Demokratie. Eine Bevölkerung braucht im Allgemeinen Informationen. Ohne Medien gibt es in der modernen Gesellschaft, in der wir leben, keine Demokratie. Wählen ist kein demokratischer Akt, der Demokratie an sich definiert. Es gibt viele Länder, in denen gewählt wird, die aber keine Demokratien sind, das wissen wir sehr gut. Demokratie entscheidet sich also nicht auf dieser Ebene, sondern im Austausch, und nur die Medien ermöglichen das. Journalistinnen und Journalisten, die in Ländern informieren wollen, die ich &quot;Demokraturen&quot; nenne - eine Mischung aus Demokratie und Diktatur -, dort wird gewählt, aber wenn man mit dem, was man sagt, zu weit geht, wird man eingesperrt. Für sie ist es viel gefährlicher zu leben und diese Arbeit ehrlich auszuüben als für uns, die wir über Konflikte berichtet, vor Ort gearbeitet und dann hierher zurückgekehrt sind. Was ich also von ihnen gelernt habe, ist, dass Mut viele Formen hat. Und vielleicht ist die höchste Form des Mutes, weiterhin zu informieren und gleichzeitig im Land zu bleiben.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/gedankenfuerdentag" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+    </section>
+    <section class="day-section" data-date="2026-11-02">
+      <h2 class="day-title">📅 Montag, 02. November 2026</h2>
+      <article class="broadcast-card" data-show="Ambiente - von der Kunst des Reisens">
+        <div class="card-meta">
+          <span class="show-badge">Ambiente - von der Kunst des Reisens</span>
+          <span class="broadcast-time">🕒 00:05 – 01:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ambiente - von der Kunst des Reisens: (Wiederholung von Sonntag 10.05 Uhr)</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>(Wiederholung von Sonntag 10.05 Uhr)</div>
+        </div>
+        <div class="description-text">(Wiederholung von Sonntag 10.05 Uhr)</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/ambiente_wh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 22:08 – 23:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Kinder und Sport (1) Was Kinder beim Sport lernen | Aus erster Hand: Innovationen aus Afrika (1) Mikroökonomie | Die neue Schlager-Welle (1) Wie ein Schlager-Song entsteht</h3>
+        <div class="topics-list">
+          <strong>Themen dieser Sendung:</strong>
+          <ul>
+            <li>Kinder und Sport (1) Was Kinder beim Sport lernen. Gestaltung: Margit Atzler</li>
+            <li>Aus erster Hand: Innovationen aus Afrika (1) Mikroökonomie. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana</li>
+            <li>Die neue Schlager-Welle (1) Wie ein Schlager-Song entsteht. Gestaltung: Noel Kriznik</li>
+          </ul>
+        </div>
+        <div class="description-text">Kinder und Sport (1) Was Kinder beim Sport lernen. Gestaltung: Margit Atzler Aus erster Hand: Innovationen aus Afrika (1) Mikroökonomie. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana Die neue Schlager-Welle (1) Wie ein Schlager-Song entsteht. Gestaltung: Noel Kriznik</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokollegwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Dimensionen">
+        <div class="card-meta">
+          <span class="show-badge">Dimensionen</span>
+          <span class="broadcast-time">🕒 19:05 – 19:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Dimensionen: Haben Schwarze Löcher Haare? – Wie ein Stern eine alte Frage der Astrophysik beantworten könnte</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Wie ein Stern eine alte Frage der Astrophysik beantworten könnte</div>
+        </div>
+        <div class="description-text">Nein, lautet die derzeitige Antwort der theoretischen Astrophysik. Soll bedeuten: Außer ihrer Masse, ihrer elektrischer Ladung und ihrem Drehimpuls besitzen Schwarze Löcher keine weiteren Eigenschaften. Ob das tatsächlich stimmt, wollen Wissenschaftler:innen an der Flugbahn eines Sterns beobachten. Bis 2031 wird S301, so sein Name, wird er dem Schwarzen Loch in der Mitte der Milchstraße so nahe kommen, dass erstmals die Rotation eines Schwarzen Lochs gemessen werden kann. Weicht der Stern auch danach nicht von dem Kurs ab, den Einsteins Relativitätstheorie vorhersagt, wäre das ein Beweis für das &quot;Keine-Haare-Theorem&quot;. Beobachten will das ein Team um den Deutschen Gerhard Genzel, der schon die Masse des Schwarzen Lochs in der Mitte unserer Galaxie vermessen konnte - und dafür 2020 den Physiknobelpreis erhielt.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/dimensionen" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Journal-Panorama">
+        <div class="card-meta">
+          <span class="show-badge">Journal-Panorama</span>
+          <span class="broadcast-time">🕒 18:25 – 18:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Journal-Panorama: Japans Strafvollzug - Reform ohne Wandel?</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Der neue Schwerpunkt liegt auf der Resozialiserung - zumindest in der Theorie.</div>
+        </div>
+        <div class="description-text">Im Juni 2025 trat in Japan die erste grundlegende Reform des Strafvollzugs seit 119 Jahren in Kraft. Arbeit in Haft soll nicht länger bloß Strafe sein, sondern Teil einer individuellen Behandlung, die Rückfälle verhindert und auf ein Leben nach der Haft vorbereitet. Ein gutes Jahr später stellt sich die Frage, ob sich das System tatsächlich verändert hat: Wie setzen Gefängnisse die neue Freiheitsstrafe um, welche Rolle spielen Arbeit, Therapie, Ausbildung und psychologische Betreuung heute, und warum bestimmen Disziplin, Schweigen und Gehorsam den Gefängnisalltag vielerorts weiterhin? Der Blick in das Frauengefängnis Tochigi dient dabei als Beispiel für strukturelle Probleme: Gefangene sind oft krank, die medizinische Versorgung mangelhaft, und für lebenslang Inhaftierte gibt es kaum Perspektiven. Ob Resozialisierung in einem System gelingen kann, das Gefangene vor allem kontrolliert, bleibt fraglich. Ist die Reform also gescheitert? Gestaltung: Martin Fritz</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/journalpanorama" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Digital.Leben">
+        <div class="card-meta">
+          <span class="show-badge">Digital.Leben</span>
+          <span class="broadcast-time">🕒 17:55 – 18:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Digital.Leben: Gedanken lesen mit KI – Wie ein japanischer Wissenschafter in Köpfe schauen kann</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Wie ein japanischer Wissenschafter in Köpfe schauen kann</div>
+        </div>
+        <div class="description-text">Sichtbar machen, was in unseren Köpfen vorgeht: Das ist gleichermaßen spannend wie gruselig. Yukiyasu Kamitani aus Kyoto hat das bereits geschafft. Kamitani nutzt Künstliche Intelligenz, um Gehirnstromanalysen in Bilder umzusetzen. Er hat Menschen auf Fotos und Objekte blicken lassen, die daraus resultierenden Muster im Gehirn aufgezeichnet und damit eine KI gefüttert. Im Umkehrschluss kann die Maschine jetzt aus Gehirnströmen etwa eine Ente nachzeichnen, wenn man eine Ente entweder gerade sieht oder auch nur an sie denkt. Franz Zeller hat Kamitani auf der KI-Konferenz TED:AI in Wien getroffen.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Science Arena">
+        <div class="card-meta">
+          <span class="show-badge">Science Arena</span>
+          <span class="broadcast-time">🕒 16:05 – 17:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Science Arena: Ausgefeiert, USA? Das Ende eines Jubiläumsjahres</h3>
+        <div class="description-text">Das Jubiläumsjahr &quot;250 Jahre USA&quot; nähert sich seinem Ende und es stellt sich mehr denn je die Frage, was es denn da überhaupt zu feiern gab - für die USA, für die Welt. Trifft jene europäische Perspektive zu, die tendenziell eine skeptische bis negative Sicht auf Nordamerika entwickelt hat, oder ist das alles ein Irrtum, und wir verzeichnen die Vereinigten Staaten in ihrer historischen und aktuellen Entwicklung? Martin Haidinger holt in der &quot;Science Arena&quot; österreichische Fachleute für die USA vors Mikrofon, die einiges von der Welt gesehen haben und die westliche Supermacht einordnen - vielleicht ganz neu und überraschend?</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/sciencearena" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Punkt eins">
+        <div class="card-meta">
+          <span class="show-badge">Punkt eins</span>
+          <span class="broadcast-time">🕒 13:00 – 13:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Punkt eins: Staaten in der Schuldenfalle</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Warum sich auch die größten Staaten immer mehr Geld leihen. Gast: Philipp Heimberger, Senior Economist, Wiener Institut für Internationale Wirtschaftsvergleiche (wiiw)</div>
+        </div>
+        <div class="contributors">👥 Moderation: Philipp Blom. Anrufe 0800 22 69 79 | punkteins(at)orf.at</div>
+        <div class="description-text">Die Staatsverschuldung in Österreich wächst, wie auch in anderen europäischen Ländern, und auch global nehmen die Schulden immer weiter zu. Viele Staaten stehen vor immer höher werdenden Schuldenbergen, auch die USA und China. Das macht Länder immer stärker abhängig von globalen Finanzmärkten, denn der Schuldendienst ist längst zu einem entscheidenden Budgetposten geworden. Bei den Jugendprotesten in Frankreich etwa wurde bekannt, dass das Land mehr für seine Rückzahlungen ausgibt, als für Bildung oder Verteidigung. Wenn sich auf internationalen Märkten die Zinssätze der Staatsanleihen und die Risikobewertungen einzelner Länder ändern, kann das für das Budget eines Staates und damit für sein Sozialsystem und sein Funktionieren zur existenziellen Krise werden, wie in Griechenland nach der Finanzkrise 2008. Beobachter warnen jetzt, dass ein ähnliches Problem auch auf Länder wie Frankreich zukommen könnte, mit gravierenden Konsequenzen für die gesamte Eurozone. Warum aber sind Staaten in jüngster Zeit immer höher verschuldet, was bedeutet das und was sind die Perspektiven für den Schuldenabbau? Philipp Heimberger ist Senior Economist am Wiener Institut für Internationale Wirtschaftsvergleiche. Er spricht mit Philipp Blom über das Funktionieren von staatlichen Schulden, warum sie nicht immer eine Tragödie sind und warum der legendäre Ökonom John Maynard Keynes sogar ein Fan davon war. Die Covid-Krise war ein Wendepunkt, führt Heimberger aus und erklärt, wie Demografie, Weltmärkte, Wohlfahrtsstaaten und Finanzspekulation ineinandergreifen und manche Staaten, besonders in ärmeren Ländern, vor eine existenzielle Herausforderung stellen. Welche Möglichkeiten gibt es für Staaten, aus der Schuldenspirale herauszukommen, oder sind Schulden für Staaten eigentlich kein Problem, weil Staaten und Nationalbanken nicht bankrott gehen können? Und wird die Finanzierung von Wohlfahrtsstaaten heute nicht zur untragbaren Hypothek für folgende Generationen? Sprechen Sie mit uns über Staatsverschuldung, ihre Vorteile und Nachteile: Rufen Sie in der Sendung an unter 0800 22 69 79 oder schreiben Sie ein E-Mail an punkteins(at)orf.at.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiogeschichten">
+        <div class="card-meta">
+          <span class="show-badge">Radiogeschichten</span>
+          <span class="broadcast-time">🕒 11:05 – 11:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiogeschichten: Die letzte Reise in die Schweiz</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>&quot;In die Schweiz&quot; von Emma Cline. Aus dem Englischen übersetzt von Nikolaus Stingl. Es liest Steffen Rössler.</div>
+        </div>
+        <div class="description-text">&quot;Ihr Hotel lag in der Altstadt. Altstadt: Cody sagte das, als ob es David etwas bedeutete. Altstadt: so ziemlich, was sein Gehirn mittlerweile war. Ein Ort, wo die Vergangenheit vorherrschte. Sie war interessanter, lebendiger. Sein aktuelles Selbst war zum jetzigen Zeitpunkt bloß ein Tourist in seine alten Leben, der gegenwärtige Moment nur als Portal in die Vergangenheit zwangsverpflichtet.&quot; David Hastings ist an Alzheimer erkrankt und schafft ohne fremde Hilfe den Alltag nicht mehr. Der Mitsiebziger kennt den Krankheitsverlauf und will assistierten Suizid in der Schweiz. Dorthin begleitet den einst erfolgreichen Investmentbanker sein Assistent Cody. Nur Cody und Davids ehemaliger Chef und Freund wissen von den Plänen und unterstützen ihn. Auf der Reise in die Schweiz will David seine Tochter und seinen Enkel ein letztes Mal besuchen und vor allem auch seinen ehemaligen Studienfreund, den er vor vielen Jahren verraten und enttäuscht hat. Emma Cline beschreibt diese Reise aus Davids Sicht - unsentimental, souverän und ohne moralische Wertungen.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:45 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Die Neue Schlager-Welle (1) – Wie ein Schlager-Song entsteht</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Wie ein Schlager-Song entsteht</div>
+        </div>
+        <div class="description-text">Schlagermusik ist in der Mitte der Gesellschaft angekommen. Sängerinnen und Sänger a la Gabalier und Naschenweng füllen Stadien. In der Stadt pilgern Jugendliche in Tracht zum Oktoberfest und auf TikTok scheint volkstümliche Musik, unterfüttert mit Techno-Beats, zu ziehen. Noel Kriznik nimmt die neue Schlager-Welle in den Blick. Die Solo-Künstlerin kommt mit einer pointierten Aussage und ein paar Riffs ins Studio. Den Rest erledigt der Produzent. Musikalische Virtuosität ist nicht zwingend notwendig, gefragt sind ein gutes Gespür für Wirkung, ein professioneller Umgang mit Musiksoftware und die Fähigkeit, aus einfachen Ideen etwas Eingängiges zu formen. Reichen eine simple Melodie und ein einprägsamer Text, damit ein Schlagerhit entsteht? Und wie kommt die nötige Portion Glitzer dazu? Folge 1 zeigt, wie das in der Praxis gelingen kann bei einem Besuch im Studio. Gestaltung: Noel Kriznik</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:30 – 09:45 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Aus erster Hand: Innovationen aus Afrika (1) – Mikroökonomie</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Mikroökonomie</div>
+        </div>
+        <div class="description-text">Im Rahmen des ORF Schwerpunkts &quot;Africa Now&quot; bringt das Ö1 Radiokolleg diese Woche täglich Berichte aus dem südlichen Kontinent. Journalist:innen aus Afrika berichten über Innovationen, Kooperationen und Projekte in verschiedenen afrikanischen Ländern, in denen lokal und regional die Wirtschaft gefördert, die Umwelt geschützt und für Geschlechtergerechtigkeit gesorgt wird und die Mobilität klimaneutral wird. In dieser Folge stellen wir lokale Projekte vor, die großen Einfluss auf das Wohlergehen und die wirtschaftliche Entwicklung einzelner Regionen haben. Journalist:innen vor Ort informieren über eine Initiative in Benin, in der heimische Lebensmittel wieder in den Fokus gerückt werden und von der Elfenbeinküste erfahren wir über ein Recyclingprojekt das Schulen, Frauen und Kinder stärkt. Gestaltung: Albert Ansah, Joel Henri, Jose Herminio, Eunice Malawa, Gabriel Maina und Venuste Nshimyiana</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:05 – 09:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Kinder brauchen Sport (1) – Was Kinder beim Sport lernen</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Was Kinder beim Sport lernen</div>
+        </div>
+        <div class="description-text">Welchen Stellenwert hat sportliche Betätigung für Kinder und Jugendliche in Österreich? Kinder wollen sich bewegen, mehr als den Erwachsenen oft lieb ist. Doch Sport &quot;nur&quot; um des Sports Willen? Vielleicht für die besonders Talentierten. Die anderen sollen lieber an ihre berufliche Zukunft denken. Kinder laufen durch die Gegend, klettern, wo sie vielleicht nicht klettern sollten, raufen miteinander. Irgendwann entwickelt sich aus dem kleinkindlichen Bewegungsdrang die Fähigkeit, Sport auszuüben; d.h. kontrollierte Bewegungsmuster auszuführen, ein dazugehöriges Regelwerk zu befolgen, Sportgeräte zu nutzen und sich in eine Gruppe einzufügen. Ob Mannschafts- oder Einzelsport, einzelne Sportarten fördern unterschiedliche Fähigkeiten, die aus entwicklungspsychologischer Sicht auch als Lernfeld betrachtet werden können. Auch fördern die unterschiedlichen Bewegungsmuster der vielfältigen Sportarten eine Flexibilität, die für das Erwachsenenalter eine wertvolle Grundlage bilden kann - körperlich und kognitiv. Hinzukommen geschlechter- und kulturelle Stereotype, die man als Familie mitunter unterstützen oder lieber meiden möchte. Kampfsportarten sind gerade bei den Mädchen im Trend - und bieten neben körperlicher Fitness Möglichkeiten zur Selbstwahrnehmung und Selbstermächtigung. Gestaltung: Margit Atzler</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Gedanken für den Tag">
+        <div class="card-meta">
+          <span class="show-badge">Gedanken für den Tag</span>
+          <span class="broadcast-time">🕒 06:57 – 07:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Gedanken für den Tag: Lebenswelten Afrika – Sechs Stimmen, sechs Perspektiven</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Sechs Stimmen, sechs Perspektiven</div>
+        </div>
+        <div class="description-text">Ich arbeite an einer Schule, wo 90 Prozent der Lehrkräfte Frauen sind. Denn die Ausbildung soll ganzheitlich sein - nicht nur aus akademischer Sicht, also Englisch und Mathematik, die wichtig sind, sondern auch hinsichtlich der Persönlichkeitsentwicklung und Wertevermittlung. Wir möchten, dass die Mädchen pünktlich sind und kämpferisch. Und die beste Person, um Ratschläge zu geben, ist jemand, der dieselbe Situation erlebt - also eine Frau. Da es eine Mädchenschule ist, haben die Mädchen auch jeden Monat ein Gespräch mit einer Mentorin. Wir wollten den Mädchen Vorbilder zeigen. Nicht nur in der Theorie, sondern wir wollen, dass sie Frauen als Lehrerinnen in Geschichte, Geografie, Mathematik und Physik erleben. Aber es gibt sehr wenige Menschen, die sich für den Lehrberuf entscheiden, und noch weniger Frauen, die sich dafür entscheiden. Nach zehn Jahren mussten wir dieses Jahr erstmals einen Mann einstellen, der Physik und Mathematik unterrichtet, weil wir keine Lehrerin gefunden haben. Ich habe am Polytechnikum studiert, wir waren zwei Frauen. Frauen, die naturwissenschaftliche Studiengänge abschließen, haben im Allgemeinen viele Möglichkeiten, wenn sie kompetent sind. Und jetzt, wo es all diese Maßnahmen zur Förderung von Frauen in den Wissenschaften gibt, sieht man sogar in Stellenanzeigen den Satz: Bewerbungen von Frauen sind ausdrücklich erwünscht. Daher ist es derzeit tatsächlich sehr leicht für Frauen in den Wissenschaften Arbeit zu finden. Dieses Jahr haben wir an der Schule einen &quot;Tag der Berufe&quot; organisiert. Das heißt, alle Kinder sollten verkleidet kommen, mit der Kleidung des Berufs, den sie später einmal ausüben möchten. Im Kindergarten haben wir Buben und Mädchen. Die Jungen kamen als Ingenieure, Astronauten, Feuerwehrleute oder Soldaten. Und die Mädchen kamen als Prinzessinnen oder Journalistinnen. Die einzige Ausnahme war ein Mädchen, das Tierärztin werden wollte. Aber im Allgemeinen sieht man, dass schon von klein auf eine gewisse Orientierung stattfindet. Ich denke also, dass die Macht der Stereotype dazu führt, dass Mädchen später Schwierigkeiten haben, sich für Naturwissenschaften zu entscheiden. Sie hören jahrelang Botschaften, dass diese Dinge kompliziert seien. Und wenn sie dann ihren Studiengang wählen müssen, gehen sie überallhin - nur nicht in die Wissenschaften.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/gedankenfuerdentag" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+    </section>
+    <section class="day-section" data-date="2026-11-01">
+      <h2 class="day-title">📅 Sonntag, 01. November 2026</h2>
+      <article class="broadcast-card" data-show="Diagonal">
+        <div class="card-meta">
+          <span class="show-badge">Diagonal</span>
+          <span class="broadcast-time">🕒 22:05 – 00:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Diagonal: Humanistin, Feministin, Künstlerin. Zur Person Miriam Cahn</h3>
+        <div class="topics-list">
+          <strong>Themen dieser Sendung:</strong>
+          <ul>
+            <li>Miriam Cahn. Ihre Bilder scheuen nicht den bösen Blick, nicht die Brutalität, nicht den Körper. Ihre Malerei - ob mit Ölfarben, Kreide, Pastell, Kohle oder Aquarell - rückt die Geister, die von Krieg, Flucht, Sexualität, Verletzung erzählen, farbgewaltig, figurativ und unbestechlich ins Zentrum</li>
+            <li>Wiederholung von Samstag, 17.05 Uhr</li>
+          </ul>
+        </div>
+        <div class="description-text">Die Schweizer Künstlerin Miriam Cahn, 1949 in Basel geboren, malt verstörende, expressive Sujets. Mit dem künstlerischen Selbstverständnis jüngerer Generationen teilt sie die Befragung der Identität. Sie versteht sich als Feministin, als Jüdin, als politischer Mensch. Wer sie kennenlernt, trifft auf eine listige Person, von kerniger Gesundheit, mit feixenden Augen und manchmal rüdem Benehmen. Eine Frau, die sich kein Blatt vor den Mund nimmt. Erst im Alter von 45 Jahren machte die vielfach ausgezeichnete, international renommierte Künstlerin, Malerei zu ihrem wichtigsten Medium. Heute lebt Miram Cahn unweit von St. Moritz, in Stampa, in einem fast fensterlosen Gebäude, einer Raumschachtel aus Beton, schlicht, funktional und ohne Dekor, entworfen von dem Schweizer Architekten Armando Ruinelli. Cahn sucht weder urbane Dynamik und Energie noch Romantik und Ruhe der Natur, sie sucht das Rohe, Karge, Klare, Raue. Ihr Haus steht an der Durchzugsstraße, im Winter gibt es hier kaum Sonne. Ein Atelierbesuch im Schweizer Bergell. Eine Sendung von Nicole Dietrich und Anna Soucek.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/diagonal_wh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Ex libris">
+        <div class="card-meta">
+          <span class="show-badge">Ex libris</span>
+          <span class="broadcast-time">🕒 16:00 – 16:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ex libris: Vom Sterben und Trauern – Bücher, Menschen, Themen</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Bücher, Menschen, Themen</div>
+        </div>
+        <div class="contributors">👥 Moderation: Julia Reuter</div>
+        <div class="description-text">Marica Bodrozic: &quot;Sterben&quot;, Hanser Berlin Gestaltung: Manuela Reichart Paulus Hochgatterer: &quot;Mio und die Unsterblichkeit&quot;, Zsolnay Gestaltung: Tim Felchlin Boris Schumatsky: &quot;Die Seine fließt ins Schwarze Meer&quot;, Residenz Gestaltung: Erich Klein Helga Schubert: &quot;Die Woche danach. Ein Stundenbuch der Hoffnung&quot;, dtv Gestaltung: Holger Heimann Emma Cline: &quot;In die Schweiz&quot;, übersetzt von Nikolaus Stingl, Hanser Gestaltung: Klaus Nüchtern John Burnside: &quot;Von Riesenalks und Auerochsen. Über das Verschwinden der Arten und unseren Platz in der Natur&quot;, übersetzt von Bernhard Robben, Penguin Gestaltung: Gudrun Hamböck</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/exlibris" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Ambiente - von der Kunst des Reisens">
+        <div class="card-meta">
+          <span class="show-badge">Ambiente - von der Kunst des Reisens</span>
+          <span class="broadcast-time">🕒 10:05 – 11:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ambiente - von der Kunst des Reisens: Streifzug durch Senegal</h3>
+        <div class="topics-list">
+          <strong>Themen dieser Sendung:</strong>
+          <ul>
+            <li>Ambiente Spezial:</li>
+            <li>Ein Land zwischen Stillstand und Aufbruch. Von Dakar, einer wachsenden Metropole im Wandel per Fähre Aline Sitoé Diatta über den Wasserweg in die paradiesische, Enklave Casamance mit brüchigen Perspektiven</li>
+          </ul>
+        </div>
+        <div class="description-text">Am westlichsten Punkt des afrikanischen Festlands, in der senegalesischen Hauptstadt Dakar beginnt diese Reise. An der vor knapp zwei Jahrhunderten entstandenen Stadt lassen sich die tiefgreifenden Veränderungen ablesen, die das Land geprägt haben: von der französischen Kolonialzeit über die Unabhängigkeit bis in die Gegenwart. Viele Zeugnisse dieser Vergangenheit sind heute jedoch vom Verfall und Vergessen bedroht, während die Millionenmetropole unaufhörlich weiterwächst. Ein anderes Erbe wirkt fort: das kulturelle Vermächtnis des ersten Präsidenten Léopold Sédar Senghor, der mit seiner Kulturpolitik das Selbstverständnis des unabhängigen Senegal entscheidend prägte. Seine Visionen von der Bedeutung von Kunst und Kultur haben sich in den öffentlichen Raum und den Geist der Stadt eingeschrieben. Bis heute schöpft Dakar daraus neue künstlerische und intellektuelle Impulse, die die Hauptstadt zu einer der dynamischsten Kulturmetropolen Westafrikas machen. Von Dakar aus geht es weiter in den Süden Senegals - in die Region Casamance, die über den Seeweg mit der Hauptstadt verbunden ist. Die Fähre Aline Sitoé Diatta bringt Reisende und Einheimische über den Atlantik und den Fluss Casamance nach Ziguinchor, in das Zentrum einer Region, die geografisch vom übrigen Senegal durch das Land Gambia getrennt ist. An Bord begegnen sich Menschen mit unterschiedlichen Hintergründen und Geschichten: vom Fischer am Heck, der auf die nächtlich verschwindende Silhouette der Hauptstadt blickt, über die picknickenden Handwerker bis zu französischen Touristinnen, die vor vorbeiziehenden Mangrovenlandschaften Delphine bestaunen. Die Überfahrt gibt Einblicke in die Vielfalt der Region, in die Lebensrealitäten ihrer Bevölkerung und in die politischen und gesellschaftlichen Herausforderungen, vor denen Senegal steht. Die letzte Station ist die Casamance - eine Region, die mit ihren Mangroven, Flüssen, Stränden und ihrer kulturellen Vielfalt zu den landschaftlich eindrucksvollsten Gegenden Westafrikas zählt. Lange war die Region ein beliebtes Reiseziel, doch heute bleibt ihr touristisches Potenzial weitgehend ungenutzt. Ein jahrzehntelanger kriegerischer Konflikt, verbliebene Minenfelder, fehlende Infrastruktur und ökologische Herausforderungen prägen den Alltag vieler Menschen und erschweren ihre Lebensbedingungen. Dennoch haben diese Erfahrungen die Hoffnung der lokalen Bevölkerung nicht genommen: Sie bewahren kulturelle Traditionen und suchen nach Wegen, neue Perspektiven zu schaffen. Gestaltung: Luna Ragheb Redaktion: Ursula Burkert</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/ambiente" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Gedanken">
+        <div class="card-meta">
+          <span class="show-badge">Gedanken</span>
+          <span class="broadcast-time">🕒 09:05 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Gedanken: Ernst Molden, Liedermacher und Dichter</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>&quot;Der Witz von Willi hat die Welt umarmt und niemanden ausgeschlossen.&quot; Der Musiker Ernst Molden erinnert sich an seinen Freund Willi Resetarits.</div>
+        </div>
+        <div class="description-text">Am Allerheiligentag, einen Tag vor Allerseelen, dem Gedenktag für die Verstorbenen, erinnert sich Ernst Molden an Willi Resetarits. Als Ostbahn-Kurti wurde er zu einer prägenden Figur der österreichischen Musik. Für Molden war Resetarits Freund, musikalischer Weggefährte und ein Mensch, von dem er viel gelernt hat. 1987 besucht der damals 20-jährige Polizeireporter Molden einen Auftritt von Ostbahn-Kurti. Dort kommen die beiden erstmals ins Gespräch. In den 2000er-Jahren begegnen sie einander wieder: Resetarits lädt Molden mit dessen Album &quot;Bubenlieder&quot; in seine Radiosendung &quot;Trost und Rat&quot; ein, singt und spielt Mundharmonika. Molden schreibt daraufhin das Lied &quot;Hammerschmidgossn&quot; für ihn. Es markiert den Beginn einer langjährigen Zusammenarbeit mit Walther Soyka und Hannes Wirth. Ihre Lieder entstehen auf der Bühne: im Zuhören, im Reagieren und im gemeinsamen Spiel. Resetarits konnte, so Molden, in Songs &quot;hineinkriechen wie in maßgeschneiderte Gewänder&quot;. Molden beschreibt seinen Freund als jemanden, der nicht belehrte, sondern durch sein Handeln wirkte. Sein Humor ging nie auf Kosten anderer: &quot;Der Witz von Willi hat die Welt umarmt und niemanden ausgeschlossen.&quot; Prägend sei für Resetarits auch die Erfahrung gewesen, als Kind einer burgenlandkroatischen Familie in Wien nicht selbstverständlich dazuzugehören. Molden sagt: &quot;Weil er damals mitspielen durfte, hat er seinen Lebtag lang alle mitspielen lassen.&quot; Willi Resetarits starb am 24. April 2022. In seinen Liedern und in den Erinnerungen an die gemeinsame Zeit bleibt er für Ernst Molden lebendig: &quot;Den Willi spüre ich dauernd.&quot;</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/gedanken" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+    </section>
+    <section class="day-section" data-date="2026-10-31">
+      <h2 class="day-title">📅 Samstag, 31. Oktober 2026</h2>
+      <article class="broadcast-card" data-show="Diagonal">
+        <div class="card-meta">
+          <span class="show-badge">Diagonal</span>
+          <span class="broadcast-time">🕒 17:05 – 19:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Diagonal: Humanistin, Feministin, Künstlerin. Zur Person Miriam Cahn</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Miriam Cahn. Ihre Bilder scheuen nicht den bösen Blick, nicht die Brutalität, nicht den Körper. Ihre Malerei - ob mit Ölfarben, Kreide, Pastell, Kohle oder Aquarell - rückt die Geister, die von Krieg, Flucht, Sexualität, Verletzung erzählen, farbgewaltig, figurativ und unbestechlich ins Zentrum.</div>
+        </div>
+        <div class="description-text">Die Schweizer Künstlerin Miriam Cahn, 1949 in Basel geboren, malt verstörende, expressive Sujets. Mit dem künstlerischen Selbstverständnis jüngerer Generationen teilt sie die Befragung der Identität. Sie versteht sich als Feministin, als Jüdin, als politischer Mensch. Wer sie kennenlernt, trifft auf eine listige Person, von kerniger Gesundheit, mit feixenden Augen und manchmal rüdem Benehmen. Eine Frau, die sich kein Blatt vor den Mund nimmt. Erst im Alter von 45 Jahren machte die vielfach ausgezeichnete, international renommierte Künstlerin, Malerei zu ihrem wichtigsten Medium. Heute lebt Miram Cahn unweit von St. Moritz, in Stampa, in einem fast fensterlosen Gebäude, einer Raumschachtel aus Beton, schlicht, funktional und ohne Dekor, entworfen von dem Schweizer Architekten Armando Ruinelli. Cahn sucht weder urbane Dynamik und Energie noch Romantik und Ruhe der Natur, sie sucht das Rohe, Karge, Klare, Raue. Ihr Haus steht an der Durchzugsstraße, im Winter gibt es hier kaum Sonne. Ein Atelierbesuch im Schweizer Bergell. Eine Sendung von Nicole Dietrich und Anna Soucek.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/diagonal" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Gedanken für den Tag">
+        <div class="card-meta">
+          <span class="show-badge">Gedanken für den Tag</span>
+          <span class="broadcast-time">🕒 06:57 – 07:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Gedanken für den Tag: Reformationstag 2026</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>von David Weiss, Kulturanthropologe und ehrenamtlicher Seelsorger in der evangelisch-lutherischen Kirche</div>
+        </div>
+        <div class="description-text">Heute vor 509 Jahren, am 31.Oktober 1517, schlug der Augustinerpater Martin Luther seine 95 Thesen an die Tür der Schlosskirche von Wittenberg. So erzählten und glaubten es die Menschen jahrhundertelang. Das Bild im Kopf, das Hämmern in den Ohren. Aber das so beschriebene Ereignis hat niemals stattgefunden, auch wenn manch einer das Holz der Kirchentür nach den Nagellöchern abgesucht hat, um das Originalformat von Luthers Streitschrift zu ermitteln. Martin Luther richtete die Thesen zum Römerbrief an seine Vorgesetzten Erzbischof Albrecht von Mainz und Bischof Hieronymus Schultz. Irgendjemand hat das vertrauliche Schreiben wie wir neudeutsch sagen, geleakt. Es geriet in die Hände der Buchdrucker und sein Inhalt ging viral. Die Lawine war losgetreten und durch nichts mehr aufzuhalten. Vielleicht wählten die Reformatoren das Datum bewusst als Gegenpol zum Allerheiligenabend, an dem die Kinder der Bauern und Tagelöhner überall im Kaiserreich Rübenlaternen schnitzten und von Tür zu Tür nach Essbarem bettelten? Der Thesenanschlag fiel in eine Seelsorgekrise, in der die Mehrheit der Pfarrstellen unbesetzt und die geistlichen Stifte leer standen. Die Würdenträger der organisierten Religion hatten aufgrund ihres Lebenswandels alle Glaubwürdigkeit eingebüßt. Orientierungslosigkeit und Aberglauben grassierten. Veränderung lag in der Luft. Vieles von damals erinnert mich an heute. Menschen suchen nach Halt und Antworten. Zu allen Zeiten und an vielen verschiedenen Orten. Das Angebot ist bunt. Die Amtskirchen tun sich schwer. Sie werden als erstarrte Institutionen wahrgenommen. Idealist:innen und Ehrenamtliche halten dagegen und geben tagtäglich in der Seelsorge ihr Bestes. Sie vermitteln Überzeugung und keine faulen Kompromisse. Vielleicht ist das die wahre Bedeutung des Reformationstags.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/gedankenfuerdentag" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+    </section>
+    <section class="day-section" data-date="2026-10-30">
+      <h2 class="day-title">📅 Freitag, 30. Oktober 2026</h2>
+      <article class="broadcast-card" data-show="matrix - computer &amp; neue medien">
+        <div class="card-meta">
+          <span class="show-badge">matrix - computer &amp; neue medien</span>
+          <span class="broadcast-time">🕒 19:05 – 19:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">matrix - computer &amp; neue medien: Abschiednehmen in Zeiten von KI – Wie Technologie neue Formen der Erinnerung schafft</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Wie Technologie neue Formen der Erinnerung schafft</div>
+        </div>
+        <div class="description-text">Trauer findet längst nicht mehr nur auf Friedhöfen statt: Sogenannte Griefbots, digitale Seelsorgeangebote und der Umgang mit dem eigenen digitalen Nachlass verlagern Trauer zunehmend ins Internet. Welche Chancen diese neuen Technologien bieten und wo die ethischen Grenzen liegen, das schaut sich Anna Tratter für matrix an. Sie berichtet, welche Möglichkeiten und Risiken KI in der Trauerbegleitung bietet und warum unser digitales Erbe eine immer größere Bedeutung bekommt. Neue Spielwiesen der Desinformation Bis vor kurzem waren vor allem Social Plattformen die Orte, an denen Desinformations-Kampagnen und Fake News verbreitet wurden. Das sind sie zwar immer noch, aber im Zeitalter der Künstlichen Intelligenz kommen hier noch weitere Schauplätze dazu. Ulla Ebner war vor kurzem auf einer großen Desinformationskonferenz in Vilnius und hat dort mit Forschern über neue die neuen Schauplätze der Desinformation gesprochen: Zum Beispiel KI-Freunde und Online-Wettplattformen.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/matrix" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Europa-Journal">
+        <div class="card-meta">
+          <span class="show-badge">Europa-Journal</span>
+          <span class="broadcast-time">🕒 18:25 – 18:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Europa-Journal: EU und Arktis, Ukraine, Schweiz, Polen</h3>
+        <div class="topics-list">
+          <strong>Themen dieser Sendung:</strong>
+          <ul>
+            <li>&quot;Arktische Zeitenwende&quot;: Robert Habeck im Gespräch</li>
+            <li>Ukraine: Callcenter-Betrug als Milliardengeschäft</li>
+            <li>Schweizer Sklavenhandel: Karibischer Aktivist zeigt Kantone an</li>
+            <li>Neuer Sehnsuchtsort? Warum es viele Österreicher nach Polen zieht</li>
+          </ul>
+        </div>
+        <div class="description-text">&quot;Arktische Zeitenwende&quot;: Robert Habeck im Gespräch Vor einer Woche hat die EU-Kommission ihre Arktis-Strategie vorgestellt und sie dabei als &quot;Frontlinie des globalen Großmachtwettbewerbs&quot; eingestuft. Der frühere deutsche Vizekanzler und Klimaminister Robert Habeck hat sich monatelang im hohen Norden aufgehalten und zeichnet in seinem neuen Buch &quot;Arctic Meltdown&quot; nach, wie in der Arktis Klimawandel und Geopolitik zusammenwirken. Im Interview mit Andreas Pfeifer spricht Robert Habeck auch über die deutsche Demokratie im Wandel und über sein Leben nach der Politik. Ukraine: Callcenter-Betrug als Milliardengeschäft Betrügerische Callcenter sind in der Ukraine schon lange ein lukratives Geschäft. Zehntausende Menschen sollen in diesen &quot;Scam Offices&quot; tätig sein und Opfer weltweit mit falschen Investitionsversprechen oder vorgetäuschten Liebesbeziehungen um ihr Geld gebracht haben. Daniela Prugger ist der Frage nachgegangen, wer im Hintergrund daran verdient und warum die kriminelle Branche seit Beginn des russischen Angriffskriegs so stark gewachsen ist. Schweizer Sklavenhandel: Karibischer Aktivist zeigt Kantone an Die Schweiz verfügt weltweit über das höchste Durchschnittsvermögen pro Kopf. Dieser Reichtum hat aber auch eine dunkle Vergangenheit. Die Kantone Zürich, Bern und Solothurn haben im 18. und 19. Jahrhundert in den transatlantischen Sklavenhandel investiert. Nachfahren von Sklaven in der Karibik haben jetzt eine Strafanzeige gegen die drei Kantone bei der Bundesanwaltschaft eingebracht. Bettina Prendergast berichtet aus der Schweiz. Neuer Sehnsuchtsort? Warum es viele Österreicher nach Polen zieht Bauarbeiter, Handwerker, Erntehelfer: Lange sind Polinnen und Polen nach Österreich gekommen, um hier Geld zu verdienen. Doch inzwischen hat sich das Blatt gewendet - seit 2024 ziehen mehr polnische Staatsbürger von Österreich nach Polen als umgekehrt. Und auch viele Österreicher verschlägt es dorthin. Was macht Polen so anziehend? Michael Mayrhofer hat sich in Warschau umgehört. Moderation: Martha Georgiew</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/europajournal" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Punkt eins">
+        <div class="card-meta">
+          <span class="show-badge">Punkt eins</span>
+          <span class="broadcast-time">🕒 13:00 – 13:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Punkt eins: Gen Z übernimmt die Welt – Jugendproteste weiten sich aus - und bewirken Veränderungen</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Jugendproteste weiten sich aus - und bewirken Veränderungen</div>
+        </div>
+        <div class="contributors">👥 Gäste: Rebekka Dober, Geschäftsführerin &quot;YEP - Stimme der Jugend&quot;; Veronika Wöhrer, Univ.-Professorin für Bildung und Ungleichheit, Insitut für Bildungswissenschaft, Universität Wien. Moderation: Xaver Forthuber. Anrufe 0800 22 69 79 | punkteins(at)orf.at</div>
+        <div class="description-text">Eine Welle von Protesten überzieht derzeit Europa - nicht nur in Frankreich, auch in Italien, Albanien oder Belgien gehen Menschen für ihre Zukunft auf die Straße. Getragen werden die Proteste ganz wesentlich von der &quot;Generation Z&quot; der Jugendlichen und jungen Erwachsenen, die um die Jahrtausendwende geboren sind. In Deutschland wird unter dem Titel &quot;Gen Z regelt&quot; für Samstag zu landesweiten, friedlichen Kundgebungen aufgerufen. Die Forderungen der Initiative: &quot;Eine Politik, die in Bildung, soziale Sicherheit, Gesundheit, Klimaschutz und bezahlbares Leben investiert.&quot; Deutsche Jugendliche, die die ZDF-Sendung &quot;heute&quot; im Vorfeld befragt hat, distanzieren sich überwiegend von Gewalteskalationen wie in Frankreich, finden es aber genau so wichtig, &quot;einmal aufzustehen&quot; und &quot;ein Zeichen zu setzen&quot;; denn auch in unserem Nachbarland ist bei den Jungen die Ansicht verbreitet, dass die Politik &quot;mit unserer Zukunft spielt&quot;. Die Forderungen sind überall ähnlich; an der Spitze stehen Bildungschancen, die viele derzeit nicht eingelöst sehen oder soziale Gerechtigkeit vermissen. Steigende Lebenshaltungskosten und der Umgang mit der Umwelt werden ebenfalls allerorts ventiliert. Ein weiteres übergreifendes Thema: Die Dringlichkeit und die Forderung nach echter Mitbestimmung (&quot;unsere Zukunft liegt in unseren Händen&quot;). Dass die junge Generation Veränderung bewirken kann, hat sie längst bewiesen. 2024 und 2025 wurden zuerst in Bangladesch, dann auch in Kenia, Nepal, Madagaskar oder Marokko Jugendproteste laut und zogen teils einschneidende politische Umbrüche nach sich. Zuletzt wurden autokratische Regierungen in Ungarn, Serbien und Brasilien abgewählt - und immer gelten Basisbewegungen als zentraler Faktor, die auch oder sogar großteils von Jugendlichen und jungen Erwachsenen getragen werden. Vielen ihrer Forderungen können sich breite Teile der Bevölkerung ganz generationenübergreifend anschließen, wie nicht zuletzt in Frankreich zu sehen war. Wie sich der Anfang des Erwachsenseins in der Welt des 21. Jahrhunderts anfühlt, welche Themen auf der Agenda der unmittelbaren Zukunft stehen und welche Formen der politischen Partizipation dafür die (neue) Lösung sein könnten, darüber diskutieren die Sozialunternehmerin Rebekka Dober und die Bildungsforscherin Veronika Wöhrer mit Xaver Forthuber. Reden Sie mit: Rufen Sie in der Sendung an unter 0800 22 69 79 oder schreiben Sie ein E-Mail an punkteins(at)orf.at.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Gedanken für den Tag">
+        <div class="card-meta">
+          <span class="show-badge">Gedanken für den Tag</span>
+          <span class="broadcast-time">🕒 06:57 – 07:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Gedanken für den Tag: Evangelisch oder protestantisch?</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>David Weiss, Kulturanthropologe und ehrenamtlicher Seelsorger in der evangelisch-lutherischen Kirche, zum Reformationstag 2026</div>
+        </div>
+        <div class="description-text">Auf dem Friedhof von Spitz an der Donau steht der Pastorenturm. Keine Hinweistafel erklärt heute, dass einst von seiner Kanzel den Menschen das Evangelium in Luthers Übersetzung gepredigt wurde. Die evangelische Schlosskirche im Ortskern ist bis auf die Außenmauern zerstört. In der Ruine sind heute ein Weinkeller und eine Weinpresse, die nach einem katholischen Abt der Gegenreformation benannt ist, untergebracht. Nichts erinnert daran, dass hier von den Theologen David Chytraeus und Christoph Reuter die erste evangelische Kirchenordnung in Österreich verfasst wurde. Innere Streitigkeiten verhinderten jedoch die Ratifizierung zur rechtlich bindenden Kirchenverfassung. Die Gegenreformation tat sich leicht, die bestehenden Strukturen des evangelischen Kirchenwesens wieder aufzulösen. Kontroversen und Befindlichkeiten prägen bis heute den Alltag. Ich werde in Gesprächen öfters gefragt, ob es mir lieber ist, Protestant oder evangelisch genannt zu werden. Scheinbar steckt viel Gefühl in dieser Diskussion, die für englischsprachige Gläubige gegenstandslos ist. International ist es völlig klar, als lutherische und reformierte Christ:innen Protestant:innen zu sein. Die Eigenbezeichnung Protestanten leitet sich von der Protestation der evangelischen Reichsstände gegen die Zwangskonfessionalisierung auf dem zweiten Reichstag in Speyer 1529 ab, dem entschiedenen und organisierten Widerstand gegen Unterdrückung, Intoleranz, Willkür und Machtmissbrauch. Je länger ich so darüber nachdenke, bevorzuge ich, lieber in den Spuren von lauten Widerständigen als auf den Pfaden von Leisetretern zu wandeln. Das bin ich den Generationen nach mir schuldig. Ein aufrüttelnder Weckruf ins sich anbiedernde kollektive Verstummen angesichts unbequemer Entwicklungen wirkt manchmal Wunder.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/gedankenfuerdentag" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+    </section>
+    <section class="day-section" data-date="2026-10-29">
+      <h2 class="day-title">📅 Donnerstag, 29. Oktober 2026</h2>
+      <article class="broadcast-card" data-show="Im Fokus - Religion und Ethik">
+        <div class="card-meta">
+          <span class="show-badge">Im Fokus - Religion und Ethik</span>
+          <span class="broadcast-time">🕒 00:05 – 01:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Im Fokus - Religion und Ethik: (Wiederholung von Mittwoch 16:05 Uhr)</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>(Wiederholung von Mittwoch 16:05 Uhr)</div>
+        </div>
+        <div class="description-text">(Wiederholung von Mittwoch 16:05 Uhr)</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/imfokus_2" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 22:08 – 23:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Was bleibt? 50 Jahre Medien-Archive Austria (3) Was darf verschwinden? | Mit Hirn durchs Leben (3) Macht es noch irgendeinen Sinn etwas zu lernen? | Wien Modern - Zwischen Tradition und Gegenwart (3) Die Zukunft</h3>
+        <div class="topics-list">
+          <strong>Themen dieser Sendung:</strong>
+          <ul>
+            <li>Was bleibt? 50 Jahre Medien-Archive Austria (3) Was darf verschwinden? Gestaltung: Jakob Steiner, Kathrin Schedler</li>
+            <li>Mit Hirn durchs Leben (3) Macht es noch irgendeinen Sinn etwas zu lernen? Gestaltung: Lisz Hirn</li>
+            <li>Wien Modern - Zwischen Tradition und Gegenwart (3) Die Zukunft. Gestaltung: Susanne Hofinger</li>
+          </ul>
+        </div>
+        <div class="description-text">Was bleibt? 50 Jahre Medien-Archive Austria (3) Was darf verschwinden? Gestaltung: Jakob Steiner, Kathrin Schedler Mit Hirn durchs Leben (3) Macht es noch irgendeinen Sinn etwas zu lernen? Gestaltung: Lisz Hirn Wien Modern - Zwischen Tradition und Gegenwart (3) Die Zukunft. Gestaltung: Susanne Hofinger</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokollegwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Dimensionen">
+        <div class="card-meta">
+          <span class="show-badge">Dimensionen</span>
+          <span class="broadcast-time">🕒 19:05 – 19:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Dimensionen: Was tun gegen Einsamkeit? – Open Space: Dimensionen on Tour</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Open Space: Dimensionen on Tour</div>
+        </div>
+        <div class="description-text">12 Prozent der 18- bis 34-Jährigen fühlten sich in den letzten Wochen &quot;immer&quot; oder &quot;meistens&quot; einsam. Das zeigt die Befragung &quot;So geht&#x27;s uns heute&quot; der Statistik Austria. Damit sind junge Menschen deutlich häufiger von Einsamkeit betroffen als ältere Generationen. Einsamkeit ist nicht dasselbe wie Alleinsein. Entscheidend ist, ob die eigenen Beziehungen den Kontakt und die Nähe bieten, die man sich wünscht. Bei Umbrüchen im Leben, wie Umzug oder Elternschaft, kann Einsamkeit vorübergehend auftreten. Sie kann ein Signal sein, wieder mehr Verbindung zu anderen zu suchen. Ist das Gefühl jedoch besonders stark oder hält es lange an, sollte man sich Unterstützung holen. - Die &quot;Dimensionen on Tour&quot; machen Halt an der Universität Klagenfurt und sprechen dort mit der Psychologin Mareike Ernst über Einsamkeit, die Rolle von Social Media und Maßnahmen, die gegen Einsamkeit helfen. Moderation: Juliane Nagiller</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/dimensionen" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Journal-Panorama">
+        <div class="card-meta">
+          <span class="show-badge">Journal-Panorama</span>
+          <span class="broadcast-time">🕒 18:25 – 18:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Journal-Panorama: Verdorrte Äcker - der Dürresommer 2026 – Saldo</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Saldo</div>
+        </div>
+        <div class="description-text">Trocken war es schon zu Jahresbeginn, doch dann kam der Sommer - mit Temperaturen, die in unseren Breiten bisher unbekannt waren. Die heimische Landwirtschaft ist dadurch in eine tiefe Krise geraten, bei manchen Kulturen gibt es Ernteausfälle bis zu 80 Prozent. Spätestens zum Jahreswechsel wird es in den Supermarktregalen etwa keine heimischen Erdäpfel mehr geben, schätzt die Landwirtschaftskammer. Auch die Tierhaltung steht vor enormen Herausforderungen: Es gab kaum Grünfutter im heurigen Jahr, die Rinder fressen seit Monaten Futter, das eigentlich für den Winter bestimmt war. Etliche Bauern mussten ihren Tierbestand reduzieren, die Schlachthäuser waren überfordert, die Kühlhäuser voll. Wer keinen finanziell gesunden Betrieb hat, muss um dessen Fortbestand fürchten - noch ein Sommer wie dieser wird schwer zu verkraften sein. Psychische Probleme bei Landwirten und -wirtinnen nehmen zu, geht es doch um ihre Existenz. Eine Nachschau auf dürren Äckern, trockenen Almen und Obstgärten, in denen nichts mehr wächst. Gestaltung: Cornelia Krebs</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/journalpanorama" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Punkt eins">
+        <div class="card-meta">
+          <span class="show-badge">Punkt eins</span>
+          <span class="broadcast-time">🕒 13:00 – 13:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Punkt eins: Brasiliens Perspektiven nach der Wahl – Aufholjagd, Flucht, und ein polarisiertes Land</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Aufholjagd, Flucht, und ein polarisiertes Land</div>
+        </div>
+        <div class="contributors">👥 Gäste: ao. Univ.-Prof. Dr. Andreas Novy, Vorstand des Instituts für räumliche und sozial-ökologische Transformationen, Wirtschaftsuniversität Wien; Chrislane Barros Bomfim da Silva, Aktivistin. Moderation: Marina Wetzlmaier. Anrufe 0800 22 69 79 | punkteins(at)orf.at</div>
+        <div class="description-text">Nach einer historischen Aufholjagd konnte Luiz Inácio Lula da Silva die Präsidentschaftswahl in Brasilien doch noch gewinnen. Im ersten Wahlgang am 4. Oktober lag er noch hinter seinem Kontrahenten, dem ultrarechten Senator Flávio Bolsonaro - Sohn des wegen eines Putschversuchs inhaftierten Ex-Präsidenten Jair Bolsonaro. Beobachter:innen sahen Flávio Bolsonaro auch in der Stichwahl vorne. Doch in den drei Wochen bis zum 25. Oktober gewann Lula mehr als zehn Millionen Stimmen dazu und feierte schlussendlich mit knapp vier Prozentpunkten Vorsprung den Sieg. Er tritt seine vierte Amtszeit an. &quot;Die Wähler:innen widersetzten sich den Vorhersagen und zeigten, dass Demokratie unerwartete Ergebnisse produzieren kann&quot;, schrieb die New York Times. Damit bremste Brasilien den Rechtsruck in Lateinamerika ein, hieß es weiter. Allerdings erlangten die konservativen und rechten Kräfte bei den Parlamentswahlen, die ebenfalls am 4. Oktober stattfanden, eine Mehrheit. Man werde das Parlament zu einer &quot;Festung&quot; gegen die linke Regierung machen, kündigte Flávio Bolsonaro vergangenen Montag noch an. Am Tag danach flüchtete er in die USA. Die brasilianische Justiz ermittelt gegen ihn wegen des Verdachts auf Geldwäsche und Korruption. Der Oberste Gerichtshof hatte ein Ausreiseverbot gegen Flávio Bolsonaro verhängt. Er hätte seine Reisepässe abgeben sollen. Unerwartete Wendungen, Vorhersagen, die nicht eingetroffen sind, Mobilisierungen auf den Straßen und auf Social Media, Ermittlungen, Flucht - die Ereignisse rund um die Wahlen in Brasilien lesen sich wie ein Drehbuch. Doch wie geht es hinter all dem mit dem größten Land Lateinamerikas weiter? &quot;Viele Menschen wollen eine Veränderung&quot;, heißt es in den Kommentaren. Welche Erwartungen haben die Menschen jetzt? Wie können ihre Sorgen rund um Sicherheit und Leistbarkeit - zwei wichtige Themen im Wahlkampf - gelöst werden? Wie geht Lula mit der Polarisierung in der Gesellschaft um, möchte er doch ein &quot;Präsident für alle&quot; sein? Mit welchen politisch einflussreichen Gruppen muss er Kompromisse finden? Wie werden sich die internationalen Beziehungen Brasiliens entwickeln, speziell zu den USA? Donald Trump hatte sich zwar nicht direkt für Flávio Bolsonaro ausgesprochen, die beiden stehen einander allerdings politisch nahe. Welche Bedeutung haben die Wahlergebnisse über Brasilien hinaus? Andreas Novy forscht seit vielen Jahren über Brasilien. Dennoch überraschten ihn die Ereignisse ebenso wie viele andere Kenner:innen des Landes. Chrislane Barros Bomfim da Silva verfolgte die Wahlkämpfe auf Social Media und in den brasilianischen Nachrichten und war im Sommer selbst vor Ort. Als Gäste bei Marina Wetzlmaier ordnen sie die Entwicklungen ein und sprechen über die Perspektiven Brasiliens. Reden Sie mit: Rufen Sie an unter 0800 22 69 79 (kostenfrei innerhalb von Österreich) oder schreiben Sie uns per E-Mail an punkteins(at)orf.at.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiogeschichten">
+        <div class="card-meta">
+          <span class="show-badge">Radiogeschichten</span>
+          <span class="broadcast-time">🕒 11:05 – 11:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiogeschichten: &quot;Ein Mörder namens Wirén&quot; von Henning Mankell – Aus dem Schwedischen von Lotta Rüegger. Es liest Rafael Schuchter</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Aus dem Schwedischen von Lotta Rüegger. Es liest Rafael Schuchter.</div>
+        </div>
+        <div class="description-text">Alle paar Wochen wechselt der zwölfjährige Stefan seine Identität - für sich allein, in seiner Fantasie. Als &quot;Agent Hoover&quot; beobachtet er die Nachbarn seines Wohnhauses und stellt sich deren Geschicke vor. Bald glaubt er entdeckt zu haben, dass im 14. Stock ein Mann lebt, der wegen Dreifachmordes im Gefängnis gesessen hatte. Nicht auszudenken, was da alles passieren kann. &quot;Ein Mörder namens Wirén&quot; veranschaulicht die psychologische Feinarbeit des schwedischen Krimi-Meisters Henning Mankell. Henning Mankell wurde 1948 in Stockholm geboren. Er lebte als Theaterregisseur und Autor in Schweden und in Mosambik. Seine Romane um Kommissar Wallander sind internationale Bestseller. Sein Leben in Mosambik lieferte Mankell Stoff für verschiedene Romane, die in Afrika angesiedelt sind. Außerdem schrieb er zahlreiche Kinder- und Jugendbücher. Er starb im Oktober 2015.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:45 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Wien Modern - Zwischen Tradition und Gegenwart – Die Zukunft</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Die Zukunft</div>
+        </div>
+        <div class="description-text">&quot;Wien Modern&quot; feiert in zwei Jahren sein 40-jähriges Bestehen: Das Festival steht heute nicht mehr vor der Aufgabe, eine versäumte Moderne nachzuholen. Die Frage nach dem Neuen wird häufig durch die Frage nach Relevanz und Aktualität ersetzt, und zeitgenössische Musik muss sich in einer pluralen Gegenwart behaupten und aktuelle Themen verhandeln.</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:30 – 09:45 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Mit Hirn durchs Leben (3) – Macht es noch irgendeinen Sinn etwas zu lernen?</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Macht es noch irgendeinen Sinn etwas zu lernen?</div>
+        </div>
+        <div class="description-text">KI hält Einzug in die Arbeitswelt, in den Alltag und in die Schule. Wozu muss ich dann noch Latein lernen, fragte sich kürzlich sogar der Bildungsminister. Was wäre denn zeitgemäße Schulbildung? Wie würden sich die alten griechischen und römischen Denker verteidigen, wenn man sie gegen die KI in die Arena schicken könnte? Lisz Hirn tritt als Verteidigerin des Denkenlernens ins virtuelle Amphitheater ein. Gestaltung: Lisz Hirn, Ulrike Schmitzer</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Radiokolleg">
+        <div class="card-meta">
+          <span class="show-badge">Radiokolleg</span>
+          <span class="broadcast-time">🕒 09:05 – 09:30 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Radiokolleg: Was bleibt? 50 Jahre Medien-Archive Austria (3) – Was darf verschwinden?</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>Was darf verschwinden?</div>
+        </div>
+        <div class="description-text">Früher lautete die Frage: Wie retten wir genug? Heute stellt sich eine andere: Wie gehen wir mit einer Welt um, in der scheinbar nichts mehr verloren geht? Digitale Nachlässe, soziale Netzwerke, Künstliche Intelligenz und allgegenwärtige Datenspeicherung verändern unser Verhältnis zur Vergangenheit grundlegend. Erinnerungen entstehen längst nicht mehr nur in Archiven, sondern auf Plattformen, Servern und in privaten Clouds. Gleichzeitig wächst der Wunsch, Spuren auch wieder verschwinden zu lassen. Digitale Plattformen, Künstliche Intelligenz und neue Formen der Datenspeicherung verändern unser Verhältnis zur Vergangenheit grundlegend. Erinnerungen entstehen längst nicht mehr nur in Archiven, sondern auch in sozialen Netzwerken, digitalen Nachlässen oder privaten Datenspeichern. Gleichzeitig wächst der Wunsch, Spuren wieder verschwinden zu lassen. Ausgehend von den aktuellen Herausforderungen der Medien-Archive Austria wirft das Radiokolleg einen Blick auf die Zukunft des Archivierens und fragt, welche Aufgaben Archive künftig übernehmen werden - zwischen Bewahren, verantwortungsvollem Auswählen und vielleicht sogar bewusstem Vergessen. Gestaltung: Kathrin Schedler, Jakob Steiner</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/radiokolleg" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+      <article class="broadcast-card" data-show="Gedanken für den Tag">
+        <div class="card-meta">
+          <span class="show-badge">Gedanken für den Tag</span>
+          <span class="broadcast-time">🕒 06:57 – 07:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Gedanken für den Tag: Bildung</h3>
+        <div class="topics-list">
+          <strong>Thema:</strong>
+          <div>David Weiss, Kulturanthropologe und ehrenamtlicher Seelsorger in der evangelisch-lutherischen Kirche, zum Reformationstag 2026</div>
+        </div>
+        <div class="description-text">Auf einer der Holzdecken des Renaissanceschlosses Rosenburg am Kamp ist ein Rogendorfer in voller Kriegs- oder Turnierausrüstung dargestellt. Reiter und Ross sind prachtvoll, die Rogendorfer waren ein mächtiges Adelsgeschlecht. Johann Wilhelm von Rogendorf war zur Zeit der Reformation und Konfessionsbildung Landmarschall der Niederösterreichischen Landstände, also de facto Landeshauptmann und Verbindungsglied zum Landesfürsten. Er verhandelte 1571 mit Kaiser Maximilian II. die &quot;Religionsassekuration&quot;. Die niederösterreichischen adeligen Stände erhielten das Recht zur Errichtung eines protestantischen Kirchenwesens. Neun von zehn befragten Adeligen bekannten sich damals zum Augsburger Bekenntnis. Sie stellten evangelische Prediger an und gründeten Landschaftsschulen in Linz, Krems, Wien, Horn und Loosdorf. Humanistische Bildung war für die Reformatoren essenziell, ihr Glaube brauchte Argumente. Die Schulordung von Loosdorf von 1574 ist erhalten und als Faksimile erhältlich. Prügelstrafe war verboten; Grammatik, Dialektik und Rhetorik wurde allen Buben unterrichtet, die die Voraussetzungen erfüllten und das Schulgeld bezahlten. Individuelle Talente wie Mathematik oder Musik wurden gefördert. Ein konkretes Ergebnis dieser Ausbildung ist der älteste moderne, genordete Stadtplan Wiens von Job Hartmann von Enenkel, einem Schüler der Hohen Schule in Loosdorf. In der Gegenreformation wurden alle Schulen geschlossen und die evangelischen Schulmeister und Prediger ausgewiesen. Ferdinand II. erwies den Habsburgern und ihren Völkern einen Bärendienst. Seine Nachfolger holten die vertriebenen Schulmeister und Fachkräfte sowie ihr Wissen mit der Einführung von Schulpflicht und Industrialisierung nach Österreich zurück. Ohne Bildung ist kein Staat zu machen!</div>
+        <div class="card-footer">
+          <a href="https://oe1.orf.at/gedankenfuerdentag" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+        </div>
+      </article>
+    </section>
+  </main>
+  <footer>
+    <p>Zuletzt aktualisiert: 04.11.2026 um 08:53 Uhr (UTC)</p>
+    <p>Datenquelle: <a href="https://oe1.orf.at" target="_blank">Österreich 1 / ORF Audio-API</a></p>
+  </footer>
 
   <script>
-    const feedUrl = window.location.href.replace(/index\.html$/, '').replace(/\/$/, '') + '/feed.xml';
-    document.getElementById('feed-url').innerText = feedUrl;
-    document.getElementById('sub-btn').href = feedUrl.replace(/^https?:\/\//, 'podcast://');
-  </script>
+    function filterShow(showName, button) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      button.classList.add('active');
 
+      const cards = document.querySelectorAll('.broadcast-card');
+      const sections = document.querySelectorAll('.day-section');
+
+      cards.forEach(card => {
+        if (showName === 'all' || card.getAttribute('data-show') === showName) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Hide empty day sections
+      sections.forEach(sec => {
+        const visibleCards = sec.querySelectorAll('.broadcast-card[style="display: block;"], .broadcast-card:not([style*="display: none"])');
+        // Check actual visibility
+        let hasVisible = false;
+        sec.querySelectorAll('.broadcast-card').forEach(c => {
+          if (c.style.display !== 'none') hasVisible = true;
+        });
+        sec.style.display = hasVisible ? 'block' : 'none';
+      });
+    }
+  </script>
+    
 </body>
 </html>
