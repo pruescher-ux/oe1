@@ -457,6 +457,104 @@ def generate_web_html(items, feed_config, show_patterns):
         background: #2563eb;
         border-color: #2563eb;
       }
+      .show-pills {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .show-select-wrapper {
+        display: none;
+        position: relative;
+        flex: 1;
+        max-width: 340px;
+      }
+      .show-select {
+        width: 100%;
+        padding: 8px 34px 8px 12px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--text);
+        background-color: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        outline: none;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b7280'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 18px;
+      }
+      .show-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(198,40,40,0.15);
+      }
+      @media (max-width: 768px) {
+        header {
+          padding: 12px 14px 10px;
+        }
+        h1 {
+          font-size: 1.25rem;
+        }
+        .header-sub {
+          display: none;
+        }
+        .header-content {
+          gap: 8px;
+        }
+        .header-actions {
+          width: 100%;
+          display: flex;
+          gap: 8px;
+        }
+        .search-box {
+          flex: 1;
+          width: 100%;
+        }
+        .rss-badge {
+          padding: 7px 11px;
+          font-size: 0.78rem;
+          white-space: nowrap;
+        }
+        .controls-bar {
+          margin-top: 10px;
+          gap: 8px;
+        }
+        .filter-group.timeframe-group {
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 2px;
+          margin-right: -14px;
+          padding-right: 14px;
+        }
+        .filter-group.timeframe-group::-webkit-scrollbar {
+          display: none;
+        }
+        .time-pill {
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
+        .show-filter-group {
+          flex-wrap: nowrap;
+        }
+        .show-pills {
+          display: none !important;
+        }
+        .show-select-wrapper {
+          display: block !important;
+          max-width: none;
+        }
+        .broadcast-card {
+          padding: 14px 14px;
+        }
+        .broadcast-title {
+          font-size: 1.05rem;
+        }
+      }
       .stats-bar {
         max-width: 950px;
         margin: 14px auto 0;
@@ -699,7 +797,7 @@ def generate_web_html(items, feed_config, show_patterns):
     html.append('    <div class="controls-bar">')
 
     # 1. Timeframe selection
-    html.append('      <div class="filter-group">')
+    html.append('      <div class="filter-group timeframe-group">')
     html.append('        <span class="group-label">Zeitraum:</span>')
     html.append('        <button class="pill time-pill" data-days="3" onclick="setTimeframe(3, this)">Letzte 3 Tage</button>')
     html.append('        <button class="pill time-pill" data-days="7" onclick="setTimeframe(7, this)">Letzte 7 Tage</button>')
@@ -708,14 +806,26 @@ def generate_web_html(items, feed_config, show_patterns):
     html.append('      </div>')
 
     # 2. Show selection
-    html.append('      <div class="filter-group">')
+    html.append('      <div class="filter-group show-filter-group">')
     html.append('        <span class="group-label">Sendung:</span>')
-    html.append('        <button class="pill show-pill active" data-show="all" onclick="setShowFilter(\'all\', this)">Alle Sendungen</button>')
+    html.append('        <div class="show-pills">')
+    html.append('          <button class="pill show-pill active" data-show="all" onclick="setShowFilter(\'all\')">Alle Sendungen</button>')
     for s in sorted_shows:
         count = sum(1 for it in items if it.get("show_name") == s)
-        html.append('        <button class="pill show-pill" data-show="{}" onclick="setShowFilter(\'{}\', this)">{}</button>'.format(
+        html.append('          <button class="pill show-pill" data-show="{}" onclick="setShowFilter(\'{}\')">{}</button>'.format(
             escape(s), escape(s), escape(s)
         ))
+    html.append('        </div>')
+    html.append('        <div class="show-select-wrapper">')
+    html.append('          <select id="showSelect" class="show-select" onchange="setShowFilter(this.value)" aria-label="Sendung auswählen">')
+    html.append('            <option value="all">📻 Alle Sendungen ({})</option>'.format(len(items)))
+    for s in sorted_shows:
+        count = sum(1 for it in items if it.get("show_name") == s)
+        html.append('            <option value="{}">{} ({})</option>'.format(
+            escape(s), escape(s), count
+        ))
+    html.append('          </select>')
+    html.append('        </div>')
     html.append('      </div>')
 
     html.append('    </div>')
@@ -857,10 +967,24 @@ def generate_web_html(items, feed_config, show_patterns):
       applyAllFilters();
     }
 
-    function setShowFilter(showName, button) {
+    function setShowFilter(showName) {
       currentShow = showName;
-      document.querySelectorAll('.show-pill').forEach(p => p.classList.remove('active'));
-      button.classList.add('active');
+
+      // Update desktop pills
+      document.querySelectorAll('.show-pill').forEach(btn => {
+        if (btn.getAttribute('data-show') === showName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Update mobile select
+      const select = document.getElementById('showSelect');
+      if (select && select.value !== showName) {
+        select.value = showName;
+      }
+
       applyAllFilters();
     }
 
@@ -921,7 +1045,8 @@ def generate_web_html(items, feed_config, show_patterns):
       // Update counter
       const counter = document.getElementById('counterText');
       if (counter) {
-        counter.innerText = `${visibleCount} Sendungsbeiträge (Zeitraum: ${currentTimeframe} Tage)`;
+        const showLabel = (currentShow === 'all') ? '' : ` • ${currentShow}`;
+        counter.innerText = `${visibleCount} Beiträge${showLabel} (${currentTimeframe} Tage)`;
       }
 
       // No results message

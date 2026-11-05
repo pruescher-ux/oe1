@@ -118,6 +118,104 @@
         background: #2563eb;
         border-color: #2563eb;
       }
+      .show-pills {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .show-select-wrapper {
+        display: none;
+        position: relative;
+        flex: 1;
+        max-width: 340px;
+      }
+      .show-select {
+        width: 100%;
+        padding: 8px 34px 8px 12px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--text);
+        background-color: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        outline: none;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b7280'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 18px;
+      }
+      .show-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(198,40,40,0.15);
+      }
+      @media (max-width: 768px) {
+        header {
+          padding: 12px 14px 10px;
+        }
+        h1 {
+          font-size: 1.25rem;
+        }
+        .header-sub {
+          display: none;
+        }
+        .header-content {
+          gap: 8px;
+        }
+        .header-actions {
+          width: 100%;
+          display: flex;
+          gap: 8px;
+        }
+        .search-box {
+          flex: 1;
+          width: 100%;
+        }
+        .rss-badge {
+          padding: 7px 11px;
+          font-size: 0.78rem;
+          white-space: nowrap;
+        }
+        .controls-bar {
+          margin-top: 10px;
+          gap: 8px;
+        }
+        .filter-group.timeframe-group {
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 2px;
+          margin-right: -14px;
+          padding-right: 14px;
+        }
+        .filter-group.timeframe-group::-webkit-scrollbar {
+          display: none;
+        }
+        .time-pill {
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
+        .show-filter-group {
+          flex-wrap: nowrap;
+        }
+        .show-pills {
+          display: none !important;
+        }
+        .show-select-wrapper {
+          display: block !important;
+          max-width: none;
+        }
+        .broadcast-card {
+          padding: 14px 14px;
+        }
+        .broadcast-title {
+          font-size: 1.05rem;
+        }
+      }
       .stats-bar {
         max-width: 950px;
         margin: 14px auto 0;
@@ -354,35 +452,61 @@
       </div>
     </div>
     <div class="controls-bar">
-      <div class="filter-group">
+      <div class="filter-group timeframe-group">
         <span class="group-label">Zeitraum:</span>
         <button class="pill time-pill" data-days="3" onclick="setTimeframe(3, this)">Letzte 3 Tage</button>
         <button class="pill time-pill" data-days="7" onclick="setTimeframe(7, this)">Letzte 7 Tage</button>
         <button class="pill time-pill active" data-days="14" onclick="setTimeframe(14, this)">Letzte 14 Tage (2 Wochen)</button>
         <button class="pill time-pill" data-days="30" onclick="setTimeframe(30, this)">Voller Monat (30 Tage)</button>
       </div>
-      <div class="filter-group">
+      <div class="filter-group show-filter-group">
         <span class="group-label">Sendung:</span>
-        <button class="pill show-pill active" data-show="all" onclick="setShowFilter('all', this)">Alle Sendungen</button>
-        <button class="pill show-pill" data-show="#doublecheck - das Ö1 Medienmagazin" onclick="setShowFilter('#doublecheck - das Ö1 Medienmagazin', this)">#doublecheck - das Ö1 Medienmagazin</button>
-        <button class="pill show-pill" data-show="Ambiente - von der Kunst des Reisens" onclick="setShowFilter('Ambiente - von der Kunst des Reisens', this)">Ambiente - von der Kunst des Reisens</button>
-        <button class="pill show-pill" data-show="Diagonal" onclick="setShowFilter('Diagonal', this)">Diagonal</button>
-        <button class="pill show-pill" data-show="Digital.Leben" onclick="setShowFilter('Digital.Leben', this)">Digital.Leben</button>
-        <button class="pill show-pill" data-show="Dimensionen" onclick="setShowFilter('Dimensionen', this)">Dimensionen</button>
-        <button class="pill show-pill" data-show="Europa-Journal" onclick="setShowFilter('Europa-Journal', this)">Europa-Journal</button>
-        <button class="pill show-pill" data-show="Ex libris" onclick="setShowFilter('Ex libris', this)">Ex libris</button>
-        <button class="pill show-pill" data-show="Gedanken" onclick="setShowFilter('Gedanken', this)">Gedanken</button>
-        <button class="pill show-pill" data-show="Gedanken für den Tag" onclick="setShowFilter('Gedanken für den Tag', this)">Gedanken für den Tag</button>
-        <button class="pill show-pill" data-show="Im Fokus - Religion und Ethik" onclick="setShowFilter('Im Fokus - Religion und Ethik', this)">Im Fokus - Religion und Ethik</button>
-        <button class="pill show-pill" data-show="Journal-Panorama" onclick="setShowFilter('Journal-Panorama', this)">Journal-Panorama</button>
-        <button class="pill show-pill" data-show="Journal-Panorama - Klartext" onclick="setShowFilter('Journal-Panorama - Klartext', this)">Journal-Panorama - Klartext</button>
-        <button class="pill show-pill" data-show="Journal-Panorama-Klartext" onclick="setShowFilter('Journal-Panorama-Klartext', this)">Journal-Panorama-Klartext</button>
-        <button class="pill show-pill" data-show="Passagen" onclick="setShowFilter('Passagen', this)">Passagen</button>
-        <button class="pill show-pill" data-show="Punkt eins" onclick="setShowFilter('Punkt eins', this)">Punkt eins</button>
-        <button class="pill show-pill" data-show="Radiogeschichten" onclick="setShowFilter('Radiogeschichten', this)">Radiogeschichten</button>
-        <button class="pill show-pill" data-show="Radiokolleg" onclick="setShowFilter('Radiokolleg', this)">Radiokolleg</button>
-        <button class="pill show-pill" data-show="Science Arena" onclick="setShowFilter('Science Arena', this)">Science Arena</button>
-        <button class="pill show-pill" data-show="matrix - computer &amp; neue medien" onclick="setShowFilter('matrix - computer &amp; neue medien', this)">matrix - computer &amp; neue medien</button>
+        <div class="show-pills">
+          <button class="pill show-pill active" data-show="all" onclick="setShowFilter('all')">Alle Sendungen</button>
+          <button class="pill show-pill" data-show="#doublecheck - das Ö1 Medienmagazin" onclick="setShowFilter('#doublecheck - das Ö1 Medienmagazin')">#doublecheck - das Ö1 Medienmagazin</button>
+          <button class="pill show-pill" data-show="Ambiente - von der Kunst des Reisens" onclick="setShowFilter('Ambiente - von der Kunst des Reisens')">Ambiente - von der Kunst des Reisens</button>
+          <button class="pill show-pill" data-show="Diagonal" onclick="setShowFilter('Diagonal')">Diagonal</button>
+          <button class="pill show-pill" data-show="Digital.Leben" onclick="setShowFilter('Digital.Leben')">Digital.Leben</button>
+          <button class="pill show-pill" data-show="Dimensionen" onclick="setShowFilter('Dimensionen')">Dimensionen</button>
+          <button class="pill show-pill" data-show="Europa-Journal" onclick="setShowFilter('Europa-Journal')">Europa-Journal</button>
+          <button class="pill show-pill" data-show="Ex libris" onclick="setShowFilter('Ex libris')">Ex libris</button>
+          <button class="pill show-pill" data-show="Gedanken" onclick="setShowFilter('Gedanken')">Gedanken</button>
+          <button class="pill show-pill" data-show="Gedanken für den Tag" onclick="setShowFilter('Gedanken für den Tag')">Gedanken für den Tag</button>
+          <button class="pill show-pill" data-show="Im Fokus - Religion und Ethik" onclick="setShowFilter('Im Fokus - Religion und Ethik')">Im Fokus - Religion und Ethik</button>
+          <button class="pill show-pill" data-show="Journal-Panorama" onclick="setShowFilter('Journal-Panorama')">Journal-Panorama</button>
+          <button class="pill show-pill" data-show="Journal-Panorama - Klartext" onclick="setShowFilter('Journal-Panorama - Klartext')">Journal-Panorama - Klartext</button>
+          <button class="pill show-pill" data-show="Journal-Panorama-Klartext" onclick="setShowFilter('Journal-Panorama-Klartext')">Journal-Panorama-Klartext</button>
+          <button class="pill show-pill" data-show="Passagen" onclick="setShowFilter('Passagen')">Passagen</button>
+          <button class="pill show-pill" data-show="Punkt eins" onclick="setShowFilter('Punkt eins')">Punkt eins</button>
+          <button class="pill show-pill" data-show="Radiogeschichten" onclick="setShowFilter('Radiogeschichten')">Radiogeschichten</button>
+          <button class="pill show-pill" data-show="Radiokolleg" onclick="setShowFilter('Radiokolleg')">Radiokolleg</button>
+          <button class="pill show-pill" data-show="Science Arena" onclick="setShowFilter('Science Arena')">Science Arena</button>
+          <button class="pill show-pill" data-show="matrix - computer &amp; neue medien" onclick="setShowFilter('matrix - computer &amp; neue medien')">matrix - computer &amp; neue medien</button>
+        </div>
+        <div class="show-select-wrapper">
+          <select id="showSelect" class="show-select" onchange="setShowFilter(this.value)" aria-label="Sendung auswählen">
+            <option value="all">📻 Alle Sendungen (210)</option>
+            <option value="#doublecheck - das Ö1 Medienmagazin">#doublecheck - das Ö1 Medienmagazin (1)</option>
+            <option value="Ambiente - von der Kunst des Reisens">Ambiente - von der Kunst des Reisens (7)</option>
+            <option value="Diagonal">Diagonal (8)</option>
+            <option value="Digital.Leben">Digital.Leben (1)</option>
+            <option value="Dimensionen">Dimensionen (17)</option>
+            <option value="Europa-Journal">Europa-Journal (4)</option>
+            <option value="Ex libris">Ex libris (4)</option>
+            <option value="Gedanken">Gedanken (4)</option>
+            <option value="Gedanken für den Tag">Gedanken für den Tag (25)</option>
+            <option value="Im Fokus - Religion und Ethik">Im Fokus - Religion und Ethik (10)</option>
+            <option value="Journal-Panorama">Journal-Panorama (12)</option>
+            <option value="Journal-Panorama - Klartext">Journal-Panorama - Klartext (3)</option>
+            <option value="Journal-Panorama-Klartext">Journal-Panorama-Klartext (1)</option>
+            <option value="Passagen">Passagen (5)</option>
+            <option value="Punkt eins">Punkt eins (21)</option>
+            <option value="Radiogeschichten">Radiogeschichten (17)</option>
+            <option value="Radiokolleg">Radiokolleg (60)</option>
+            <option value="Science Arena">Science Arena (7)</option>
+            <option value="matrix - computer &amp; neue medien">matrix - computer &amp; neue medien (3)</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="stats-bar">
@@ -6724,7 +6848,7 @@
     </section>
   </main>
   <footer>
-    <p>Aktualisiert: 05.11.2026 um 19:59 Uhr (UTC)</p>
+    <p>Aktualisiert: 05.11.2026 um 20:06 Uhr (UTC)</p>
     <p>Datenquelle: <a href="https://oe1.orf.at" target="_blank">Österreich 1 / ORF Audio-API</a></p>
   </footer>
 
@@ -6764,10 +6888,24 @@
       applyAllFilters();
     }
 
-    function setShowFilter(showName, button) {
+    function setShowFilter(showName) {
       currentShow = showName;
-      document.querySelectorAll('.show-pill').forEach(p => p.classList.remove('active'));
-      button.classList.add('active');
+
+      // Update desktop pills
+      document.querySelectorAll('.show-pill').forEach(btn => {
+        if (btn.getAttribute('data-show') === showName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Update mobile select
+      const select = document.getElementById('showSelect');
+      if (select && select.value !== showName) {
+        select.value = showName;
+      }
+
       applyAllFilters();
     }
 
@@ -6828,7 +6966,8 @@
       // Update counter
       const counter = document.getElementById('counterText');
       if (counter) {
-        counter.innerText = `${visibleCount} Sendungsbeiträge (Zeitraum: ${currentTimeframe} Tage)`;
+        const showLabel = (currentShow === 'all') ? '' : ` • ${currentShow}`;
+        counter.innerText = `${visibleCount} Beiträge${showLabel} (${currentTimeframe} Tage)`;
       }
 
       // No results message
