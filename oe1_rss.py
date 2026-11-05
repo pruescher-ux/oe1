@@ -464,6 +464,32 @@ def generate_web_html(items, feed_config, show_patterns):
         color: var(--text-muted);
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .expand-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .text-btn {
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 2px 4px;
+        text-decoration: underline;
+        font-family: inherit;
+      }
+      .text-btn:hover {
+        color: var(--primary-hover);
+      }
+      .sep {
+        color: #d1d5db;
+        font-size: 0.75rem;
       }
       main {
         max-width: 950px;
@@ -587,6 +613,51 @@ def generate_web_html(items, feed_config, show_patterns):
         font-weight: 600;
       }
       .oe1-link:hover { text-decoration: underline; }
+      /* Details / Accordion */
+      .broadcast-details {
+        margin-top: 8px;
+      }
+      .details-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--primary);
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 5px 12px;
+        user-select: none;
+        transition: all 0.15s ease;
+        list-style: none;
+      }
+      .details-toggle::-webkit-details-marker,
+      .details-toggle::marker {
+        display: none;
+      }
+      .details-toggle:hover {
+        background: #fee2e2;
+        border-color: #f87171;
+      }
+      .broadcast-details[open] .details-toggle {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+        color: #4b5563;
+        margin-bottom: 12px;
+      }
+      .broadcast-details .toggle-label-open { display: none; }
+      .broadcast-details .toggle-label-closed { display: inline-flex; align-items: center; gap: 6px; }
+      .broadcast-details[open] .toggle-label-open { display: inline-flex; align-items: center; gap: 6px; }
+      .broadcast-details[open] .toggle-label-closed { display: none; }
+      .details-body {
+        animation: fadeIn 0.15s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
       .no-results {
         text-align: center;
         padding: 60px 20px;
@@ -652,6 +723,11 @@ def generate_web_html(items, feed_config, show_patterns):
     # Stats
     html.append('    <div class="stats-bar">')
     html.append('      <span id="counterText">Lade Beiträge...</span>')
+    html.append('      <div class="expand-actions">')
+    html.append('        <button type="button" class="text-btn" onclick="toggleAllDetails(true)">Alle aufklappen</button>')
+    html.append('        <span class="sep">•</span>')
+    html.append('        <button type="button" class="text-btn" onclick="toggleAllDetails(false)">Alle zuklappen</button>')
+    html.append('      </div>')
     html.append('    </div>')
     html.append('  </header>')
 
@@ -688,30 +764,48 @@ def generate_web_html(items, feed_config, show_patterns):
 
             html.append('        <h3 class="broadcast-title">{}</h3>'.format(escape(item["title"])))
 
-            if item.get("topics"):
-                html.append('        <div class="topics-list">')
-                if len(item["topics"]) > 1:
-                    html.append('          <strong>Themen dieser Sendung:</strong>')
-                    html.append('          <ul>')
-                    for t in item["topics"]:
-                        html.append('            <li>{}</li>'.format(escape(t)))
-                    html.append('          </ul>')
-                else:
-                    html.append('          <strong>Thema:</strong>')
-                    html.append('          <div>{}</div>'.format(escape(item["topics"][0])))
-                html.append('        </div>')
+            has_details = bool(item.get("topics") or item.get("meta_info") or item.get("description") or item.get("link"))
+            if has_details:
+                html.append('        <details class="broadcast-details">')
+                html.append('          <summary class="details-toggle">')
+                html.append('            <span class="toggle-label-closed">')
+                html.append('              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>')
+                html.append('              Details &amp; Themen anzeigen')
+                html.append('            </span>')
+                html.append('            <span class="toggle-label-open">')
+                html.append('              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>')
+                html.append('              Details verbergen')
+                html.append('            </span>')
+                html.append('          </summary>')
+                html.append('          <div class="details-body">')
 
-            if item.get("meta_info"):
-                for m in item["meta_info"]:
-                    html.append('        <div class="contributors">👥 {}</div>'.format(escape(m)))
+                if item.get("topics"):
+                    html.append('            <div class="topics-list">')
+                    if len(item["topics"]) > 1:
+                        html.append('              <strong>Themen dieser Sendung:</strong>')
+                        html.append('              <ul>')
+                        for t in item["topics"]:
+                            html.append('                <li>{}</li>'.format(escape(t)))
+                        html.append('              </ul>')
+                    else:
+                        html.append('              <strong>Thema:</strong>')
+                        html.append('              <div>{}</div>'.format(escape(item["topics"][0])))
+                    html.append('            </div>')
 
-            if item.get("description"):
-                html.append('        <div class="description-text">{}</div>'.format(escape(item["description"])))
+                if item.get("meta_info"):
+                    for m in item["meta_info"]:
+                        html.append('            <div class="contributors">👥 {}</div>'.format(escape(m)))
 
-            if item.get("link"):
-                html.append('        <div class="card-footer">')
-                html.append('          <a href="{}" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>'.format(escape(item["link"])))
-                html.append('        </div>')
+                if item.get("description"):
+                    html.append('            <div class="description-text">{}</div>'.format(escape(item["description"])))
+
+                if item.get("link"):
+                    html.append('            <div class="card-footer">')
+                    html.append('              <a href="{}" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>'.format(escape(item["link"])))
+                    html.append('            </div>')
+
+                html.append('          </div>')
+                html.append('        </details>')
 
             html.append('      </article>')
 
@@ -730,6 +824,7 @@ def generate_web_html(items, feed_config, show_patterns):
   <script>
     let currentTimeframe = 14; // Default: 14 days
     let currentShow = 'all';
+    let previousSearch = '';
 
     // Restore saved timeframe if available
     try {
@@ -744,6 +839,15 @@ def generate_web_html(items, feed_config, show_patterns):
         });
       }
     } catch(e) {}
+
+    function toggleAllDetails(open) {
+      document.querySelectorAll('.broadcast-card').forEach(card => {
+        if (card.style.display !== 'none') {
+          const details = card.querySelector('.broadcast-details');
+          if (details) details.open = open;
+        }
+      });
+    }
 
     function setTimeframe(days, button) {
       currentTimeframe = days;
@@ -782,6 +886,23 @@ def generate_web_html(items, feed_config, show_patterns):
           card.style.display = 'none';
         }
       });
+
+      // Auto-expand details when user enters a search query
+      if (searchQuery) {
+        cards.forEach(card => {
+          if (card.style.display !== 'none') {
+            const d = card.querySelector('.broadcast-details');
+            if (d) d.open = true;
+          }
+        });
+      } else if (previousSearch && !searchQuery) {
+        // Reset/close details when search was cleared
+        cards.forEach(card => {
+          const d = card.querySelector('.broadcast-details');
+          if (d) d.open = false;
+        });
+      }
+      previousSearch = searchQuery;
 
       // Show/hide date sections
       sections.forEach(sec => {
