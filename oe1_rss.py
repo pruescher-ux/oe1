@@ -230,6 +230,18 @@ def build_item_content(program_title, episode_title, subtitle, detail_desc):
     return display_title, topics, meta_info, clean_desc or clean_sub
 
 
+def normalize_show_name(raw_name):
+    """Normalize show names to avoid duplicate pills due to minor spelling/whitespace differences."""
+    name = (raw_name or "").strip()
+    # Merge "Journal-Panorama-Klartext" and "Journal-Panorama - Klartext"
+    if re.search(r"journal-panorama\s*-\s*klartext", name, re.IGNORECASE):
+        return "Journal-Panorama - Klartext"
+    # Normalize Digital.Leben
+    if re.search(r"digital\.?leben", name, re.IGNORECASE):
+        return "Digital.Leben"
+    return name
+
+
 def matches_show(broadcast, show_patterns):
     """Match broadcast against user's configured show list."""
     program_title = (broadcast.get("programTitle") or "").lower()
@@ -240,7 +252,10 @@ def matches_show(broadcast, show_patterns):
 
     for pattern in show_patterns:
         p = pattern.lower()
-        if p in program_title or p in link_text or p in title:
+        if p in program_title or p in link_text:
+            return True
+        # Only fall back to episode title if program_title is missing
+        if not program_title and p in title:
             return True
     return False
 
@@ -1126,6 +1141,7 @@ def main():
             program_title = bc.get("programTitle") or ""
             if not program_title and bc.get("link"):
                 program_title = bc["link"].get("text", "")
+            program_title = normalize_show_name(program_title)
 
             episode_title = bc.get("title") or ""
             subtitle = bc.get("subtitle") or ""
@@ -1172,7 +1188,7 @@ def main():
 
             item = {
                 "title": display_title,
-                "show_name": program_title or episode_title,
+                "show_name": normalize_show_name(program_title or episode_title),
                 "topics": topics,
                 "meta_info": meta_info,
                 "description": clean_desc,

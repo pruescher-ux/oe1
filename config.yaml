@@ -40,3 +40,5 @@ shows:
   - match: "Passagen"
   - match: "Dimensionen"
   - match: "Im Fokus"
+  - match: "Digital.Leben"
+  - match: "Digital Leben"
