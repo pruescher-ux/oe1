@@ -239,6 +239,12 @@ def normalize_show_name(raw_name):
     # Normalize Digital.Leben
     if re.search(r"digital\.?leben", name, re.IGNORECASE):
         return "Digital.Leben"
+    # Normalize Kontext (e.g. "Kontext - Sachbücher & Themen" vs "Kontext - Sachbücher und Themen")
+    if re.search(r"^kontext", name, re.IGNORECASE):
+        return "Kontext"
+    # Normalize Moment (e.g. "Moment" and "Moment - Kulinarium")
+    if re.search(r"^moment", name, re.IGNORECASE):
+        return "Moment"
     return name
 
 
@@ -248,11 +254,14 @@ def matches_show(broadcast, show_patterns):
     link_text = ""
     if broadcast.get("link"):
         link_text = (broadcast["link"].get("text") or "").lower()
+    link_url = ""
+    if broadcast.get("link") and broadcast["link"].get("url"):
+        link_url = broadcast["link"]["url"].lower()
     title = (broadcast.get("title") or "").lower()
 
     for pattern in show_patterns:
         p = pattern.lower()
-        if p in program_title or p in link_text:
+        if p in program_title or p in link_text or p in link_url:
             return True
         # Only fall back to episode title if program_title is missing
         if not program_title and p in title:
@@ -358,6 +367,14 @@ def generate_web_html(items, feed_config, show_patterns):
     html.append('  <meta charset="utf-8">')
     html.append('  <meta name="viewport" content="width=device-width, initial-scale=1.0">')
     html.append('  <title>Ö1 Themen-Übersicht</title>')
+    html.append('  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">')
+    html.append('  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">')
+    html.append('  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">')
+    html.append('  <link rel="manifest" href="manifest.json">')
+    html.append('  <meta name="apple-mobile-web-app-capable" content="yes">')
+    html.append('  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">')
+    html.append('  <meta name="apple-mobile-web-app-title" content="Ö1 Monitor">')
+    html.append('  <meta name="theme-color" content="#c62828">')
     html.append('  <link rel="alternate" type="application/rss+xml" title="Ö1 Themen RSS" href="feed.xml">')
     html.append('  <style>')
     html.append("""
@@ -397,6 +414,18 @@ def generate_web_html(items, feed_config, show_patterns):
         align-items: center;
         flex-wrap: wrap;
         gap: 12px;
+      }
+      .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .brand-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        flex-shrink: 0;
       }
       h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 700; }
       .header-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
@@ -510,6 +539,10 @@ def generate_web_html(items, feed_config, show_patterns):
       @media (max-width: 768px) {
         header {
           padding: 12px 14px 10px;
+        }
+        .brand-icon {
+          width: 34px;
+          height: 34px;
         }
         h1 {
           font-size: 1.25rem;
@@ -795,9 +828,12 @@ def generate_web_html(items, feed_config, show_patterns):
     # Header
     html.append('  <header>')
     html.append('    <div class="header-content">')
-    html.append('      <div>')
-    html.append('        <h1>🎙 Ö1 Themen-Monitor</h1>')
-    html.append('        <div class="header-sub">Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>')
+    html.append('      <div class="header-brand">')
+    html.append('        <img src="apple-touch-icon.png" class="brand-icon" alt="Ö1 Logo">')
+    html.append('        <div>')
+    html.append('          <h1>Ö1 Themen-Monitor</h1>')
+    html.append('          <div class="header-sub">Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>')
+    html.append('        </div>')
     html.append('      </div>')
     html.append('      <div class="header-actions">')
     html.append('        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Thema / Begriff suchen..." oninput="applyAllFilters()">')
@@ -1138,10 +1174,18 @@ def main():
             if not matches_show(bc, show_patterns):
                 continue
 
-            program_title = bc.get("programTitle") or ""
-            if not program_title and bc.get("link"):
-                program_title = bc["link"].get("text", "")
-            program_title = normalize_show_name(program_title)
+            raw_program_title = bc.get("programTitle") or ""
+            if not raw_program_title and bc.get("link"):
+                raw_program_title = bc["link"].get("text", "")
+
+            # Harmonize program titles for display
+            clean_program_title = raw_program_title.strip()
+            if re.search(r"journal-panorama\s*-\s*klartext", clean_program_title, re.IGNORECASE):
+                clean_program_title = "Journal-Panorama - Klartext"
+            elif re.search(r"kontext\s*-\s*sachb", clean_program_title, re.IGNORECASE):
+                clean_program_title = "Kontext - Sachbücher und Themen"
+            elif re.search(r"digital\.?leben", clean_program_title, re.IGNORECASE):
+                clean_program_title = "Digital.Leben"
 
             episode_title = bc.get("title") or ""
             subtitle = bc.get("subtitle") or ""
@@ -1181,14 +1225,14 @@ def main():
                         subtitle = detail["subtitle"]
 
             display_title, topics, meta_info, clean_desc = build_item_content(
-                program_title, episode_title, subtitle, detail_desc
+                clean_program_title, episode_title, subtitle, detail_desc
             )
 
             matched += 1
 
             item = {
                 "title": display_title,
-                "show_name": normalize_show_name(program_title or episode_title),
+                "show_name": normalize_show_name(clean_program_title or episode_title),
                 "topics": topics,
                 "meta_info": meta_info,
                 "description": clean_desc,

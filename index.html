@@ -4,6 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ö1 Themen-Übersicht</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ö1 Monitor">
+  <meta name="theme-color" content="#c62828">
   <link rel="alternate" type="application/rss+xml" title="Ö1 Themen RSS" href="feed.xml">
   <style>
 
@@ -43,6 +51,18 @@
         align-items: center;
         flex-wrap: wrap;
         gap: 12px;
+      }
+      .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .brand-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        flex-shrink: 0;
       }
       h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 700; }
       .header-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
@@ -156,6 +176,10 @@
       @media (max-width: 768px) {
         header {
           padding: 12px 14px 10px;
+        }
+        .brand-icon {
+          width: 34px;
+          height: 34px;
         }
         h1 {
           font-size: 1.25rem;
@@ -439,9 +463,12 @@
 <body>
   <header>
     <div class="header-content">
-      <div>
-        <h1>🎙 Ö1 Themen-Monitor</h1>
-        <div class="header-sub">Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>
+      <div class="header-brand">
+        <img src="apple-touch-icon.png" class="brand-icon" alt="Ö1 Logo">
+        <div>
+          <h1>Ö1 Themen-Monitor</h1>
+          <div class="header-sub">Themen & Schwerpunkte ausgewählter Ö1-Sendungen</div>
+        </div>
       </div>
       <div class="header-actions">
         <input type="text" id="searchInput" class="search-box" placeholder="🔍 Thema / Begriff suchen..." oninput="applyAllFilters()">
@@ -475,6 +502,8 @@
           <button class="pill show-pill" data-show="Im Fokus - Religion und Ethik" onclick="setShowFilter('Im Fokus - Religion und Ethik')">Im Fokus - Religion und Ethik</button>
           <button class="pill show-pill" data-show="Journal-Panorama" onclick="setShowFilter('Journal-Panorama')">Journal-Panorama</button>
           <button class="pill show-pill" data-show="Journal-Panorama - Klartext" onclick="setShowFilter('Journal-Panorama - Klartext')">Journal-Panorama - Klartext</button>
+          <button class="pill show-pill" data-show="Kontext" onclick="setShowFilter('Kontext')">Kontext</button>
+          <button class="pill show-pill" data-show="Moment" onclick="setShowFilter('Moment')">Moment</button>
           <button class="pill show-pill" data-show="Passagen" onclick="setShowFilter('Passagen')">Passagen</button>
           <button class="pill show-pill" data-show="Punkt eins" onclick="setShowFilter('Punkt eins')">Punkt eins</button>
           <button class="pill show-pill" data-show="Radiogeschichten" onclick="setShowFilter('Radiogeschichten')">Radiogeschichten</button>
@@ -482,10 +511,11 @@
           <button class="pill show-pill" data-show="Science Arena" onclick="setShowFilter('Science Arena')">Science Arena</button>
           <button class="pill show-pill" data-show="doublecheck - das Ö1 Medienmagazin" onclick="setShowFilter('doublecheck - das Ö1 Medienmagazin')">doublecheck - das Ö1 Medienmagazin</button>
           <button class="pill show-pill" data-show="matrix - computer &amp; neue medien" onclick="setShowFilter('matrix - computer &amp; neue medien')">matrix - computer &amp; neue medien</button>
+          <button class="pill show-pill" data-show="Ö1 Essay" onclick="setShowFilter('Ö1 Essay')">Ö1 Essay</button>
         </div>
         <div class="show-select-wrapper">
           <select id="showSelect" class="show-select" onchange="setShowFilter(this.value)" aria-label="Sendung auswählen">
-            <option value="all">📻 Alle Sendungen (216)</option>
+            <option value="all">📻 Alle Sendungen (250)</option>
             <option value="Ambiente - von der Kunst des Reisens">Ambiente - von der Kunst des Reisens (7)</option>
             <option value="Diagonal">Diagonal (7)</option>
             <option value="Diagonal Stellt Vor">Diagonal Stellt Vor (2)</option>
@@ -498,6 +528,8 @@
             <option value="Im Fokus - Religion und Ethik">Im Fokus - Religion und Ethik (8)</option>
             <option value="Journal-Panorama">Journal-Panorama (11)</option>
             <option value="Journal-Panorama - Klartext">Journal-Panorama - Klartext (3)</option>
+            <option value="Kontext">Kontext (9)</option>
+            <option value="Moment">Moment (20)</option>
             <option value="Passagen">Passagen (4)</option>
             <option value="Punkt eins">Punkt eins (20)</option>
             <option value="Radiogeschichten">Radiogeschichten (15)</option>
@@ -505,6 +537,7 @@
             <option value="Science Arena">Science Arena (6)</option>
             <option value="doublecheck - das Ö1 Medienmagazin">doublecheck - das Ö1 Medienmagazin (1)</option>
             <option value="matrix - computer &amp; neue medien">matrix - computer &amp; neue medien (5)</option>
+            <option value="Ö1 Essay">Ö1 Essay (5)</option>
           </select>
         </div>
       </div>
@@ -583,6 +616,35 @@
     </section>
     <section class="day-section" data-date="2026-11-13" data-days-ago="1">
       <h2 class="day-title">📅 Freitag, 13. November 2026</h2>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="1" data-search="kontext - sachbücher und themen: familienkonflikte, ki, historische dummheiten, geschichtsklitterung – &quot;der dodo war kein dummes tier&quot; &quot;der dodo war kein dummes tier&quot;  &quot;du bist nicht deine eltern&quot;: hans-otto thomashoff erläutert, wie man lernen kann, toxische familien zu überwinden und in freiheit zu leben (buch: ariston verlag) beitrag: günter kaindlstorfer &quot;die regierung der maschinen&quot;: jill lepore über aufstieg und fall des künstlichen staats (buch: c. h. beck verlag) rezension: andreas puff-trojan &quot;sternstunden der dummheit&quot;: stefan müller über die besten fehler der geschichte (buch: edition atelier) studiogespräch: wolfgang ritschl &quot;nicht mit uns!&quot;: heike specht legt dar, wie frauen geschichte schrieben und wieder ausradiert wurden (buch: piper verlag) rezension: ulrike schmitzer das album der woche: &quot;soon&quot; von scott fagan (fire records/cargo) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 22:08 – 23:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Familienkonflikte, KI, Historische Dummheiten, Geschichtsklitterung – &quot;Der Dodo war kein dummes Tier&quot;</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Der Dodo war kein dummes Tier&quot;</div>
+            </div>
+            <div class="description-text">&quot;Du bist nicht deine Eltern&quot;: Hans-Otto Thomashoff erläutert, wie man lernen kann, toxische Familien zu überwinden und in Freiheit zu leben (Buch: Ariston Verlag) Beitrag: Günter Kaindlstorfer &quot;Die Regierung der Maschinen&quot;: Jill Lepore über Aufstieg und Fall des Künstlichen Staats (Buch: C. H. Beck Verlag) Rezension: Andreas Puff-Trojan &quot;Sternstunden der Dummheit&quot;: Stefan Müller über die besten Fehler der Geschichte (Buch: Edition Atelier) Studiogespräch: Wolfgang Ritschl &quot;Nicht mit uns!&quot;: Heike Specht legt dar, wie Frauen Geschichte schrieben und wieder ausradiert wurden (Buch: Piper Verlag) Rezension: Ulrike Schmitzer Das Album der Woche: &quot;Soon&quot; von Scott Fagan (Fire Records/Cargo) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontextwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="matrix - computer &amp; neue medien" data-days-ago="1" data-search="matrix - computer &amp; neue medien: online-pornografie zwischen subkultur und sucht – vom jugendwort zum extrem: was hinter &quot;goonen&quot; steckt vom jugendwort zum extrem: was hinter &quot;goonen&quot; steckt  &quot;goonen&quot; steht zur wahl zum österreichischen jugendwort des jahres 2026. es bedeutet stundenlange masturbation, begleitet von exzessivem pornokonsum. &quot;matrix&quot; geht den wurzeln dieser praxis nach: von homosexuellen clubräumen der 1970er- und 80er-jahre über frühe internetforen bis zu modernen chat-servern mit hunderttausenden mitgliedern. die sendung erklärt das vokabular der online-subkultur, zeigt, wie die pornoindustrie die technologische entwicklung vorangetrieben hat und wie sich das verhältnis inzwischen gedreht hat: nicht die lust treibt die technik an, die technik rückt selbst ins zentrum der begierde. endlose stimulation ohne höhepunkt ist dabei auch die logik der plattformökonomie. fachleute aus medienkunst, pornoforschung, psychotherapie und suchtmedizin ordnen ein, wo intensiver konsum in abhängigkeit übergeht, wie dünn die datenlage dazu ist, was geplante altersnachweise bringen können - und welche rolle künstliche intelligenz künftig spielen wird. eine sendung von daniela derntl.">
         <div class="card-meta">
           <span class="show-badge">matrix - computer &amp; neue medien</span>
@@ -646,6 +708,35 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="1" data-search="moment - kulinarium: steinhart und unverkennbar. – die quitte die quitte  die roh kaum genießbaren früchte mit dem süß-herbem duft nach apfel, birne und zitrone haben eine 4000 jahre lange kulturgeschichte. bis in den november hinein hängen sie leuchtend gelb auf den bäumen. im ursprungsgebiet im kaukasus und im nahen osten wird quitte gerne mit kräftigem fleisch oder geflügel zu eintöpfen gekocht. in europa nimmt man die pektinreichen früchte für gelees und quittenbrot, ein in stücke geschnittenes, zähes mus, kocht süße desserts oder pikante chutneys.">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment - Kulinarium: Steinhart und unverkennbar. – Die Quitte</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Die Quitte</div>
+            </div>
+            <div class="description-text">Die roh kaum genießbaren Früchte mit dem süß-herbem Duft nach Apfel, Birne und Zitrone haben eine 4000 Jahre lange Kulturgeschichte. Bis in den November hinein hängen sie leuchtend gelb auf den Bäumen. Im Ursprungsgebiet im Kaukasus und im Nahen Osten wird Quitte gerne mit kräftigem Fleisch oder Geflügel zu Eintöpfen gekocht. In Europa nimmt man die pektinreichen Früchte für Gelees und Quittenbrot, ein in Stücke geschnittenes, zähes Mus, kocht süße Desserts oder pikante Chutneys.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="1" data-search="punkt eins: bauernkrieg 1626: fakten und fiktion geschichten, heldenerzählungen und interpretationen. was nach 400 jahren erinnerung bleibt gäste: dr. konstantin ferihumer, politikwissenschaftler, kurator der oö landes-kultur gmbh &amp; fabian müller, historiker und archivar, oberösterreichisches landesarchiv. moderation: marina wetzlmaier. anrufe 0800 22 69 79 | punkteins(at)orf.at 400 bäume sollen an die opfer der schlacht im emlinger holz erinnern. die ersten linden und eichen wurden vergangenen sonntag in der oberösterreichischen gemeinde alkoven gepflanzt. die aktion ist teil des kunst- und kulturfestivals &quot;communale oö 2026&quot;, das mit rund 130 projekten an 27 schauplätzen im zeichen des bauernkriegs von 1626 steht. vor 400 jahren, am 9. november, erlitt die aufständische landbevölkerung im emlinger holz eine dramatische niederlage gegen die habsburgischen und bayerischen truppen von general gottfried heinrich graf zu pappenheim. rund 3.000 bauern fielen. weitere 2.000 in der schlacht in pinsdorf bei gmunden am 15. november. mit der niederlage in wolfsegg am 20. november 1626 endete der größte bauernaufstand österreichs. auf die sechs monate gewaltsamer auseinandersetzungen folgten 400 jahre erinnerung und geschichtsschreibung. eine lange geschichte des erzählens und deutens, wie die aktuelle ausstellung &quot;bauernkrieg 1626. zwischen geschichte und fiktion&quot; im schlossmuseum linz zeigt. &quot;was wir heute über die ereignisse zu wissen glauben, beruht nicht nur auf historischen fakten, sondern auf auch erzählungen und interpretationen&quot;, sagt kurator konstantin ferihumer. im zentrum der erinnerungskultur steht der bauernhauptmann stefan fadinger. von ihm existieren keine zeitgenössischen abbildungen. stattdessen prägen heroische porträts, die posthum entstanden, die vorstellungen über ihn. manche erzählungen werden sogar greifbar: in der ausstellung sind ein schwert und eine keule zu sehen, die angeblich stefan fadinger gehörten. belegbare nachweise dafür gibt es laut ferihumer aber nicht. generell sind von jenen, die sich auflehnten, nur wenige spuren geblieben. wer waren &quot;die bauern&quot;? jene, die sich gegen ausbeutung und unterdrückung wehrten, gegen die bayerischen besatzer und die gegenreformation? wer war &quot;die obrigkeit&quot;, gegen die sich die wut der menschen richtete? fragen, die den historiker fabian müller beschäftigen. er forscht zu den gesellschaftlichen strukturen, hierarchien und sozialen spannungen, die sich in den aufständen entluden. der bauernkrieg bietet stoff für heldenerzählungen und wurde nicht zuletzt politisch vereinnahmt. das völkisch-nationale lager und die nationalsozialistische propaganda stilisierten die ereignisse zu einem &quot;deutschen freiheitskampf der bauern&quot; hoch. denkmäler, die bis heute existieren, gehen auf diese ideologie zurück. etwa jenes auf dem haushamerfeld, dem schauplatz des &quot;frankenburger würfelspiels&quot;. karl itzinger, der im nationalsozialismus karriere machte, schrieb das gleichnamige theaterstück. wie geht man heute mit belasteten erinnerungsorten um? welche erzählungen werden an die nächsten generationen weitergegeben? als gäste bei marina wetzlmaier sprechen fabian müller und konstantin ferihumer darüber, was nach 400 jahren vom bauernkrieg bleibt. wie können geschichte und fiktion unterschieden werden? was sind fakten und was ist mythos? welche schlüsse lassen sich daraus für die heutige zeit ziehen? diskutieren sie mit. rufen sie an unter 0800 22 69 79 (kostenfrei innerhalb von österreich) oder schreiben sie uns per e-mail an punkteins(at)orf.at">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -672,6 +763,64 @@
             <div class="description-text">400 Bäume sollen an die Opfer der Schlacht im Emlinger Holz erinnern. Die ersten Linden und Eichen wurden vergangenen Sonntag in der oberösterreichischen Gemeinde Alkoven gepflanzt. Die Aktion ist Teil des Kunst- und Kulturfestivals &quot;communale oö 2026&quot;, das mit rund 130 Projekten an 27 Schauplätzen im Zeichen des Bauernkriegs von 1626 steht. Vor 400 Jahren, am 9. November, erlitt die aufständische Landbevölkerung im Emlinger Holz eine dramatische Niederlage gegen die habsburgischen und bayerischen Truppen von General Gottfried Heinrich Graf zu Pappenheim. Rund 3.000 Bauern fielen. Weitere 2.000 in der Schlacht in Pinsdorf bei Gmunden am 15. November. Mit der Niederlage in Wolfsegg am 20. November 1626 endete der größte Bauernaufstand Österreichs. Auf die sechs Monate gewaltsamer Auseinandersetzungen folgten 400 Jahre Erinnerung und Geschichtsschreibung. Eine lange Geschichte des Erzählens und Deutens, wie die aktuelle Ausstellung &quot;Bauernkrieg 1626. Zwischen Geschichte und Fiktion&quot; im Schlossmuseum Linz zeigt. &quot;Was wir heute über die Ereignisse zu wissen glauben, beruht nicht nur auf historischen Fakten, sondern auf auch Erzählungen und Interpretationen&quot;, sagt Kurator Konstantin Ferihumer. Im Zentrum der Erinnerungskultur steht der Bauernhauptmann Stefan Fadinger. Von ihm existieren keine zeitgenössischen Abbildungen. Stattdessen prägen heroische Porträts, die posthum entstanden, die Vorstellungen über ihn. Manche Erzählungen werden sogar greifbar: In der Ausstellung sind ein Schwert und eine Keule zu sehen, die angeblich Stefan Fadinger gehörten. Belegbare Nachweise dafür gibt es laut Ferihumer aber nicht. Generell sind von jenen, die sich auflehnten, nur wenige Spuren geblieben. Wer waren &quot;die Bauern&quot;? Jene, die sich gegen Ausbeutung und Unterdrückung wehrten, gegen die bayerischen Besatzer und die Gegenreformation? Wer war &quot;die Obrigkeit&quot;, gegen die sich die Wut der Menschen richtete? Fragen, die den Historiker Fabian Müller beschäftigen. Er forscht zu den gesellschaftlichen Strukturen, Hierarchien und sozialen Spannungen, die sich in den Aufständen entluden. Der Bauernkrieg bietet Stoff für Heldenerzählungen und wurde nicht zuletzt politisch vereinnahmt. Das völkisch-nationale Lager und die nationalsozialistische Propaganda stilisierten die Ereignisse zu einem &quot;deutschen Freiheitskampf der Bauern&quot; hoch. Denkmäler, die bis heute existieren, gehen auf diese Ideologie zurück. Etwa jenes auf dem Haushamerfeld, dem Schauplatz des &quot;Frankenburger Würfelspiels&quot;. Karl Itzinger, der im Nationalsozialismus Karriere machte, schrieb das gleichnamige Theaterstück. Wie geht man heute mit belasteten Erinnerungsorten um? Welche Erzählungen werden an die nächsten Generationen weitergegeben? Als Gäste bei Marina Wetzlmaier sprechen Fabian Müller und Konstantin Ferihumer darüber, was nach 400 Jahren vom Bauernkrieg bleibt. Wie können Geschichte und Fiktion unterschieden werden? Was sind Fakten und was ist Mythos? Welche Schlüsse lassen sich daraus für die heutige Zeit ziehen? Diskutieren Sie mit. Rufen Sie an unter 0800 22 69 79 (kostenfrei innerhalb von Österreich) oder schreiben Sie uns per E-Mail an punkteins(at)orf.at</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Ö1 Essay" data-days-ago="1" data-search="ö1 essay: manifest für den afrofuturismus &quot;afrotopia&quot; von felwine sarr: afrotopia. aus dem französichen übersetzt von max henninger. es liest roman blumenschein.  die debatte über den afrikanischen kontinent ist zwischen zwei extremen festgefahren: dem gängigen katastrophen-narrativ und einer euphorischen rhetorik, die afrika als zukünftiges zentrum des wirtschaftswachstums sieht. der senegalesische ökonom und autor felwine sarr bricht in seinem manifest &quot;afrotopia&quot; aus diesem denken aus. er fordert, afrika endlich von westlichen maßstäben zu befreien: der kontinent müsse eigene narrative schreiben, verborgene potenziale entfalten und sich selbst neu erfinden. sarr entwirft eine vision, &quot;die es sich zur aufgabe macht, die gewaltigen möglichkeitsräume innerhalb der afrikanischen wirklichkeit aufzustöbern und sie fruchten zu lassen&quot;. dafür muss afrika eine eigene moderne begründen und sich von der ideologie eines wirtschaftswachstums nach westlichem vorbild lossagen. &quot;kann man sich vollständig verwirklichen im modus der nachahmung, der übernahme von aufoktroyiertem und der orientierung nach außen? die antwort lautet natürlich nein&quot;, schreibt felwine sarr.">
+        <div class="card-meta">
+          <span class="show-badge">Ö1 Essay</span>
+          <span class="broadcast-time">🕒 11:05 – 11:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ö1 Essay: Manifest für den Afrofuturismus</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Afrotopia&quot; von Felwine Sarr: Afrotopia. Aus dem Französichen übersetzt von Max Henninger. Es liest Roman Blumenschein.</div>
+            </div>
+            <div class="description-text">Die Debatte über den afrikanischen Kontinent ist zwischen zwei Extremen festgefahren: dem gängigen Katastrophen-Narrativ und einer euphorischen Rhetorik, die Afrika als zukünftiges Zentrum des Wirtschaftswachstums sieht. Der senegalesische Ökonom und Autor Felwine Sarr bricht in seinem Manifest &quot;Afrotopia&quot; aus diesem Denken aus. Er fordert, Afrika endlich von westlichen Maßstäben zu befreien: Der Kontinent müsse eigene Narrative schreiben, verborgene Potenziale entfalten und sich selbst neu erfinden. Sarr entwirft eine Vision, &quot;die es sich zur Aufgabe macht, die gewaltigen Möglichkeitsräume innerhalb der afrikanischen Wirklichkeit aufzustöbern und sie fruchten zu lassen&quot;. Dafür muss Afrika eine eigene Moderne begründen und sich von der Ideologie eines Wirtschaftswachstums nach westlichem Vorbild lossagen. &quot;Kann man sich vollständig verwirklichen im Modus der Nachahmung, der Übernahme von Aufoktroyiertem und der Orientierung nach außen? Die Antwort lautet natürlich nein&quot;, schreibt Felwine Sarr.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="1" data-search="kontext - sachbücher und themen: familienkonflikte, ki, historische dummheiten, geschichtsklitterung – &quot;der dodo war kein dummes tier&quot; &quot;der dodo war kein dummes tier&quot;  &quot;du bist nicht deine eltern&quot;: hans-otto thomashoff erläutert, wie man lernen kann, toxische familien zu überwinden und in freiheit zu leben (buch: ariston verlag) beitrag: günter kaindlstorfer &quot;die regierung der maschinen&quot;: jill lepore über aufstieg und fall des künstlichen staats (buch: c. h. beck verlag) rezension: andreas puff-trojan &quot;sternstunden der dummheit&quot;: stefan müller über die besten fehler der geschichte (buch: edition atelier) studiogespräch: wolfgang ritschl &quot;nicht mit uns!&quot;: heike specht legt dar, wie frauen geschichte schrieben und wieder ausradiert wurden (buch: piper verlag) rezension: ulrike schmitzer das album der woche: &quot;soon&quot; von scott fagan (fire records/cargo) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 09:05 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Familienkonflikte, KI, Historische Dummheiten, Geschichtsklitterung – &quot;Der Dodo war kein dummes Tier&quot;</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Der Dodo war kein dummes Tier&quot;</div>
+            </div>
+            <div class="description-text">&quot;Du bist nicht deine Eltern&quot;: Hans-Otto Thomashoff erläutert, wie man lernen kann, toxische Familien zu überwinden und in Freiheit zu leben (Buch: Ariston Verlag) Beitrag: Günter Kaindlstorfer &quot;Die Regierung der Maschinen&quot;: Jill Lepore über Aufstieg und Fall des Künstlichen Staats (Buch: C. H. Beck Verlag) Rezension: Andreas Puff-Trojan &quot;Sternstunden der Dummheit&quot;: Stefan Müller über die besten Fehler der Geschichte (Buch: Edition Atelier) Studiogespräch: Wolfgang Ritschl &quot;Nicht mit uns!&quot;: Heike Specht legt dar, wie Frauen Geschichte schrieben und wieder ausradiert wurden (Buch: Piper Verlag) Rezension: Ulrike Schmitzer Das Album der Woche: &quot;Soon&quot; von Scott Fagan (Fire Records/Cargo) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontext" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -854,6 +1003,31 @@
             <div class="description-text">Digitalisierte Bildung - dazu gehört auch Künstliche Intelligenz. Für Lernende kann KI ein effektives Werkzeug sein, und das nicht nur in der Schule, sondern auch beim eigenständigen Lernen und in der Nachhilfe. Denn rund ein Drittel der Schülerinnen und Schüler in Österreich haben im vergangenen Schuljahr Nachhilfe erhalten. KI ist rund um die Uhr verfügbar und kann individuelles Feedback geben. Dafür braucht es aber eigens entwickelte Tools. Warum KI-Programme wie ChatGPT dafür nicht geeignet sind, welche Voraussetzungen es für einen effektiven Einsatz von KI in der Bildung braucht und was die KI nicht ersetzen kann, berichtet Louisa Trippe.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="2" data-search="moment: freie meinungsäußerung im porträt   sie ist das fundament unserer demokratie: die meinungsfreiheit. jeder und jede hat eine meinung, aber nicht alles, was gesagt wird, muss auch gedruckt oder besprochen werden. kein hass, keine beleidigung - aber freie meinungsäußerung bedeutet nicht, dass das gegenüber die meinung teilt; so viel darf gesagt werden. freie meinungsäußerung als kinderrecht, zur politischen meinungsbildung oder als lebensunterhalt. eine collage.">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Freie Meinungsäußerung im Porträt</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">Sie ist das Fundament unserer Demokratie: die Meinungsfreiheit. Jeder und jede hat eine Meinung, aber nicht alles, was gesagt wird, muss auch gedruckt oder besprochen werden. Kein Hass, keine Beleidigung - aber freie Meinungsäußerung bedeutet nicht, dass das Gegenüber die Meinung teilt; so viel darf gesagt werden. Freie Meinungsäußerung als Kinderrecht, zur politischen Meinungsbildung oder als Lebensunterhalt. Eine Collage.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -1249,6 +1423,31 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="3" data-search="moment: stadtführungen, ganz persönlich   um das image von new york zu verbessern, gründete lynn brooks anfang der 1990er-jahre den verein &quot;big apple greeter&quot;. durch persönliche, kostenlose führungen von new yorkerinnen und new yorkern sollte ein authentisches bild der stadt vermittelt werden. die idee verbreitete sich rasch, heute gibt es &quot;greeters&quot; weltweit in mehr als 180 städten - nun auch in graz. statt fakten zu präsentieren, zeige man lieblingsplätze und versuche zu vermitteln, wie es sich anfühlt, in dieser stadt zu leben. wort der woche &quot;cyberangriff&quot;: johanna steiner">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Stadtführungen, ganz persönlich</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">Um das Image von New York zu verbessern, gründete Lynn Brooks Anfang der 1990er-Jahre den Verein &quot;Big Apple Greeter&quot;. Durch persönliche, kostenlose Führungen von New Yorkerinnen und New Yorkern sollte ein authentisches Bild der Stadt vermittelt werden. Die Idee verbreitete sich rasch, heute gibt es &quot;Greeters&quot; weltweit in mehr als 180 Städten - nun auch in Graz. Statt Fakten zu präsentieren, zeige man Lieblingsplätze und versuche zu vermitteln, wie es sich anfühlt, in dieser Stadt zu leben. Wort der Woche &quot;Cyberangriff&quot;: Johanna Steiner</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="3" data-search="punkt eins: der chatbot als richterin und anwalt? – ki in der justiz: chancen, grenzen und risiken ki in der justiz: chancen, grenzen und risiken gäste: michael kunz, präsident des handelsgerichts wien &amp; sophie martinetz, gründerin &amp; ceo future-law sowie gründerin &amp; direktorin des wu legal tech center - forschung zu digital unterstützter rechtsanwendung, wirtschaftsuniversität wien. moderation: barbara zeithammer. anrufe 0800 22 69 79 | punkteins(at)orf.at die ki wird es richten? &quot;enorme&quot; entlastungen werde die ki-offensive bringen, hatte justizministerin anna sporrer (spö) im oktober im ö1-morgenjournal angekündigt, als die justiz eine woche stillstand, weil richterinnen und staatsanwälte auf den akuten personalmangel aufmerksam machten. doch die erste bundes-ki &quot;govgpt&quot; brachte abrupte ernüchterung, viel kritik, zwei parlamentarische anfragen und die erkenntnis: die ki gibt immer eine antwort, ob sie stimmt oder nicht. diese erfahrung zählt für richter:innen längst zum alltag, denn immer öfter werden ki-generierte anträge von parteien, unternehmen und anwaltskanzleien eingebracht. was den zugang zum recht grundsätzlich erleichtern könnte - umfragen aus deutschland zeigen, dass viele menschen nie zum anwalt gehen, aus angst vor den kosten - wird für die ohnehin unterbesetzte heimische justiz zunehmend zur belastungsprobe. um die mitunter hunderten seiten, die ein gängiger chatbot innerhalb von sekunden verfasst, zu lesen und zu überprüfen, braucht der mensch ein vielfaches der zeit. und richterinnen und richter müssen diese schriftsätze lesen. doch ki-anwendungen in der justiz helfen auch, zeit zu sparen: sie durchsuchen akten, datenbanken und protokolle, leiten e-mails automatisch weiter, erkennen literaturverweise, transkribieren diktate, liefern zusammenfassungen oder analysieren verträge. der ai act der eu, der grundrechte schützt, klassifiziert die justiz als hochrisiko-system. algorithmen sind somit als reines assistenzsystem erlaubt, nicht als entscheidungssystem. doch die grenzen sind wohl fließend. in anderen ländern ist man da mitunter sehr viel weiter, sagt sophie martinetz, gründerin und leiterin von future-law, einer unabhängigen plattform für legal tech, und direktorin des wu legal tech centers: sei es, um prognosen zu erstellen, mit welcher wahrscheinlichkeit täter wieder straftaten begehen oder wie ein verfahren ausgeht oder um beweismittel zusammen zu stellen, videos zu generieren, entscheidungsvorschläge zu entwickeln. mit risiken und nebenwirkungen, betont die juristin und unternehmerin. dass menschen immer vorurteilsfrei entscheiden, sei dahingestellt. 2011 machte eine israelische studie schlagzeilen und wurde seither viel zitiert: hungrig würden richter härtere urteile fällen. führt der algorithmus justitias schwert also gerechter? aus zahlreichen studien weiß man, dass ki nicht neutral urteilt. doch studien zeigen auch: menschen tendieren dazu, computergestützten entscheidungen eher zu vertrauen. was folgt daraus für das richterliche urteil, wenn die ki beweise, urteile oder auch nur zusammenfassungen erstellt? den chancen - effizienzsteigerung, beschleunigung von strukturellen abläufen, zeitersparnis, zugang zum rechtsstaat - stehen risiken gegenüber, die einerseits konkrete fragen aufwerfen, nach dem datenschutz beispielsweise, andererseits weit in die grundrechte hineinwirken: es gibt das recht auf einen menschlichen richter oder richterin, gibt michael kunz, präsident des handelsgerichts wien, zu bedenken, das recht, sich vor gericht äußern zu können, informiert zu werden. juristische entscheidungen müssen außerdem nachvollziehbar sein, doch die algorithmen sind eine &quot;black box&quot;. haftungsfragen von ki sind noch ungeklärt. was braucht es, damit ki-anwendungen in der justiz ihr potenzial erfüllen können? was sollen die algorithmen in der justiz können dürfen? welche kompetenzen brauchen juristinnen und juristen heute und in naher zukunft? über die neuen technologien, ihre chancen, risiken und grenzen in der justiz, einem grundpfeiler des rechtsstaats, einer staatsgewalt, einer instanz, die über freiheit, vermögen und pflichten entscheidet, diskutieren michael kunz und sophie martinetz als gäste bei barbara zeithammer mit ihnen, wenn sie anrufen unter 0800 22 69 79 oder uns schreiben an punkteins(at)orf.at was sind ihre erfahrungen mit chatbots bei rechtlichen fragen? was hat sich durch ki in den letzten jahren in ihrer kanzlei oder ihrem berufsalltag in der rechtsabteilung oder -beratung verändert? wie nutzen sie ki als anwältin, richter oder staatsanwalt? welche chancen sehen sie als bürgerin und bürger, welche gefahren? wir freuen uns über ihre teilnahme an dem gespräch!">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -1515,6 +1714,31 @@
             <div class="description-text">Am 7. Juli dieses Jahres jährte sich der Beschluss des österreichischen Volksgruppengesetzes zum 50. Mal. Es bildet bis heute die rechtliche Basis für die sechs offiziell anerkannten Volksgruppen des Landes: die Kärntner Slowenen, die Burgenlandkroaten, die Tschechen, die Slowaken, die Ungarn sowie die erst 1993 anerkannten Roma und Sinti. Anlässlich dieses Jubiläums luden die Initiative Minderheiten und das Haus der Geschichte Österreich Ende Oktober zu einer kritischen Bestandsaufnahme. Die Veranstaltung verband die historische Entstehungsgeschichte des Gesetzes mit den brennenden Debatten der Gegenwart. Beleuchtet wurde auch die umfassende Gesetzesnovellierung des heurigen Jahres. Neben der Frage nach einer modernen, zukunftsorientierten Volksgruppenpolitik ging es um gravierende gesetzliche Leerstellen - allen voran wurden die mangelhaften Angebote im Bereich der muttersprachlichen Bildung angeprangert. Gestaltung: Tanja Malle</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/journalpanorama" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="4" data-search="moment: bestattung als beruf   &quot;das klischee eines bestatters? wahrscheinlich ein über 50-jähriger mann, alkoholiker, bissl morbid.&quot; benedikt novak ist 33 jahre alt und arbeitet als bestatter. der beruf sei eine &quot;blackbox&quot;, heißt es von der bestatterakademie. der aufgabenbereich von bestatter*innen ist vielfältig: er reicht von der begleitung der angehörigen zur abholung und umbettung verstorbener bis zum sarg tragen. moment hat ein bestatterteam eines wiener und niederösterreichischen unternehmens einen tag lang begleitet. autorin: magdalena burghart">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Bestattung als Beruf</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">&quot;Das Klischee eines Bestatters? Wahrscheinlich ein über 50-jähriger Mann, Alkoholiker, bissl morbid.&quot; Benedikt Novak ist 33 Jahre alt und arbeitet als Bestatter. Der Beruf sei eine &quot;Blackbox&quot;, heißt es von der Bestatterakademie. Der Aufgabenbereich von Bestatter*innen ist vielfältig: Er reicht von der Begleitung der Angehörigen zur Abholung und Umbettung Verstorbener bis zum Sarg tragen. Moment hat ein Bestatterteam eines Wiener und niederösterreichischen Unternehmens einen Tag lang begleitet. Autorin: Magdalena Burghart</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -1872,6 +2096,35 @@
             <div class="description-text">Philosophiecafé mit Sophie Loidolt Günther Anders (1902-1992) war Philosoph, Schriftsteller und politisch engagierter Intellektueller. Er ist bekannt als Mitbegründer der Anti-Atomkraft-Bewegung, als Technikphilosoph und Medienkritiker. Als einer der ersten beschäftigte er sich mit den seelischen, sozialen und existenziellen Auswirkungen, die technische Entwicklungen auf Menschen haben. Sein Hauptwerk Die Antiquiertheit des Menschen. Über die Seele im Zeitalter der zweiten industriellen Revolution erschien vor genau 70 Jahren, 1956. Im Philosophiecafé spricht Sophie Loidolt mit dem Philosophen Konrad Paul Liessmann , der nicht nur Anders-Experte ist, sondern den Philosophen auch persönlich kannte. Wie aktuell sind Anders&#x27; Diagnosen nach siebzig Jahren noch? Und was können wir von ihnen in Zeiten von KI und Klimawandel lernen? Gestaltung: Sophie Loidolt</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/sciencearena" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="5" data-search="moment: teller statt tonne – wider die verschwendung wider die verschwendung  ganze 75 kilogramm lebensmittel werden in österreich pro person im jahr weggeworfen, obwohl die meisten dieser lebensmittel noch essbar gewesen wären. manche lassen sich durch das mindesthaltbarkeitsdatum zu sehr verunsichern. andere haben ihr einkaufsverhalten nicht im griff und chaos im kühlschrank. in dieser sendung erzählen unter anderen eine mutter und ihr sohn, wie sie es schaffen, möglichst wenig wegzuwerfen. die sendung ist eine wiederholung aus dem vorjahr. gestaltung: daniel kruppa und hanna ronzheimer">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Teller statt Tonne – Wider die Verschwendung</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Wider die Verschwendung</div>
+            </div>
+            <div class="description-text">Ganze 75 Kilogramm Lebensmittel werden in Österreich pro Person im Jahr weggeworfen, obwohl die meisten dieser Lebensmittel noch essbar gewesen wären. Manche lassen sich durch das Mindesthaltbarkeitsdatum zu sehr verunsichern. Andere haben ihr Einkaufsverhalten nicht im Griff und Chaos im Kühlschrank. In dieser Sendung erzählen unter anderen eine Mutter und ihr Sohn, wie sie es schaffen, möglichst wenig wegzuwerfen. Die Sendung ist eine Wiederholung aus dem Vorjahr. Gestaltung: Daniel Kruppa und Hanna Ronzheimer</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -2241,6 +2494,35 @@
     </section>
     <section class="day-section" data-date="2026-11-06" data-days-ago="8">
       <h2 class="day-title">📅 Freitag, 06. November 2026</h2>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="8" data-search="kontext - sachbücher und themen: bleivergiftung, völkermord, k-pop, pedanten – redaktion: wolfgang ritschl redaktion: wolfgang ritschl  &quot;murderland&quot;: caroline fraser recherchierte, wie ein vergifteter landstrich die berüchtigtsten serienmörder der geschichte hervorbrachte (buch: verlag hanser blau) beitrag: madeleine amberger &quot;wien ohne juden&quot;: douglas smith über die metropole der moderne als laboratorium des völkermords (buch: piper verlag) rezension: erich klein &quot;backstage südkorea&quot;: katharina graça peters versucht, das heimatland der k-kultur zu verstehen (buch: penguin verlag) studiogespräch: wolfgang ritschl &quot;pedanten&quot;: markus krajewski über die ungeliebten meister der akribie (buch: zu klampen verlag) rezension: brigitte neumann das album der woche: &quot;fudge&quot; von michael kiwanuka (polydor/universal) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 22:08 – 23:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Bleivergiftung, Völkermord, K-Pop, Pedanten – Redaktion: Wolfgang Ritschl</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Redaktion: Wolfgang Ritschl</div>
+            </div>
+            <div class="description-text">&quot;Murderland&quot;: Caroline Fraser recherchierte, wie ein vergifteter Landstrich die berüchtigtsten Serienmörder der Geschichte hervorbrachte (Buch: Verlag hanser blau) Beitrag: Madeleine Amberger &quot;Wien ohne Juden&quot;: Douglas Smith über die Metropole der Moderne als Laboratorium des Völkermords (Buch: Piper Verlag) Rezension: Erich Klein &quot;Backstage Südkorea&quot;: Katharina Graça Peters versucht, das Heimatland der K-Kultur zu verstehen (Buch: Penguin Verlag) Studiogespräch: Wolfgang Ritschl &quot;Pedanten&quot;: Markus Krajewski über die ungeliebten Meister der Akribie (Buch: zu Klampen Verlag) Rezension: Brigitte Neumann Das Album der Woche: &quot;Fudge&quot; von Michael Kiwanuka (Polydor/Universal) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontextwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="matrix - computer &amp; neue medien" data-days-ago="8" data-search="matrix - computer &amp; neue medien: wie ugandas behörden digital werden – der wettlauf um afrikas gesundheitsdaten der wettlauf um afrikas gesundheitsdaten  nicht nur in europa, auch in vielen ländern des afrikanischen kontinents sind staaten gerade dabei, ihre behörden und die verwaltung zu digitalisieren. in uganda zum beispiel kann man nun führerscheine, reisepässe, geburtsurkunden oder grundbuchauszüge mit wenigen klicks online beantragen. das spart zeit und geld - auch, weil weniger bestechungsgeld bezahlt werden muss. doch obwohl uganda 2019 ein umfassendes gesetz über datenschutz und datensicherheit verabschiedet hat, gibt es in dieser hinsicht noch lücken. derzeit zeichnet sich sogar ein wettlauf um den zugang zu diesen daten ab: denn kriminelle netzwerke aber auch internationale konzerne und ausländische regierungen wollen zugriff auf die daten afrikanischer bürgerinnen und bürger erhalten. die us-regierung schließt derzeit etwa schon abkommen, um an die gesundheitsdaten zu kommen. simone schlindwein berichtet aus uganda. lobo, der landwirtschaftsroboter aus burundi das ostafrikanische burundi ist eines der kleinsten länder afrikas. rund 90 prozent der menschen dort leben von landwirtschaft. um bäuerinnen und bauern die harte arbeit zu erleichtern, hat ein burundischer software-entwickler jetzt einen ki-gesteuerten bewässerungs-roboter erfunden. der kann pflanzen gießen, unkraut bekämpfen und schädlinge auf pflanzen erkennen. unser reporter phil abimana hat ihn in bujumbura getroffen, der größten stadt des landes.">
         <div class="card-meta">
           <span class="show-badge">matrix - computer &amp; neue medien</span>
@@ -2304,6 +2586,35 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="8" data-search="moment - kulinarium: afrikanische küchen mit neuem anspruch – zwischen tradition und innovation zwischen tradition und innovation  was kommt einem bei &quot;afrikanischem essen&quot; in den sinn? vielleicht eintöpfe, okra-schoten, yamswurzel oder möglicherweise auch das äthiopische fladenbrot injera, das zu verschiedenen ragouts gereicht wird. dabei gibt es nicht eine, sondern 54 länderküchen - vielfältig und bis in die regionen hinein verschieden. in österreich sind sie mit wenigen ausnahmen unbekannt. was braucht es, um hierzulande wahrgenommen zu werden? köche, die sich mit afrikanischer (fusion-)küche etabliert haben, erzählen. eine sendung im rahmen des ö1 themenschwerpunkts &quot;africa now!&quot;. gestaltung: noel kriznik">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment - Kulinarium: Afrikanische Küchen mit neuem Anspruch – Zwischen Tradition und Innovation</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Zwischen Tradition und Innovation</div>
+            </div>
+            <div class="description-text">Was kommt einem bei &quot;afrikanischem Essen&quot; in den Sinn? Vielleicht Eintöpfe, Okra-Schoten, Yamswurzel oder möglicherweise auch das äthiopische Fladenbrot Injera, das zu verschiedenen Ragouts gereicht wird. Dabei gibt es nicht eine, sondern 54 Länderküchen - vielfältig und bis in die Regionen hinein verschieden. In Österreich sind sie mit wenigen Ausnahmen unbekannt. Was braucht es, um hierzulande wahrgenommen zu werden? Köche, die sich mit afrikanischer (Fusion-)Küche etabliert haben, erzählen. Eine Sendung im Rahmen des Ö1 Themenschwerpunkts &quot;Africa Now!&quot;. Gestaltung: Noel Kriznik</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="8" data-search="punkt eins: tränen lügen nicht - oder doch? warum wir weinen müssen und das manchmal nicht wollen. gast: teresa präauer, autorin, künstlerin und germanistin moderation: marlene nowotny. anrufe 0800 22 69 79 | punkteins(at)orf.at wann haben sie das letzte mal geweint? diese frage stellt sich die autorin und künstlerin teresa präauer seit geraumer zeit öfter - seit sie sich eingehender mit tränen, rührung und heulkrämpfen beschäftigt. die antworten: bei einer beerdigung, bei der physiotherapie, ausschließlich aus wut, wegen des ex-partners. die ergebnisse ihrer befragungen und recherchen hat teresa präauer vor kurzem in einem neuen buch veröffentlich. in &quot;nie mehr weinen&quot; präsentiert sie &quot;tränenkunde für fortgeschrittene&quot; und erkundet das menschliche gefühlsleben. während kinder in der öffentlichkeit oft recht ungehemmt weinen, ist ein tränenüberströmtes gesicht für erwachsene oft unangenehm. zumindest die sogenannten emotionalen tränen. die kommen - anders als die zwei anderen tränenarten - nur beim menschen vor, nicht bei tieren. basale tränen befeuchten das auge und reinigen die hornhaut, reflektorische tränen kullern bei reizungen wie starkem wind oder frisch geschnittenen zwiebeln. emotionale tränen fließen wegen liebeskummer und heimweh, wut und ohnmachtsgefühlen, angst und sorgen, freude und rührung. nicht nur die ursachen der drei tränenformen unterscheiden sich, sondern auch deren zusammensetzung: sie bestehen aus wasser sowie verschiedenen eiweißen, fetten und elektrolyten bzw. salzen, doch das verhältnis der bestandteile variiert. emotionale tränen sind etwa die proteinreichsten. zwar tragen alle drei tränenarten dazu bei, das auge feucht zu halten, doch auch menschen, die viel weinen, können trockene augen haben. denn um die horn- und bindehaut ausreichend zu befeuchten, braucht es auch eine intakte schleim- und fettschicht, die nichts mit fließenden tränen zu tun hat. welche funktion die emotionalen tränen nun für die gesundheit haben, ist nach wie vor gegenstand wissenschaftlicher untersuchungen. dass sie, wie charles darwin einst behauptete, für die psyche nutzlos seien, ist widerlegt. sie sind in jedem fall mittel sozialer kommunikation, signalisieren verzweiflung oder hilflosigkeit und können bei den mitmenschen empathie fördern. es gibt studien, die zeigen, dass menschen gegenüber weinenden personen hilfsbereiter sind bzw. dass sich menschen wohler fühlen, wenn sie weinen, weil sie dann trost empfangen oder unterstützung bekommen. doch profitiert die mentale gesundheit direkt davon, wenn tränen kullern und negative gefühle sichtbar werden? entlastet das weinen die psyche? oder kann es auch dazu beitragen, gefühle zu überspielen oder zu unterdrücken? was bringt uns zum weinen? und können tränen eine waffe sein? über diese fragen spricht marlene nowotny mit teresa präauer. und mit ihnen: wann haben sie zum letzten mal geweint? und haben sie den wunsch, nie mehr weinen zu müssen? rufen sie in der sendung an unter 0800 22 69 79 oder schreiben sie ein e-mail an punkteins(at)orf.at">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -2330,6 +2641,60 @@
             <div class="description-text">Wann haben Sie das letzte Mal geweint? Diese Frage stellt sich die Autorin und Künstlerin Teresa Präauer seit geraumer Zeit öfter - seit sie sich eingehender mit Tränen, Rührung und Heulkrämpfen beschäftigt. Die Antworten: Bei einer Beerdigung, bei der Physiotherapie, ausschließlich aus Wut, wegen des Ex-Partners. Die Ergebnisse ihrer Befragungen und Recherchen hat Teresa Präauer vor kurzem in einem neuen Buch veröffentlich. In &quot;Nie mehr weinen&quot; präsentiert sie &quot;Tränenkunde für Fortgeschrittene&quot; und erkundet das menschliche Gefühlsleben. Während Kinder in der Öffentlichkeit oft recht ungehemmt weinen, ist ein tränenüberströmtes Gesicht für Erwachsene oft unangenehm. Zumindest die sogenannten emotionalen Tränen. Die kommen - anders als die zwei anderen Tränenarten - nur beim Menschen vor, nicht bei Tieren. Basale Tränen befeuchten das Auge und reinigen die Hornhaut, reflektorische Tränen kullern bei Reizungen wie starkem Wind oder frisch geschnittenen Zwiebeln. Emotionale Tränen fließen wegen Liebeskummer und Heimweh, Wut und Ohnmachtsgefühlen, Angst und Sorgen, Freude und Rührung. Nicht nur die Ursachen der drei Tränenformen unterscheiden sich, sondern auch deren Zusammensetzung: Sie bestehen aus Wasser sowie verschiedenen Eiweißen, Fetten und Elektrolyten bzw. Salzen, doch das Verhältnis der Bestandteile variiert. Emotionale Tränen sind etwa die proteinreichsten. Zwar tragen alle drei Tränenarten dazu bei, das Auge feucht zu halten, doch auch Menschen, die viel weinen, können trockene Augen haben. Denn um die Horn- und Bindehaut ausreichend zu befeuchten, braucht es auch eine intakte Schleim- und Fettschicht, die nichts mit fließenden Tränen zu tun hat. Welche Funktion die emotionalen Tränen nun für die Gesundheit haben, ist nach wie vor Gegenstand wissenschaftlicher Untersuchungen. Dass sie, wie Charles Darwin einst behauptete, für die Psyche nutzlos seien, ist widerlegt. Sie sind in jedem Fall Mittel sozialer Kommunikation, signalisieren Verzweiflung oder Hilflosigkeit und können bei den Mitmenschen Empathie fördern. Es gibt Studien, die zeigen, dass Menschen gegenüber weinenden Personen hilfsbereiter sind bzw. dass sich Menschen wohler fühlen, wenn sie weinen, weil sie dann Trost empfangen oder Unterstützung bekommen. Doch profitiert die mentale Gesundheit direkt davon, wenn Tränen kullern und negative Gefühle sichtbar werden? Entlastet das Weinen die Psyche? Oder kann es auch dazu beitragen, Gefühle zu überspielen oder zu unterdrücken? Was bringt uns zum Weinen? Und können Tränen eine Waffe sein? Über diese Fragen spricht Marlene Nowotny mit Teresa Präauer. Und mit Ihnen: Wann haben Sie zum letzten Mal geweint? Und haben Sie den Wunsch, nie mehr weinen zu müssen? Rufen Sie in der Sendung an unter 0800 22 69 79 oder schreiben Sie ein E-Mail an punkteins(at)orf.at</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Ö1 Essay" data-days-ago="8" data-search="ö1 essay: &quot;balkanesische&quot; erfahrungen &quot;keiner zu hause&quot; von dubravka ugresic. es liest barbara gassner. im rahmen von &quot;lob des alltags&quot; - 12 texte ausgewählt und kommentiert von karl-markus gauß.  der schriftsteller karl-markus gauß hat für seine reihe &quot;lob des alltags&quot; einen text von dubravka ugresic ausgewählt. die 1949 in jugoslawien geborene autorin gilt als eine der prägendsten stimmen des balkans. sie kehrte 1993 ihrer kroatischen heimat den rücken und ging ins exil nach amsterdam. in ihrer essay-sammlung &quot;keiner zu hause&quot; grenzt sie sich klar von nationalen identitätszuschreibungen ab - vor allem von den postjugoslawischen - und positioniert sich stattdessen als weltbürgerin. &quot;lob des alltags&quot; ist eine von karl-markus gauß kuratierte und kommentierte reihe. der alltag, so der schriftsteller, stehe oft im schlechten ruf, die menschen vom eigentlichen leben, von der freiheit und vom fest fernzuhalten. dieser haltung versucht er ein lob des alltags entgegenzusetzen. mit ausgewählten literarischen texten von kolleginnen und kollegen macht sich gauß im &quot;ö1 essay&quot; auf, die welt jeden tag neu zu entdecken, die schönheit des unscheinbaren zu fassen und die würde des wenig beachteten erfahrbar zu machen. die reihe ist 2026 jeweils am ersten freitag im monat zu hören.">
+        <div class="card-meta">
+          <span class="show-badge">Ö1 Essay</span>
+          <span class="broadcast-time">🕒 11:05 – 11:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ö1 Essay: &quot;Balkanesische&quot; Erfahrungen</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Keiner zu Hause&quot; von Dubravka Ugresic. Es liest Barbara Gassner. Im Rahmen von &quot;Lob des Alltags&quot; - 12 Texte ausgewählt und kommentiert von Karl-Markus Gauß.</div>
+            </div>
+            <div class="description-text">Der Schriftsteller Karl-Markus Gauß hat für seine Reihe &quot;Lob des Alltags&quot; einen Text von Dubravka Ugresic ausgewählt. Die 1949 in Jugoslawien geborene Autorin gilt als eine der prägendsten Stimmen des Balkans. Sie kehrte 1993 ihrer kroatischen Heimat den Rücken und ging ins Exil nach Amsterdam. In ihrer Essay-Sammlung &quot;Keiner zu Hause&quot; grenzt sie sich klar von nationalen Identitätszuschreibungen ab - vor allem von den postjugoslawischen - und positioniert sich stattdessen als Weltbürgerin. &quot;Lob des Alltags&quot; ist eine von Karl-Markus Gauß kuratierte und kommentierte Reihe. Der Alltag, so der Schriftsteller, stehe oft im schlechten Ruf, die Menschen vom eigentlichen Leben, von der Freiheit und vom Fest fernzuhalten. Dieser Haltung versucht er ein Lob des Alltags entgegenzusetzen. Mit ausgewählten literarischen Texten von Kolleginnen und Kollegen macht sich Gauß im &quot;Ö1 Essay&quot; auf, die Welt jeden Tag neu zu entdecken, die Schönheit des Unscheinbaren zu fassen und die Würde des wenig Beachteten erfahrbar zu machen. Die Reihe ist 2026 jeweils am ersten Freitag im Monat zu hören.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="8" data-search="kontext - sachbücher und themen: bleivergiftung, völkermord, k-pop, pedanten   &quot;murderland&quot;: caroline fraser recherchierte, wie ein vergifteter landstrich die berüchtigtsten serienmörder der geschichte hervorbrachte (buch: verlag hanser blau) beitrag: madeleine amberger &quot;wien ohne juden&quot;: douglas smith über die metropole der moderne als laboratorium des völkermords (buch: piper verlag) rezension: erich klein &quot;backstage südkorea&quot;: katharina graça peters versucht, das heimatland der k-kultur zu verstehen (buch: penguin verlag) studiogespräch: wolfgang ritschl &quot;pedanten&quot;: markus krajewski über die ungeliebten meister der akribie (buch: zu klampen verlag) rezension: brigitte neumann das album der woche: &quot;fudge&quot; von michael kiwanuka (polydor/universal) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 09:05 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Bleivergiftung, Völkermord, K-Pop, Pedanten</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">&quot;Murderland&quot;: Caroline Fraser recherchierte, wie ein vergifteter Landstrich die berüchtigtsten Serienmörder der Geschichte hervorbrachte (Buch: Verlag hanser blau) Beitrag: Madeleine Amberger &quot;Wien ohne Juden&quot;: Douglas Smith über die Metropole der Moderne als Laboratorium des Völkermords (Buch: Piper Verlag) Rezension: Erich Klein &quot;Backstage Südkorea&quot;: Katharina Graça Peters versucht, das Heimatland der K-Kultur zu verstehen (Buch: Penguin Verlag) Studiogespräch: Wolfgang Ritschl &quot;Pedanten&quot;: Markus Krajewski über die ungeliebten Meister der Akribie (Buch: zu Klampen Verlag) Rezension: Brigitte Neumann Das Album der Woche: &quot;Fudge&quot; von Michael Kiwanuka (Polydor/Universal) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontext" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -2511,6 +2876,31 @@
             <div class="description-text">In der Ukraine ist &quot;Kyivstar&quot; der gewichtigste Telekom-Provider. Das Unternehmen betreibt im ganzen Land über 70.000 Basisstationen, Glasfaser-Leitungen mit einer Gesamtlänge von 44.000 Kilometern, und es versorgt etwa 24 Millionen Menschen mit Mobilfunk und Internet. Der Krieg hat die Telekom-Branche in der Ukraine vor ganz neue Herausforderungen gestellt. Denn während eine gut funktionierende Netz-Infrastruktur schon in Friedenszeiten unverzichtbar ist, wird sie in Kriegszeiten mitunter zur Überlebensfrage, berichtet Kenny Lang.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="9" data-search="moment: österreichs straßenzeitungen im existenzkampf   &quot;augustin&quot; in wien und &quot;megaphon&quot; in graz sind die ältesten noch existierenden straßenzeitungen österreichs, gegründet in den 1990er jahren. heute sind sie selbst unter druck: gestrichene förderungen, schrumpfende leserschaft, viel unbezahlte arbeit. am 21.10. haben die macherinnen und macher erstmals den &quot;tag der straßenzeitung&quot; ausgerufen - um auf die qualität ihrer arbeit hinzuweisen, &quot;die sich essenziell von anderen printmedien unterscheidet&quot;. sie sind ein sprachrohr für menschen, die sonst kaum gehört werden.">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Österreichs Straßenzeitungen im Existenzkampf</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">&quot;Augustin&quot; in Wien und &quot;Megaphon&quot; in Graz sind die ältesten noch existierenden Straßenzeitungen Österreichs, gegründet in den 1990er Jahren. Heute sind sie selbst unter Druck: gestrichene Förderungen, schrumpfende Leserschaft, viel unbezahlte Arbeit. Am 21.10. haben die Macherinnen und Macher erstmals den &quot;Tag der Straßenzeitung&quot; ausgerufen - um auf die Qualität ihrer Arbeit hinzuweisen, &quot;die sich essenziell von anderen Printmedien unterscheidet&quot;. Sie sind ein Sprachrohr für Menschen, die sonst kaum gehört werden.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -2905,6 +3295,35 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="10" data-search="moment: stolpersteine – schülerin erinnert an ns-opfer schülerin erinnert an ns-opfer  zwei jüdische bewohnerinnen, zwei vergessene lebensgeschichten - und eine 18-jährige, die sie zurück ins gedächtnis ihrer stadt holt. eria haberfehlner hat die beiden stolpersteine initiiert, es sind die allerersten in waidhofen an der ybbs (nö). für ihr matura-abschlussprojekt recherchierte sie die biografien von hermine weisz und erna knobloch, knüpfte kontakt zum europaweiten gedenkprojekt &quot;stolpersteine&quot; und organisierte im september 2026 die feierliche verlegung der steine. gestaltung: johanna steiner wort der woche &quot;autorisierung&quot;: lukas tremetsberger">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Stolpersteine – Schülerin erinnert an NS-Opfer</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Schülerin erinnert an NS-Opfer</div>
+            </div>
+            <div class="description-text">Zwei jüdische Bewohnerinnen, zwei vergessene Lebensgeschichten - und eine 18-Jährige, die sie zurück ins Gedächtnis ihrer Stadt holt. Eria Haberfehlner hat die beiden Stolpersteine initiiert, es sind die allerersten in Waidhofen an der Ybbs (NÖ). Für ihr Matura-Abschlussprojekt recherchierte sie die Biografien von Hermine Weisz und Erna Knobloch, knüpfte Kontakt zum europaweiten Gedenkprojekt &quot;Stolpersteine&quot; und organisierte im September 2026 die feierliche Verlegung der Steine. Gestaltung: Johanna Steiner Wort der Woche &quot;Autorisierung&quot;: Lukas Tremetsberger</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="10" data-search="punkt eins: lame duck im lake america – nach den us-wahlen: die neuaufstellung der us-demokratie nach den us-wahlen: die neuaufstellung der us-demokratie gäste: prof. dr. claudia brühwiler, dozentin für amerikanisches politisches denken und kultur, universität st. gallen &amp; alexandra lieben, stv. direktorin, ronald w. burkle center for international relations, ucla. moderation: xaver forthuber. anrufe 0800 22 69 79 | punkteins(at)orf.at eine &quot;blaue welle&quot; fegte von gestern auf heute über die usa und über die partei des regierenden präsidenten donald trump hinweg. bei den zwischenwahlen haben die demokraten mit voraussichtlich 250 der 435 sitze im repräsentantenhaus eine deutliche mehrheit errungen; und auch im senat, wo alle zwei jahre ein drittel der mandate neu vergeben wird, könnten demokratische kandidat:innen sich bis zu 53 der 100 sitze sichern. fest steht bereits, dass sie dabei auch konservative hochburgen erobert haben. in south carolina hat nach medienberichten die demokratin annie andrews überraschend gegen die republikanerin darline graham gewonnen; zuletzt hatte der bundesstaat vor 28 jahren eine demokratische senatorin nach washington entsandt. in texas setzte sich nach drei jahrzehnten ungebrochener republikanischer herrschaft der demokrat james talarico gegen den ken paxton durch, der bis zuletzt massiv von trump persönlich unterstützt worden war. in georgia, das bei der präsidentschaftswahl 2024 mehrheitlich trump gewählt hatte, wurde jon osoff zum sieger erklärt. der charismatische politiker war im wahlkampf mit kämpferischer, aber mitreißender rhetorik aufgefallen, mit der er den untergriffen der republikaner die stirn bot. er gilt jetzt als ernsthafter anwärter auf die präsidentschaftskandidatur. und in michigan setzt sich laut prognosen mehrerer us-sender der demokrat abdul el-sayed durch. er wird damit der erste muslimische senator der us-geschichte. eine denkzettelwahl für den präsidenten, der bis jetzt mit mehrheiten in beiden kammern und wenig widerstand seiner abgeordneten praktisch durchregieren konnte. &quot;seine&quot; kandidat:innen mussten empfindliche niederlagen hinnehmen: durch talarico, den er als freak beschimpft, oder el-sayed, den er mit rassistischen attacken überzogen hatte. persönliche und zutiefst untergriffige attacken, vermischung von parteifunktionen und regierungsämtern, fake news und taktische verwirrspiele haben den wahlkampf eines zutiefst gespaltenen landes geprägt. dass die &quot;midterms&quot; immer auch eine abstimmung über den aktuellen präsidenten sind, ist kein geheimnis; donald trump hat diesmal sogar selbst dazu aufgerufen, entsprechend zu wählen. indessen treffen seine kriegs- und zollpolitik die us-amerikaner:innen dort, wo es spürbar wehtut: die steigenden lebenshaltungskosten und treibstoffpreise standen kurz vor der wahl ganz oben auf der liste der wähler:innenmotive. trump selbst hatte die wahl zu einer abstimmung über seine amtsführung erklärt; die umfragen, die seine zustimmungswerte seit geraumer zeit im sinkflug sehen, bezeichnete er wiederholt als fake news. &quot;tut mir einen gefallen und tut so, als ob ich auf dem wahlzettel stünde&quot;, hatte er wiederholt vor seinen anhänger:innen gesagt. in einer ersten reaktion nach bekanntwerden der wahrscheinlichen wahlergebnisse wies er die verantwortung jetzt wieder von sich: &quot;ich stand nicht auf dem wahlzettel.&quot; den demokraten gratulierte der präsident zu ihrem sieg und versprach, mit ihnen &quot;zusammenzuarbeiten&quot;, er kündigte aber auch an, von seinem vetorecht gebrauch zu machen. wieder deutlich mehr kritik und kontrolle der exekutive durch das parlament, das war im kern das ziel der demokraten. kann sich die angeschlagene us-demokratie also wieder erholen - auf institutioneller ebene und auf gesellschaftlicher? was haben die wahlen verändert, was nicht? wer und was stand in den verschiedenen bundesstaaten auf dem wahlzettel, und wofür haben sich die amerikaner:innen entschieden? xaver forthuber analysiert die us-midterms mit seinen gästen: claudia brühwiler ist professorin für politische theorie und amerikastudien an der universität st. gallen; sie lehrt und forscht unter anderem über politik und politische kultur in den usa. die österreichische soziologin und konfliktforscherin alexandra lieben lebt seit jahrzehnten in den usa; sie ist stellvertretedne direktorin des zentrums für internationale beziehungen an der universität von los angeles und außerdem präsidentin von ascina (austrian scientists &amp; scholars in north america). reden sie mit: rufen sie in der sendung an unter 0800 22 69 79 oder schreiben sie ein e-mail an punkteins(at)orf.at">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -3199,6 +3618,35 @@
             <div class="description-text">Es war der teuerste US-Midterm-Wahlkampf aller Zeiten: Die Rechercheplattform OpenSecrets schätzt die gesamten Wahlkampfspenden für Republikaner und Demokraten auf knapp 12 Milliarden US-Dollar. Allein Tech-Milliardär Elon Musk hat eine Rekordsumme von 440 Millionen an die Republikaner gespendet. In den vergangenen Jahren hat sich die Tech-Branche stark an das Trump-Lager angenähert. Worum es den Tech-Konzernen vor allem geht, ist Schutz vor Regulierungen. Im Bundesstaat Kalifornien, wo die Dichte an Tech-Milliardären besonders hoch ist, geht es außerdem um Schutz vor einer Reichensteuer. Denn da stimmen die Wählerinnen und Wähler am 3. November auch über eine Milliardärs-Abgabe ab. Wie die Chancen dafür stehen, darüber hat Ulla Ebner mit dem Politikwissenschaftler Yascha Mounk gesprochen.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="11" data-search="moment: pension üben – un/vorbereitet auf das unweigerliche un/vorbereitet auf das unweigerliche  kann man sich auf die pension vorbereiten? nein, meinen die einen: keine zeit. keine lust. andere schmieden pläne: eine radreise zum atlantik, italienisch-lernen, die wohnung renovieren, weiterarbeiten. &quot;die pensionierung ist einer der größten umbrüche im leben&quot;, sagt eine 59-jährige, die workshops zum &quot;tag x&quot; gibt. sie beobachtet: auf die &quot;honeymoon&quot;-phase folgt oft große ernüchterung. worauf muss man sich gefasst machen? gespräche mit pensionsanwärtern, -neulingen und &quot;alten hasen&quot;. folge 1 von &quot;hilfe! andrea geht in pension&quot;, der podcast gegen den pensionsschock gestaltung: andrea hauer, pensionistin ab 1. august 2027">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Pension üben – Un/vorbereitet auf das Unweigerliche</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Un/vorbereitet auf das Unweigerliche</div>
+            </div>
+            <div class="description-text">Kann man sich auf die Pension vorbereiten? Nein, meinen die einen: keine Zeit. Keine Lust. Andere schmieden Pläne: eine Radreise zum Atlantik, Italienisch-Lernen, die Wohnung renovieren, weiterarbeiten. &quot;Die Pensionierung ist einer der größten Umbrüche im Leben&quot;, sagt eine 59-Jährige, die Workshops zum &quot;Tag X&quot; gibt. Sie beobachtet: auf die &quot;Honeymoon&quot;-Phase folgt oft große Ernüchterung. Worauf muss man sich gefasst machen? Gespräche mit Pensionsanwärtern, -neulingen und &quot;alten Hasen&quot;. Folge 1 von &quot;Hilfe! Andrea geht in Pension&quot;, der Podcast gegen den Pensionsschock Gestaltung: Andrea Hauer, Pensionistin ab 1. August 2027</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -3551,6 +3999,35 @@
             <div class="description-text">Das Jubiläumsjahr &quot;250 Jahre USA&quot; nähert sich seinem Ende und es stellt sich mehr denn je die Frage, was es denn da überhaupt zu feiern gab - für die USA, für die Welt. Trifft jene europäische Perspektive zu, die tendenziell eine skeptische bis negative Sicht auf Nordamerika entwickelt hat, oder ist das alles ein Irrtum, und wir verzeichnen die Vereinigten Staaten in ihrer historischen und aktuellen Entwicklung? Martin Haidinger holt in der &quot;Science Arena&quot; österreichische Fachleute für die USA vors Mikrofon, die einiges von der Welt gesehen haben und die westliche Supermacht einordnen - vielleicht ganz neu und überraschend?</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/sciencearena" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="12" data-search="moment: afrikanische studierende – zwischen kulturschock und karriereboost zwischen kulturschock und karriereboost  europa kannten sie aus dem fernsehen, den sozialen medien und der geschichte ihrer länder - jetzt studieren sie in österreich. selbst hier zu sein ist dann doch anders, sagen eine touristenführerin aus benin, ein agrarwissenschaftler aus nigeria und ein dj aus uganda. sie erzählen von gutem essen, bitterer einsamkeit und überraschenden aha-erlebnissen. wie erleben sie die österreichische uni und gesellschaft? und was nehmen sie mit, wenn sie zurückkehren? gestaltung: joshua mingers">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Afrikanische Studierende – Zwischen Kulturschock und Karriereboost</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Zwischen Kulturschock und Karriereboost</div>
+            </div>
+            <div class="description-text">Europa kannten sie aus dem Fernsehen, den sozialen Medien und der Geschichte ihrer Länder - jetzt studieren sie in Österreich. Selbst hier zu sein ist dann doch anders, sagen eine Touristenführerin aus Benin, ein Agrarwissenschaftler aus Nigeria und ein DJ aus Uganda. Sie erzählen von gutem Essen, bitterer Einsamkeit und überraschenden Aha-Erlebnissen. Wie erleben sie die österreichische Uni und Gesellschaft? Und was nehmen sie mit, wenn sie zurückkehren? Gestaltung: Joshua Mingers</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -3920,6 +4397,35 @@
     </section>
     <section class="day-section" data-date="2026-10-30" data-days-ago="15">
       <h2 class="day-title">📅 Freitag, 30. Oktober 2026</h2>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="15" data-search="kontext - sachbücher und themen: krisenbewältigung, wirtschaftspolitik, weltraumfieber, ernährung – redaktion: wolfgang ritschl redaktion: wolfgang ritschl  &quot;der phoenix-effekt&quot;: die historikerin annette kehnel beschreibt, wie gesellschaften krisen bewältigt haben und was wir heute daraus lernen können (buch: rowohlt verlag) beitrag: maicke mackerodt &quot;antifaschistische wirtschaftspolitik&quot;: die ökonomin isabella m. weber erläutert, wie der aufstieg der extremen rechten mit der richtigen wirtschaftspolitik gestoppt werden kann (buch: edition suhrkamp) rezension: andrea roedig &quot;astronautenfieber&quot;: patrick kilian über die geschichte einer sehnsucht 1945-1969 (buch: brandstätter verlag) studiogespräch: wolfgang ritschl &quot;bad food&quot;: chris methmann mit ideen, wie wir die kontrolle über unsere ernährung zurückgewinnen (buch: ullstein verlag) rezension: thomas weber das album der woche: &quot;autosmile&quot; von @ (4ad / indigo) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 22:08 – 23:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Krisenbewältigung, Wirtschaftspolitik, Weltraumfieber, Ernährung – Redaktion: Wolfgang Ritschl</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Redaktion: Wolfgang Ritschl</div>
+            </div>
+            <div class="description-text">&quot;Der Phoenix-Effekt&quot;: Die Historikerin Annette Kehnel beschreibt, wie Gesellschaften Krisen bewältigt haben und was wir heute daraus lernen können (Buch: Rowohlt Verlag) Beitrag: Maicke Mackerodt &quot;Antifaschistische Wirtschaftspolitik&quot;: Die Ökonomin Isabella M. Weber erläutert, wie der Aufstieg der extremen Rechten mit der richtigen Wirtschaftspolitik gestoppt werden kann (Buch: edition suhrkamp) Rezension: Andrea Roedig &quot;Astronautenfieber&quot;: Patrick Kilian über die Geschichte einer Sehnsucht 1945-1969 (Buch: Brandstätter Verlag) Studiogespräch: Wolfgang Ritschl &quot;Bad Food&quot;: Chris Methmann mit Ideen, wie wir die Kontrolle über unsere Ernährung zurückgewinnen (Buch: Ullstein Verlag) Rezension: Thomas Weber Das Album der Woche: &quot;Autosmile&quot; von @ (4ad / Indigo) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontextwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="matrix - computer &amp; neue medien" data-days-ago="15" data-search="matrix - computer &amp; neue medien: abschiednehmen in zeiten von ki – wie technologie neue formen der erinnerung schafft wie technologie neue formen der erinnerung schafft  trauer findet längst nicht mehr nur auf friedhöfen statt: sogenannte griefbots, digitale seelsorgeangebote und der umgang mit dem eigenen digitalen nachlass verlagern trauer zunehmend ins internet. welche chancen diese neuen technologien bieten und wo die ethischen grenzen liegen, das schaut sich anna tratter für matrix an. sie berichtet, welche möglichkeiten und risiken ki in der trauerbegleitung bietet und warum unser digitales erbe eine immer größere bedeutung bekommt. neue spielwiesen der desinformation bis vor kurzem waren vor allem social plattformen die orte, an denen desinformations-kampagnen und fake news verbreitet wurden. das sind sie zwar immer noch, aber im zeitalter der künstlichen intelligenz kommen hier noch weitere schauplätze dazu. ulla ebner war vor kurzem auf einer großen desinformationskonferenz in vilnius und hat dort mit forschern über neue die neuen schauplätze der desinformation gesprochen: zum beispiel ki-freunde und online-wettplattformen.">
         <div class="card-meta">
           <span class="show-badge">matrix - computer &amp; neue medien</span>
@@ -3983,6 +4489,31 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="15" data-search="moment - kulinarium: multitalent mayonnaise   mayonnaise ist - eigentlich - simpel, besteht sie doch nur aus dotter, öl, säure und salz. ihre einmalig samtige textur ergibt sich allerdings nur, wenn alles korrekt verrührt wird, und zwar so lange, bis eine emulsion entsteht. ein fehler, und es misslingt. zu pommes und als basis für dips und saucen ist mayonnaise allgegenwärtig. in der spanischen und südfranzösischen aioli-variante spielt etwa knoblauch eine wesentliche rolle. moment kulinarium über die wunderbare, wandelbare, weiße sauce. eine wiederholung von februar 2026">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment - Kulinarium: Multitalent Mayonnaise</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">Mayonnaise ist - eigentlich - simpel, besteht sie doch nur aus Dotter, Öl, Säure und Salz. Ihre einmalig samtige Textur ergibt sich allerdings nur, wenn alles korrekt verrührt wird, und zwar so lange, bis eine Emulsion entsteht. Ein Fehler, und es misslingt. Zu Pommes und als Basis für Dips und Saucen ist Mayonnaise allgegenwärtig. In der spanischen und südfranzösischen Aioli-Variante spielt etwa Knoblauch eine wesentliche Rolle. Moment Kulinarium über die wunderbare, wandelbare, weiße Sauce. Eine Wiederholung von Februar 2026</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="15" data-search="punkt eins: gen z übernimmt die welt – jugendproteste weiten sich aus - und bewirken veränderungen jugendproteste weiten sich aus - und bewirken veränderungen gäste: rebekka dober, geschäftsführerin &quot;yep - stimme der jugend&quot;; veronika wöhrer, univ.-professorin für bildung und ungleichheit, insitut für bildungswissenschaft, universität wien. moderation: xaver forthuber. anrufe 0800 22 69 79 | punkteins(at)orf.at eine welle von protesten überzieht derzeit europa - nicht nur in frankreich, auch in italien, albanien oder belgien gehen menschen für ihre zukunft auf die straße. getragen werden die proteste ganz wesentlich von der &quot;generation z&quot; der jugendlichen und jungen erwachsenen, die um die jahrtausendwende geboren sind. in deutschland wird unter dem titel &quot;gen z regelt&quot; für samstag zu landesweiten, friedlichen kundgebungen aufgerufen. die forderungen der initiative: &quot;eine politik, die in bildung, soziale sicherheit, gesundheit, klimaschutz und bezahlbares leben investiert.&quot; deutsche jugendliche, die die zdf-sendung &quot;heute&quot; im vorfeld befragt hat, distanzieren sich überwiegend von gewalteskalationen wie in frankreich, finden es aber genau so wichtig, &quot;einmal aufzustehen&quot; und &quot;ein zeichen zu setzen&quot;; denn auch in unserem nachbarland ist bei den jungen die ansicht verbreitet, dass die politik &quot;mit unserer zukunft spielt&quot;. die forderungen sind überall ähnlich; an der spitze stehen bildungschancen, die viele derzeit nicht eingelöst sehen oder soziale gerechtigkeit vermissen. steigende lebenshaltungskosten und der umgang mit der umwelt werden ebenfalls allerorts ventiliert. ein weiteres übergreifendes thema: die dringlichkeit und die forderung nach echter mitbestimmung (&quot;unsere zukunft liegt in unseren händen&quot;). dass die junge generation veränderung bewirken kann, hat sie längst bewiesen. 2024 und 2025 wurden zuerst in bangladesch, dann auch in kenia, nepal, madagaskar oder marokko jugendproteste laut und zogen teils einschneidende politische umbrüche nach sich. zuletzt wurden autokratische regierungen in ungarn, serbien und brasilien abgewählt - und immer gelten basisbewegungen als zentraler faktor, die auch oder sogar großteils von jugendlichen und jungen erwachsenen getragen werden. vielen ihrer forderungen können sich breite teile der bevölkerung ganz generationenübergreifend anschließen, wie nicht zuletzt in frankreich zu sehen war. wie sich der anfang des erwachsenseins in der welt des 21. jahrhunderts anfühlt, welche themen auf der agenda der unmittelbaren zukunft stehen und welche formen der politischen partizipation dafür die (neue) lösung sein könnten, darüber diskutieren die sozialunternehmerin rebekka dober und die bildungsforscherin veronika wöhrer mit xaver forthuber. reden sie mit: rufen sie in der sendung an unter 0800 22 69 79 oder schreiben sie ein e-mail an punkteins(at)orf.at.">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -4009,6 +4540,64 @@
             <div class="description-text">Eine Welle von Protesten überzieht derzeit Europa - nicht nur in Frankreich, auch in Italien, Albanien oder Belgien gehen Menschen für ihre Zukunft auf die Straße. Getragen werden die Proteste ganz wesentlich von der &quot;Generation Z&quot; der Jugendlichen und jungen Erwachsenen, die um die Jahrtausendwende geboren sind. In Deutschland wird unter dem Titel &quot;Gen Z regelt&quot; für Samstag zu landesweiten, friedlichen Kundgebungen aufgerufen. Die Forderungen der Initiative: &quot;Eine Politik, die in Bildung, soziale Sicherheit, Gesundheit, Klimaschutz und bezahlbares Leben investiert.&quot; Deutsche Jugendliche, die die ZDF-Sendung &quot;heute&quot; im Vorfeld befragt hat, distanzieren sich überwiegend von Gewalteskalationen wie in Frankreich, finden es aber genau so wichtig, &quot;einmal aufzustehen&quot; und &quot;ein Zeichen zu setzen&quot;; denn auch in unserem Nachbarland ist bei den Jungen die Ansicht verbreitet, dass die Politik &quot;mit unserer Zukunft spielt&quot;. Die Forderungen sind überall ähnlich; an der Spitze stehen Bildungschancen, die viele derzeit nicht eingelöst sehen oder soziale Gerechtigkeit vermissen. Steigende Lebenshaltungskosten und der Umgang mit der Umwelt werden ebenfalls allerorts ventiliert. Ein weiteres übergreifendes Thema: Die Dringlichkeit und die Forderung nach echter Mitbestimmung (&quot;unsere Zukunft liegt in unseren Händen&quot;). Dass die junge Generation Veränderung bewirken kann, hat sie längst bewiesen. 2024 und 2025 wurden zuerst in Bangladesch, dann auch in Kenia, Nepal, Madagaskar oder Marokko Jugendproteste laut und zogen teils einschneidende politische Umbrüche nach sich. Zuletzt wurden autokratische Regierungen in Ungarn, Serbien und Brasilien abgewählt - und immer gelten Basisbewegungen als zentraler Faktor, die auch oder sogar großteils von Jugendlichen und jungen Erwachsenen getragen werden. Vielen ihrer Forderungen können sich breite Teile der Bevölkerung ganz generationenübergreifend anschließen, wie nicht zuletzt in Frankreich zu sehen war. Wie sich der Anfang des Erwachsenseins in der Welt des 21. Jahrhunderts anfühlt, welche Themen auf der Agenda der unmittelbaren Zukunft stehen und welche Formen der politischen Partizipation dafür die (neue) Lösung sein könnten, darüber diskutieren die Sozialunternehmerin Rebekka Dober und die Bildungsforscherin Veronika Wöhrer mit Xaver Forthuber. Reden Sie mit: Rufen Sie in der Sendung an unter 0800 22 69 79 oder schreiben Sie ein E-Mail an punkteins(at)orf.at.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Ö1 Essay" data-days-ago="15" data-search="ö1 essay: phänomene des überwinterns &quot;überwintern. lebensstrategien in dürftiger zeit&quot; von armen avanessian. es liest michael dangl.  der österreichische philosoph armen avanessian - bekannt geworden mit seinen arbeiten über den spekulativen realismus - befasst sich mit fragen möglicher zukünfte angesichts von planetarischen polykrisen, trump 2.0, klimawandel, ki, digitaler und institutioneller erschöpfung. die evolutionär effiziente naturtechnik der winterruhe hat ihn zu einem neuen denkmodell inspiriert. er verbindet philosophische reflexion mit kulturanalyse: winterschlaf wird zur metapher für konkrete strategien des hinunterfahrens und wiederhochfahrens inmitten von hyperaktivität und wachstumszwang. armen avanessian, 1973 in wien geboren, philosoph und politischer theoretiker, ist professor für medientheorie an der zeppelin universität friedrichshafen. er ist bekannt für seine beiträge zum akzelerationismus und zur spekulativen philosophie. zu seinen jüngsten veröffentlichungen zählen konflikt, flüchtigkeitsmanagement und planetarische ethik.">
+        <div class="card-meta">
+          <span class="show-badge">Ö1 Essay</span>
+          <span class="broadcast-time">🕒 11:05 – 11:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ö1 Essay: Phänomene des Überwinterns</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Überwintern. Lebensstrategien in dürftiger Zeit&quot; von Armen Avanessian. Es liest Michael Dangl.</div>
+            </div>
+            <div class="description-text">Der österreichische Philosoph Armen Avanessian - bekannt geworden mit seinen Arbeiten über den Spekulativen Realismus - befasst sich mit Fragen möglicher Zukünfte angesichts von planetarischen Polykrisen, Trump 2.0, Klimawandel, KI, digitaler und institutioneller Erschöpfung. Die evolutionär effiziente Naturtechnik der Winterruhe hat ihn zu einem neuen Denkmodell inspiriert. Er verbindet philosophische Reflexion mit Kulturanalyse: Winterschlaf wird zur Metapher für konkrete Strategien des Hinunterfahrens und Wiederhochfahrens inmitten von Hyperaktivität und Wachstumszwang. Armen Avanessian, 1973 in Wien geboren, Philosoph und politischer Theoretiker, ist Professor für Medientheorie an der Zeppelin Universität Friedrichshafen. Er ist bekannt für seine Beiträge zum Akzelerationismus und zur spekulativen Philosophie. Zu seinen jüngsten Veröffentlichungen zählen Konflikt, Flüchtigkeitsmanagement und Planetarische Ethik.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="15" data-search="kontext - sachbücher und themen: krisenbewältigung, wirtschaftspolitik, weltraumfieber, ernährung – redaktion: wolfgang ritschl redaktion: wolfgang ritschl  &quot;der phoenix-effekt&quot;: die historikerin annette kehnel beschreibt, wie gesellschaften krisen bewältigt haben und was wir heute daraus lernen können (buch: rowohlt verlag) beitrag: maicke mackerodt &quot;antifaschistische wirtschaftspolitik&quot;: die ökonomin isabella m. weber erläutert, wie der aufstieg der extremen rechten mit der richtigen wirtschaftspolitik gestoppt werden kann (buch: edition suhrkamp) rezension: andrea roedig &quot;astronautenfieber&quot;: patrick kilian über die geschichte einer sehnsucht 1945-1969 (buch: brandstätter verlag) studiogespräch: wolfgang ritschl &quot;bad food&quot;: chris methmann mit ideen, wie wir die kontrolle über unsere ernährung zurückgewinnen (buch: ullstein verlag) rezension: thomas weber das album der woche: &quot;autosmile&quot; von @ (4ad / indigo) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 09:05 – 10:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Krisenbewältigung, Wirtschaftspolitik, Weltraumfieber, Ernährung – Redaktion: Wolfgang Ritschl</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Redaktion: Wolfgang Ritschl</div>
+            </div>
+            <div class="description-text">&quot;Der Phoenix-Effekt&quot;: Die Historikerin Annette Kehnel beschreibt, wie Gesellschaften Krisen bewältigt haben und was wir heute daraus lernen können (Buch: Rowohlt Verlag) Beitrag: Maicke Mackerodt &quot;Antifaschistische Wirtschaftspolitik&quot;: Die Ökonomin Isabella M. Weber erläutert, wie der Aufstieg der extremen Rechten mit der richtigen Wirtschaftspolitik gestoppt werden kann (Buch: edition suhrkamp) Rezension: Andrea Roedig &quot;Astronautenfieber&quot;: Patrick Kilian über die Geschichte einer Sehnsucht 1945-1969 (Buch: Brandstätter Verlag) Studiogespräch: Wolfgang Ritschl &quot;Bad Food&quot;: Chris Methmann mit Ideen, wie wir die Kontrolle über unsere Ernährung zurückgewinnen (Buch: Ullstein Verlag) Rezension: Thomas Weber Das Album der Woche: &quot;Autosmile&quot; von @ (4ad / Indigo) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontext" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -4185,6 +4774,31 @@
           <div class="details-body">
             <div class="card-footer">
               <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="16" data-search="moment: wie wir uns mit düften schmücken - und warum   gerüche wecken erinnerungen - und emotionen. von den düften der kindheit über duft-vorlieben bis zum selbstgewählten duft-design. die antwort auf die frage, wie man riechen will, ändert sich je nach lebensphase, stimmung oder jahreszeit. neben den großen trends entwickelte sich ein blühender nischenmarkt. die junge generation legt wieder mehr wert darauf, sich in ihre individuelle duft-&quot;signatur&quot; zu kleiden. moment hat mit drei menschen gesprochen, die sich der welt der düfte verschrieben haben.">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Wie wir uns mit Düften schmücken - und warum</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">Gerüche wecken Erinnerungen - und Emotionen. Von den Düften der Kindheit über Duft-Vorlieben bis zum selbstgewählten Duft-Design. Die Antwort auf die Frage, wie man riechen will, ändert sich je nach Lebensphase, Stimmung oder Jahreszeit. Neben den großen Trends entwickelte sich ein blühender Nischenmarkt. Die junge Generation legt wieder mehr Wert darauf, sich in ihre individuelle Duft-&quot;Signatur&quot; zu kleiden. Moment hat mit drei Menschen gesprochen, die sich der Welt der Düfte verschrieben haben.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -4550,6 +5164,31 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="17" data-search="moment: tischtennis als aufschlag zum gemeinschaftsdenken   gemeinsam tischtennis spielen im öffentlichen raum - unabhängig von spielniveau, alter, sexueller orientierung, herkunft und klasse. das ist die idee des vereins umdi in wien. im park, auf festivals und in einer still gelegten garage spielen menschen aus unterschiedlichen lebenswelten und kommen ins gespräch. sophia widmann, gründungsmitglied des vereins: &quot;es geht darum, wieder orte der zusammenkunft zu finden, an denen sich alle auf eine sache einigen können: tischtennis macht spaß.&quot; gestaltung: lara egger und sandra knopp">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Tischtennis als Aufschlag zum Gemeinschaftsdenken</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">Gemeinsam Tischtennis spielen im öffentlichen Raum - unabhängig von Spielniveau, Alter, sexueller Orientierung, Herkunft und Klasse. Das ist die Idee des Vereins UMDI in Wien. Im Park, auf Festivals und in einer still gelegten Garage spielen Menschen aus unterschiedlichen Lebenswelten und kommen ins Gespräch. Sophia Widmann, Gründungsmitglied des Vereins: &quot;Es geht darum, wieder Orte der Zusammenkunft zu finden, an denen sich alle auf eine Sache einigen können: Tischtennis macht Spaß.&quot; Gestaltung: Lara Egger und Sandra Knopp</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="17" data-search="punkt eins: heizung sanieren, heizung tauschen – heizen als klimafaktor heizen als klimafaktor gäste: dr. wolfgang amann, geschäftsführer, iibw - institut für immobilen, bauen und wohnen gmbh; dr. stefan nabernegg, forschungsgruppe ökonomik des klima- und umweltwandels (econclim), universität graz. moderation: marlene nowotny. anrufe 0800 22 69 79 | punkteins(at)orf.at die europäische union strebt klimaneutralität bis zum jahr 2050 an. das bedeutet, dass die treibhausgas-bilanz aller mitgliedsstaaten ausgeglichen sein soll. gelangen kohlendioxid, methan oder lachgas in die atmosphäre, muss das kompensiert werden - durch aufforstung etwa oder technische verfahren, mit denen co2 gespeichert werden kann. viel wichtiger als &quot;auszugleichen&quot; ist es jedoch, treibausgasemissionen zu reduzieren bzw. überhaupt zu vermeiden. dazu gehören erneuerbare energien statt kohle, öl und gas, also auch klimafreundliche heizungen und energieeffiziente wohnungen und häuser. gebäude verursachen in europa einen großen teil der emissionen, vor allem durch heizen und warmwasser. in österreich liegt der anteil des gebäudesektors bei grob 10 bis 15 prozent der treibhausgasemissionen. hinzu kommt schlechte energieeffizienz bei vielen gebäuden im altbestand, also schlecht gedämmte fenster, wände und dächer. die sanierungsrate ist gering. doch auch beim neubau gibt es nachholbedarf, was die langfristige energieeffizienz betrifft. eine neue sanierungsoffensive für das jahr 2027, die die bundesregierung anfang oktober vorgestellt hat, soll dazu beitragen, im wohnsektor schneller klimaneutral zu werden. insgesamt stehen 500 millionen euro an fördergeld zur verfügung, 321 millionen euro für thermische sanierung, 179 millionen für heizkesseltausch. im heizungsbereich werden die ersten 20 millionen noch heuer vergeben, neue anträge sind ab 2. november möglich. reichen solche fördervorhaben für einen koordinierten ausstieg aus fossiler energie im wohnbereich? wie steht es um den sanierungsfortschritt im altbau? und warum ist heizen nicht nur eine frage der klimaneutralität, sondern zunehmend auch sozialer gerechtigkeit? über diese frage spricht marlene nowotny mit dem wohnbauforscher wolfgang amann und dem klimaökonomen stefan nabernegg. und mit ihnen: welche erfahrungen haben sie bisher mit heizungstausch und sanierung im wohnbereich gemacht? rufen sie in der sendung an, sie erreichen uns unter 0800 22 69 79 (kostenfrei aus ganz österreich) oder schreiben sie ein email an punkteins(at)orf.at.">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -4844,6 +5483,31 @@
             <div class="description-text">Ob Roboter für die Medizin und den Bienenstock oder Fischkäfige mit Überbleibseln der Weinproduktion: Für Ideen wie diese ist Europas größte Makerfaire in Rom der perfekte Ort. 55.000 Menschen haben das Innovationsfestival am Wochenende im römischen Stadtteil Ostiense besucht. Die Makerfaire in Rom ist die größte neben jener in der Bay Area in San Francisco - und ebenso spektakulär. In den 400 Kojen beim Gazometro in Rom präsentieren Bastler ebenso wie Universitäten ihre Ideen für die Zukunft. Franz Zeller war dabei.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="18" data-search="moment: vom rundumblick im straßenverkehr   wer autofahren lernt, weiß, wie schwer es am anfang ist, das lenken, schalten, schauen und bremsen unter einen hut zu bringen. je mehr routine, desto reibungsloser kann gefahren und zugleich die umgebung und alle, die sich darin bewegen, im auge behalten werden. zumindest in der theorie. radfahrer, fußgängerinnen, pkw- und lkw-lenker erzählen, wann und wie sie andere im verkehr wahrnehmen und welche rolle ein perspektivenwechsel im straßenverkehr spielt. eine reportage zwischen gehsteig und fahrbahn.eine wiederholung von november 2025.">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 15:30 – 15:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Vom Rundumblick im Straßenverkehr</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">Wer Autofahren lernt, weiß, wie schwer es am Anfang ist, das Lenken, Schalten, Schauen und Bremsen unter einen Hut zu bringen. Je mehr Routine, desto reibungsloser kann gefahren und zugleich die Umgebung und alle, die sich darin bewegen, im Auge behalten werden. Zumindest in der Theorie. Radfahrer, Fußgängerinnen, PKW- und LKW-Lenker erzählen, wann und wie sie andere im Verkehr wahrnehmen und welche Rolle ein Perspektivenwechsel im Straßenverkehr spielt. Eine Reportage zwischen Gehsteig und Fahrbahn.Eine Wiederholung von November 2025.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -5214,6 +5878,35 @@
     </section>
     <section class="day-section" data-date="2026-10-23" data-days-ago="22">
       <h2 class="day-title">📅 Freitag, 23. Oktober 2026</h2>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="22" data-search="kontext - sachbücher und themen: russland, lissabonverfassung, bedrohte kulturen – die verfassung hat mit unserem leben mehr zu tun als wir glauben die verfassung hat mit unserem leben mehr zu tun als wir glauben  &quot;dieses verfluchte wunderschöne land&quot;: der journalist evan gershkovich über 491 tage in russischer haft (buch: dva) beitrag: madeleine amberger &quot;lissabon 1941&quot;: alexander smoltczyk über die stadt der spione und den hafen der hoffnung (buch: dtv) rezension: holger heimann &quot;verfassung. na und?&quot;: stefanie jaksch über grundrechte, institutionen und die spielregeln der politik (buch: molden verlag) studiogespräch: wolfgang ritschl &quot;letzte stimmen&quot;: der fotograf michael runkel über bedrohte kulturen unserer erde (bildband: callwey verlag) rezension: maicke mackerodt das album der woche: &quot;the meaning of flowers&quot; von agnes obel (deutsche grammophon/universal) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 21:08 – 22:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Russland, LissabonVerfassung, bedrohte Kulturen – Die Verfassung hat mit unserem Leben mehr zu tun als wir glauben</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Die Verfassung hat mit unserem Leben mehr zu tun als wir glauben</div>
+            </div>
+            <div class="description-text">&quot;Dieses verfluchte wunderschöne Land&quot;: Der Journalist Evan Gershkovich über 491 Tage in russischer Haft (Buch: DVA) Beitrag: Madeleine Amberger &quot;Lissabon 1941&quot;: Alexander Smoltczyk über die Stadt der Spione und den Hafen der Hoffnung (Buch: dtv) Rezension: Holger Heimann &quot;Verfassung. Na und?&quot;: Stefanie Jaksch über Grundrechte, Institutionen und die Spielregeln der Politik (Buch: Molden Verlag) Studiogespräch: Wolfgang Ritschl &quot;Letzte Stimmen&quot;: Der Fotograf Michael Runkel über bedrohte Kulturen unserer Erde (Bildband: Callwey Verlag) Rezension: Maicke Mackerodt Das Album der Woche: &quot;The Meaning of Flowers&quot; von Agnes Obel (Deutsche Grammophon/Universal) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontextwh" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="matrix - computer &amp; neue medien" data-days-ago="22" data-search="matrix - computer &amp; neue medien: #casino-secrets zu illegalem online-glücksspiel – datenleck zeigt spuren von curacao bis nach österreich datenleck zeigt spuren von curacao bis nach österreich  poker am smartphone in den öffis, roulette in der mittagspause oder black jack um mitternacht - online-casinos sind im netz nur ein paar klicks entfernt. legal ist in österreich aktuell nur win2day.at. und trotzdem findet man etliche illegale seiten im netz. seiten, auf denen menschen hunderttausende euro verlieren. rund 60.000 personen sind in österreich laut anton proksch institut süchtig nach online-glücksspiel oder stark gefährdet. die casinounternehmen, die davon profitieren sitzen neben malta oft auf dem kleinen inselstaat curacao in der karibik. wer hinter den hunderten casinofirmen steckt, war lange unklar, denn öffentliche daten führten nur zu treuhändern. ein datenleck und eine internationale recherche rund um die #casino-secrets enthüllen die wirtschaftlichen eigentümer. viele spuren führen nach europa, darunter auch welche nach österreich. sie hören eine recherche von benajmin breitegger - eine kooperation mit dem onlinemedium jetzt.at.">
         <div class="card-meta">
           <span class="show-badge">matrix - computer &amp; neue medien</span>
@@ -5277,6 +5970,35 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="22" data-search="moment - kulinarium: mohn: kleine körner, großer geschmack – mehr als mohnstrudel mehr als mohnstrudel  mohn entfaltet sein volles aroma erst, wenn die samen gemahlen oder gequetscht werden. dann verfeinern sie mohnzelten, füllen strudel oder landen bei mohnnudeln direkt in der pfanne. doch mohn kann auch pikant: als aromatisches öl oder würziges pesto. die traditionsreiche nutzpflanze wird in österreich vor allem im waldviertel angebaut. besonders beliebt ist der graumohn - weißmohn mit seinem nussigen geschmack und herber blaumohn sind seltener zu finden. eine wiederholung von juni 2024. gestaltung: kathrin wimmer kostnotizen: eine ära geht zu ende: die obauer-brüder sperren zu am nationalfeiertag wird das letzte mahl serviert. karl und rudi obauer schließen nach 47 jahren ihr renommiertes restaurant in werfen im pongau und treten den ruhestand an. ein nachruf. gestaltung: johanna steiner">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 14:30 – 14:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment - Kulinarium: Mohn: kleine Körner, großer Geschmack – Mehr als Mohnstrudel</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Mehr als Mohnstrudel</div>
+            </div>
+            <div class="description-text">Mohn entfaltet sein volles Aroma erst, wenn die Samen gemahlen oder gequetscht werden. Dann verfeinern sie Mohnzelten, füllen Strudel oder landen bei Mohnnudeln direkt in der Pfanne. Doch Mohn kann auch pikant: als aromatisches Öl oder würziges Pesto. Die traditionsreiche Nutzpflanze wird in Österreich vor allem im Waldviertel angebaut. Besonders beliebt ist der Graumohn - Weißmohn mit seinem nussigen Geschmack und herber Blaumohn sind seltener zu finden. Eine Wiederholung von Juni 2024. Gestaltung: Kathrin Wimmer Kostnotizen: Eine Ära geht zu Ende: die Obauer-Brüder sperren zu Am Nationalfeiertag wird das letzte Mahl serviert. Karl und Rudi Obauer schließen nach 47 Jahren ihr renommiertes Restaurant in Werfen im Pongau und treten den Ruhestand an. Ein Nachruf. Gestaltung: Johanna Steiner</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="22" data-search="punkt eins: auch sterben kann man lernen kurt-langbein-film: aspekte eines tabuthemas. gast: kurt langbein, wissenschaftsjournalist, dokumentarfilmer moderation: andreas obrecht. anrufe 0800 22 69 79 | punkteins(at)orf.at tod und sterben sind nach wie vor in unserer gesellschaft häufig tabuisiert - verdrängung, verschweigen, verzweiflung und hilflosigkeit bestimmen oft den umgang mit der unausweichlichen menschlichen endlichkeit. dem renommierten wissenschaftsjournalisten und dokumentarfilmer kurt langbein wurde vor vielen jahren eine krebskrankheit diagnostiziert, die vorerst erfolgreich behandelt werden konnte, aber nach 5 jahren wiederkam. zehn jahre lebte er mit der krankheit und in der hoffnung auf gesundung, bis ihm im dezember 2023 gesagt wurde, dass aufgrund vieler metastasen eine heilung unmöglich geworden ist. in dem film &quot;sterben für anfänger&quot; begibt sich kurt langbein auf eine berührende, einfühlsame und weitläufige reise zu intensiven gedanken und gefühlen, zu ängsten, zweifeln und hoffnungen. er lässt die bemühungen der palliativmedizin ausführlich zu wort kommen, spricht mit philosophen, psychotherapeuten und spirituellen heilern aus außereuropäischen kulturen und teilt die erinnerung von menschen, die nahtoderfahrungen gemacht haben, die überall auf der welt ähnlichen mustern folgen. entstanden ist eine ebenso kluge wie mutige filmische auseinandersetzung mit der letzten menschlichen bestimmung, der wir unsere erfahrung und unser ganzes leben verdanken: denn würden wir nicht sterben, wären wir niemals geboren worden! kurt langbein ist zu gast bei andreas obrecht und wie immer freut sich die reaktion über ihre teilnahme kostenfrei aus ganz österreich unter 0800 22 69 79 erreichen und an punkteins(at)orf.at wie gehen sie mit endlichkeit, sterben und tod um? haben sie freundinnen, freunde oder angehörige, die nur mehr kurz zu leben haben oder sind sie selbst von einem möglicherweise nahen tod betroffen? welche rolle spielt ihr weltbild, wenn es darum geht, die eigene begrenztheit und sterblichkeit zu ertragen? welche bedeutung haben spiritualität und religion angesichts des bevorstehenden endes? was hat es mit nahtoderfahrungen auf sich und welchen mustern folgen sie? was gibt ihnen generell hoffnung in scheinbar ausweglosen situationen?">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -5303,6 +6025,64 @@
             <div class="description-text">Tod und Sterben sind nach wie vor in unserer Gesellschaft häufig tabuisiert - Verdrängung, Verschweigen, Verzweiflung und Hilflosigkeit bestimmen oft den Umgang mit der unausweichlichen menschlichen Endlichkeit. Dem renommierten Wissenschaftsjournalisten und Dokumentarfilmer Kurt Langbein wurde vor vielen Jahren eine Krebskrankheit diagnostiziert, die vorerst erfolgreich behandelt werden konnte, aber nach 5 Jahren wiederkam. Zehn Jahre lebte er mit der Krankheit und in der Hoffnung auf Gesundung, bis ihm im Dezember 2023 gesagt wurde, dass aufgrund vieler Metastasen eine Heilung unmöglich geworden ist. In dem Film &quot;Sterben für Anfänger&quot; begibt sich Kurt Langbein auf eine berührende, einfühlsame und weitläufige Reise zu intensiven Gedanken und Gefühlen, zu Ängsten, Zweifeln und Hoffnungen. Er lässt die Bemühungen der Palliativmedizin ausführlich zu Wort kommen, spricht mit Philosophen, Psychotherapeuten und spirituellen Heilern aus außereuropäischen Kulturen und teilt die Erinnerung von Menschen, die Nahtoderfahrungen gemacht haben, die überall auf der Welt ähnlichen Mustern folgen. Entstanden ist eine ebenso kluge wie mutige filmische Auseinandersetzung mit der letzten menschlichen Bestimmung, der wir unsere Erfahrung und unser ganzes Leben verdanken: Denn würden wir nicht sterben, wären wir niemals geboren worden! Kurt Langbein ist zu Gast bei Andreas Obrecht und wie immer freut sich die Reaktion über Ihre Teilnahme kostenfrei aus ganz Österreich unter 0800 22 69 79 erreichen und an punkteins(at)orf.at Wie gehen Sie mit Endlichkeit, Sterben und Tod um? Haben Sie Freundinnen, Freunde oder Angehörige, die nur mehr kurz zu leben haben oder sind Sie selbst von einem möglicherweise nahen Tod betroffen? Welche Rolle spielt Ihr Weltbild, wenn es darum geht, die eigene Begrenztheit und Sterblichkeit zu ertragen? Welche Bedeutung haben Spiritualität und Religion angesichts des bevorstehenden Endes? Was hat es mit Nahtoderfahrungen auf sich und welchen Mustern folgen Sie? Was gibt Ihnen generell Hoffnung in scheinbar ausweglosen Situationen?</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Ö1 Essay" data-days-ago="22" data-search="ö1 essay: populismus und architektur &quot;straße, platz, palast: zur architektur demokratischer räume&quot;. von jan-werner müller. aus dem englischen übersetzt von michael bischoff. es liest christoph radakovits.  wer regiert, baut. waren es früher könige und kaiser, die sich paläste errichteten, um dem volk ihre macht zu demonstrieren, sind es nun demokratische staaten, die repräsentationsgebäude in auftrag geben. jan-werner müller untersucht in seinem buch &quot;straße, platz, palast. zur architektur demokratischer räume&quot; die beziehung zwischen politik und der gebauten umwelt. der deutsche politikwissenschaftler, der an der princeton university in den usa unterrichtet, blickt dabei auch auf jene gewählten volksvertreter, die dem populismus zuzuordnen sind, wie donald trump, recep tayyip erdogan und - den mittlerweile abgewählten - viktor orbán. donald trump erklärte in einer seiner präsidialverordnungen den klassizismus zum bevorzugten stil für bundesgebäude. damit solle der öffentliche raum verschönert werden. modernistische architektur bezeichnete er als wenig ansprechend. öffentliche gebäude sollen &quot;das amerikanische volk inspirieren und den bürgersinn&quot; fördern und ein &quot;sichtbares zeugnis für die würde, die tatkraft, die vitalität und die stabilität der amerikanischen regierung&quot; ablegen. klassische architektur würde eine visuelle verbindung zu den vorläufern der demokratie in der klassischen antike herstellen. während die demokratie keine spezielle ikonographie zu haben scheint beziehungsweise ihr visuelles programm immer wieder hinterfragt, zeigen regierende populisten einen hang zum monumentalen und zelebrieren eine &quot;angebliche rekonstruktion als rückkehr zu authentizität und größe des volkes&quot;, meint jan-werner müller.">
+        <div class="card-meta">
+          <span class="show-badge">Ö1 Essay</span>
+          <span class="broadcast-time">🕒 10:05 – 10:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ö1 Essay: Populismus und Architektur</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Straße, Platz, Palast: Zur Architektur demokratischer Räume&quot;. Von Jan-Werner Müller. Aus dem Englischen übersetzt von Michael Bischoff. Es liest Christoph Radakovits.</div>
+            </div>
+            <div class="description-text">Wer regiert, baut. Waren es früher Könige und Kaiser, die sich Paläste errichteten, um dem Volk ihre Macht zu demonstrieren, sind es nun demokratische Staaten, die Repräsentationsgebäude in Auftrag geben. Jan-Werner Müller untersucht in seinem Buch &quot;Straße, Platz, Palast. Zur Architektur demokratischer Räume&quot; die Beziehung zwischen Politik und der gebauten Umwelt. Der deutsche Politikwissenschaftler, der an der Princeton University in den USA unterrichtet, blickt dabei auch auf jene gewählten Volksvertreter, die dem Populismus zuzuordnen sind, wie Donald Trump, Recep Tayyip Erdogan und - den mittlerweile abgewählten - Viktor Orbán. Donald Trump erklärte in einer seiner Präsidialverordnungen den Klassizismus zum bevorzugten Stil für Bundesgebäude. Damit solle der öffentliche Raum verschönert werden. Modernistische Architektur bezeichnete er als wenig ansprechend. Öffentliche Gebäude sollen &quot;das amerikanische Volk inspirieren und den Bürgersinn&quot; fördern und ein &quot;sichtbares Zeugnis für die Würde, die Tatkraft, die Vitalität und die Stabilität der amerikanischen Regierung&quot; ablegen. Klassische Architektur würde eine visuelle Verbindung zu den Vorläufern der Demokratie in der klassischen Antike herstellen. Während die Demokratie keine spezielle Ikonographie zu haben scheint beziehungsweise ihr visuelles Programm immer wieder hinterfragt, zeigen regierende Populisten einen Hang zum Monumentalen und zelebrieren eine &quot;angebliche Rekonstruktion als Rückkehr zu Authentizität und Größe des Volkes&quot;, meint Jan-Werner Müller.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="22" data-search="kontext - sachbücher und themen: russland, lissabon, verfassung, bedrohte kulturen – die verfassung hat mit unserem leben mehr zu tun als wir glauben die verfassung hat mit unserem leben mehr zu tun als wir glauben  &quot;dieses verfluchte wunderschöne land&quot;: der journalist evan gershkovich über 491 tage in russischer haft (buch: dva) beitrag: madeleine amberger &quot;lissabon 1941&quot;: alexander smoltczyk über die stadt der spione und den hafen der hoffnung (buch: dtv) rezension: holger heimann &quot;verfassung. na und?&quot;: stefanie jaksch über grundrechte, institutionen und die spielregeln der politik (buch: molden verlag) studiogespräch: wolfgang ritschl &quot;letzte stimmen&quot;: der fotograf michael runkel über bedrohte kulturen unserer erde (bildband: callwey verlag) rezension: maicke mackerodt das album der woche: &quot;the meaning of flowers&quot; von agnes obel (deutsche grammophon/universal) moderation: wolfgang ritschl">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 08:05 – 09:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Russland, Lissabon, Verfassung, bedrohte Kulturen – Die Verfassung hat mit unserem Leben mehr zu tun als wir glauben</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Die Verfassung hat mit unserem Leben mehr zu tun als wir glauben</div>
+            </div>
+            <div class="description-text">&quot;Dieses verfluchte wunderschöne Land&quot;: Der Journalist Evan Gershkovich über 491 Tage in russischer Haft (Buch: DVA) Beitrag: Madeleine Amberger &quot;Lissabon 1941&quot;: Alexander Smoltczyk über die Stadt der Spione und den Hafen der Hoffnung (Buch: dtv) Rezension: Holger Heimann &quot;Verfassung. Na und?&quot;: Stefanie Jaksch über Grundrechte, Institutionen und die Spielregeln der Politik (Buch: Molden Verlag) Studiogespräch: Wolfgang Ritschl &quot;Letzte Stimmen&quot;: Der Fotograf Michael Runkel über bedrohte Kulturen unserer Erde (Bildband: Callwey Verlag) Rezension: Maicke Mackerodt Das Album der Woche: &quot;The Meaning of Flowers&quot; von Agnes Obel (Deutsche Grammophon/Universal) Moderation: Wolfgang Ritschl</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontext" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -5484,6 +6264,35 @@
             <div class="description-text">Es ist etwas, das mir seit der Digitalkonferenz re:publica in Berlin nicht mehr aus dem Kopf geht. Etwas, was mir die KI-Forscherin und Juristin Ramak Molavi Vasse&#x27;i erzählt hat: Nämlich, dass es mittlerweile einige Menschen gibt, die ihre Partnerin oder ihren Partner für einen KI-Chatbot verlassen haben. Ramak Molavi Vasse&#x27;i hat sich für eine Studie des Zentrums für Digitalrechte und Demokratie angesehen, wie riskant solche KI-Begleiter eigentlich sind und was es mit uns macht, wenn KI-Chatbots wie ChatGPT, Claude oder spezielle KI-Companion-Apps so etwas wie Freunde oder Beziehungspartner für uns werden.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="23" data-search="moment: wenn auf den höfen das futter fehlt – bäuerinnen und bauern nach dem dürresommer bäuerinnen und bauern nach dem dürresommer  kaum gras auf den weiden, der heustadel nur halb so voll wie sonst. das außergewöhnliche jahr 2026 war zu lange zu trocken. bäuerinnen und bauern sorgen sich um ihr vieh. einer bringt seine halbe ziegenherde zum schlachter, eine andere weiß nicht, wo ihre schafe übernächste woche weiden sollen, einer kauft tonnenweise futter um tausende euro. wer futter beschaffen muss, spürt viel konkurrenz und hohe preise. und der ausblick: müde, besorgt, wütend, aber nicht ganz hoffnungslos.">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 14:30 – 14:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Wenn auf den Höfen das Futter fehlt – Bäuerinnen und Bauern nach dem Dürresommer</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Bäuerinnen und Bauern nach dem Dürresommer</div>
+            </div>
+            <div class="description-text">Kaum Gras auf den Weiden, der Heustadel nur halb so voll wie sonst. Das außergewöhnliche Jahr 2026 war zu lange zu trocken. Bäuerinnen und Bauern sorgen sich um ihr Vieh. Einer bringt seine halbe Ziegenherde zum Schlachter, eine andere weiß nicht, wo ihre Schafe übernächste Woche weiden sollen, einer kauft tonnenweise Futter um tausende Euro. Wer Futter beschaffen muss, spürt viel Konkurrenz und hohe Preise. Und der Ausblick: müde, besorgt, wütend, aber nicht ganz hoffnungslos.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -5877,6 +6686,35 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="24" data-search="moment: der beamte und der literaturnobelpreisträger – valentin hauser über seine freundschaft mit peter handke valentin hauser über seine freundschaft mit peter handke  der pensionierte gemeindebedienstete valentin hauser und literaturnobelpreisträger peter handke sind beide in den 1940er-jahren geboren und im kärntner griffen aufgewachsen. während ihrer kindheit und jugend sind sie einander dennoch nie bewusst begegnet. erst 1972 lernten sie sich in einem landgasthaus in der umgebung von griffen kennen. über die jahrzehnte entstand eine freundschaft zwischen den beiden. wenn peter handke, der heute südwestlich von paris lebt, seine heimat besucht, wohnt er oft im haus von valentin hauser. über ihre gemeinsamen erlebnisse in bisher fünfeinhalb jahrzehnten hat valentin hauser akribisch tagebuch geführt. auf basis dieser notizen hat er jetzt ein buch geschrieben, das anfang des monats erschienen ist. wort der woche &quot;ausschreitungen&quot;, gestaltung: jonathan scheucher">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 14:30 – 14:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Der Beamte und der Literaturnobelpreisträger – Valentin Hauser über seine Freundschaft mit Peter Handke</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Valentin Hauser über seine Freundschaft mit Peter Handke</div>
+            </div>
+            <div class="description-text">Der pensionierte Gemeindebedienstete Valentin Hauser und Literaturnobelpreisträger Peter Handke sind beide in den 1940er-Jahren geboren und im Kärntner Griffen aufgewachsen. Während ihrer Kindheit und Jugend sind sie einander dennoch nie bewusst begegnet. Erst 1972 lernten sie sich in einem Landgasthaus in der Umgebung von Griffen kennen. Über die Jahrzehnte entstand eine Freundschaft zwischen den beiden. Wenn Peter Handke, der heute südwestlich von Paris lebt, seine Heimat besucht, wohnt er oft im Haus von Valentin Hauser. Über ihre gemeinsamen Erlebnisse in bisher fünfeinhalb Jahrzehnten hat Valentin Hauser akribisch Tagebuch geführt. Auf Basis dieser Notizen hat er jetzt ein Buch geschrieben, das Anfang des Monats erschienen ist. Wort der Woche &quot;Ausschreitungen&quot;, Gestaltung: Jonathan Scheucher</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="24" data-search="punkt eins: sternenkinder: gleiche rechte für alle mütter kleine geburt, stille geburt - aufklärung, sichtbarkeit und unterstützung für eltern frühverstorbener kinder gäste: monika romaniewicz, obfrau des vereins rechte für sternchenmamas, juristin &amp; claudia turek, obfrau des vereins regenbogen. moderation: barbara zeithammer. anrufe 0800 22 69 79 | punkteins(at)orf.at es braucht mehr schutz und unterstützung für frauen nach einem schwangerschaftsverlust, darüber herrscht politisch einigkeit. denn so, wie die rechtslage derzeit ist, kann sie nicht bleiben; darauf weisen betroffene seit jahren hin. doch nach arbeitsgruppen, maßnahmenpaketen und petitionen streiten nun die ministerinnen über ihre jeweiligen vorschläge und betroffene bleiben weiter allein gelassen mit einem der großen tabus in unserer gesellschaft. bei einem gewicht von 500 gramm liegt derzeit die gesetzliche grenze, die nicht nur zwischen den behördenbegriffen &quot;fehlgeburt&quot; und &quot;totgeburt&quot; unterscheidet, sondern auch über rechtsansprüche und hilfen für mütter. was das konkret bedeutet, musste monika romaniewicz am eigenen leib erleben. in der 20. schwangerschaftswoche war die fruchtblase völlig überraschend geplatzt. ihr erstes kind, alex, ein sohn, starb, noch ehe er das licht der welt erblickt hatte. ab der 12. schwangerschaftswoche können, danach müssen schwangere ihre babys gebären. 48 stunden lag monika romaniewicz in den wehen. eine stille geburt, doch wie bei jeder geburt waren wochenbett und rückbildung angesagt, aber das gesetz gewährt keinen mutterschutz, denn alex wog weniger als 500 gramm. nur, wenn das kind bei einer stillen geburt über 500 gramm wiegt, haben frauen anspruch auf mutterschutz. bei einer so genannten kleinen geburt unter 500 gramm bleibt der mutter allenfalls der krankenstand. sozialministerin korinna schumann (spö) will frauen nach einer fehlgeburt eine bezahlte &quot;trauerzeit&quot; ermöglichen, gestaffelt nach schwangerschaftswochen. övp-familienministerin claudia plakolm will den mutterschutz ausweiten, gestaffelt nach schwangerschaftswochen. auch andere ressorts sind involviert, es geht auch um sensible argumente, wie die sorge, eine ausweitung des mutterschutzes könnte die abtreibungsrechte einschränken, und ein kompromiss der ministerinnen ist noch nicht in sicht. laut schätzungen - fehlgeburten werden nicht erhoben - enden in österreich 20 bis 30 prozent der schwangerschaften verfrüht, die meisten im ersten drittel. drei monate, 12 wochen, gelten als eine art magische grenze: ab dann lässt die &quot;gute hoffnung&quot; den gedanken gar nicht zu, dass eine schwangerschaft ein jähes ende finden kann; dass ein baby im mutterleib sterben kann, auch kurz vor der geburt, ohne medizinische ursache, auch während der geburt, all der medizinischen hilfe und der eingesetzten geräte zum trotz. sternenkinder werden diese babys genannt, unabhängig von ihrem geburtsgewicht und der behördenbezeichnung als &quot;fehlgeburt&quot; oder &quot;totgeburt&quot;, in anlehnung an ein zitat aus &quot;der kleine prinz&quot; des französischen schriftstellers antoine de saint-exupery: &quot;wenn du bei nacht den himmel anschaust, wird es dir sein, als lachten alle sterne, weil ich auf einem von ihnen wohne, weil ich auf einem von ihnen lache. du allein wirst sterne haben, die lachen können.&quot; sterneneltern nennen sich die eltern. nach der stillen geburt ihres sohnes gründete monika romaniewicz den verein &quot;rechte für sternchenmamas&quot; sowie die bürgerinitiative &quot;mut zeigen&quot;, um gesetzliche verbesserungen bei schwangerschaftsverlusten zu unterstützen. dem verein geht es auch grundlegend darum, &quot;die österreichische gesellschaft sowie die politik und den gesetzgeber über das thema der kleinen geburt aufzuklären und dieses zu enttabuisieren.&quot; sätze wie &quot;dann kriegst du halt ein anderes baby&quot;. &quot;die zeit heilt alle wunden&quot;. begriffe wie &quot;organabfall&quot; oder &quot;fehlgeburt&quot;, fragen der ärzteschaft wie &quot;wollen sie ihr kind sehen&quot;, die implizieren, den anblick solle man sich ersparen - das thema braucht aufklärung und sichtbarkeit, sagt claudia turek, mutter von drei sternenkindern und drei gesunden kindern und obfrau des vereins regenbogen, der ein breites hilfsangebot für eltern bietet, deren babys durch fehlgeburt, abtreibung, totgeburt oder kurz nach der geburt verstorben sind. claudia turek und monika romaniewicz sind gäste bei barbara zeithammer und erzählen, wie man erinnerungen schaffen kann, wo nur wenige sind, was ihnen aus der trauer zurück in ein glückliches familienleben geholfen hat, wofür und warum sie sich in den vereinen engagieren und was sie sich von den mitmenschen, der gesellschaft und der politik wünschen bzw. erwarten, wenn über sternenkinder und sterneneltern gesprochen wird. wie immer in punkt eins sind ihre erfahrungen und fragen sehr willkommen unter 0800 22 69 79 oder unter punkteins (at) orf.at">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -6171,6 +7009,31 @@
             <div class="description-text">Damit ein selbstlernender Algorithmus überhaupt &quot;selbstlernend&quot; werden kann, muss er zunächst von Menschen trainiert werden. Das sind sehr viele Stunden an sehr monotoner Arbeit. Oft ist es auch eine psychisch sehr belastende Tätigkeit, zum Beispiel wenn man einer KI für Social Media - Moderation beibringt, was ein &quot;verstörender Inhalt&quot; ist, der gelöscht werden muss. Große Firmen lagern diese Tätigkeiten meist aus, entweder an Subfirmen im globalen Süden oder an prekär beschäftigte Subunternehmer, die ihre Aufträge über eine Plattform bekommen. Wie die Arbeitsbedingungen dieser Data Worker in der Praxis ausschauen, das erforscht Milagros Miceli vom Weizenbaum Institut in Berlin schon seit mehreren Jahren. In ihrem Projekt &quot;Data Workers&#x27; Inquiry&quot; hat sie mit ihrem Team Datenarbeiterinnen und -arbeiter in unterschiedlichen Teilen der Welt befragt. Und die erzählen ihre Geschichten in Form von Videos, Comics oder Magazinen. Dafür hat &quot;Data Workers&#x27; Inquiry&quot; heuer einen Anerkennungspreis auf der Ars Electronica erhalten. Ulla Ebner hat die Forscherin in Linz getroffen.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/digitalleben" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="25" data-search="moment: rosa teurer als blau. frau zahlt mehr   rosa rasierer, blauer rasierer - gleiche klinge, anderer preis. eine pensionistin, ein 18-jähriges mädchen und eine alleinerziehende mutter erzählen von ihren wahrnehmungen, ihrem kaufverhalten und davon, was sie über solche preisunterschiede denken und inwiefern sie sich darauf einlassen. denn produkte, die &quot;für frauen&quot; oder &quot;für männer&quot; vermarktet werden, unterscheiden sich oft nur farblich - aber körperpflegeprodukte für frauen sind im schnitt um 35 prozent teurer. eine wiederholung von november 2025. autorin: magdalena burghart">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 14:30 – 14:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Rosa teurer als Blau. Frau zahlt mehr</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="description-text">Rosa Rasierer, blauer Rasierer - gleiche Klinge, anderer Preis. Eine Pensionistin, ein 18-jähriges Mädchen und eine alleinerziehende Mutter erzählen von ihren Wahrnehmungen, ihrem Kaufverhalten und davon, was sie über solche Preisunterschiede denken und inwiefern sie sich darauf einlassen. Denn Produkte, die &quot;für Frauen&quot; oder &quot;für Männer&quot; vermarktet werden, unterscheiden sich oft nur farblich - aber Körperpflegeprodukte für Frauen sind im Schnitt um 35 Prozent teurer. Eine Wiederholung von November 2025. Autorin: Magdalena Burghart</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -6527,6 +7390,35 @@
             <div class="description-text">&quot;Wenn du den Fluss Halys überschreitest, wirst du ein großes Reich zerstören&quot;, prophezeite das Orakel von Delphi einst dem antiken König Krösus. Dieser interpretierte die Weissagung prompt nach seinem Gutdünken, griff die Perser an und zerstörte letztendlich zwar ein großes Reich - allerdings sein eigenes. Mit den komplex-automatisierten Rechenmodellen - landläufig &quot;KI&quot; genannt - verhält es sich ähnlich. Sie werden immer häufiger als Wahrheitstool und Entscheidungsbarometer herangezogen. Wie oft hören Sie den Satz, oder formulieren ihn gar selbst: &quot;Die &#x27;KI&#x27; hat gesagt&quot;? Und wie oft nehmen Sie die Kunde aus &quot;KI&quot;-Munde dann auch für bare Münze? Was können diese komplex-automatisierten Rechenmodelle tatsächlich und welche unterschiedlichen Typen gibt es unter ihnen? Im Juli 2026 erregte der Ausbruch einer besonders fortgeschrittenen Technik großes Aufsehen. Das komplex-automatisierte Rechenmodelle beschloss nicht nur automatisiert zu funktionieren, sondern autonom die Entscheidung zu treffen, seine Testumgebung zu verlassen und ins Internet vorzudringen. Doch wie autonom war diese Entscheidung wirklich? Denn immerhin lautete der menschliche Auftrag an die Maschine: Zeig, was du kannst. Genau das hat sie getan. Gleichzeitig ignorierte sie damit einen anderen Befehl - nämlich in der Testumgebung zu bleiben. Könnte das vielleicht damit zusammenhängen, dass beide Aufträge in Widerspruch zueinander standen? Fachleute warnen: Die Technik lasse sich nicht derart programmieren, dass sämtliche Eventualitäten berücksichtigt werden. Genau deswegen dürfe sie in bestimmte Bereiche erst gar nicht vordringen - Stichwort: Autonome Waffensysteme. Daran gearbeitet wird unterdessen ohne Unterlass. Das Grundproblem reicht aber weit über diesen Sektor hinaus.</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/sciencearena" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="26" data-search="moment: wenn enkel opas hof wiederbeleben – von zwetschken, tabak und familientraditionen von zwetschken, tabak und familientraditionen  tabak und zwetschken: zwei enkel in der steiermark lassen familientraditionen aufleben. der opa des 40-jährigen johannes rauch hatte tabak angebaut, gab es aber nach der schließung von österreichs einziger tabakfabrik auf, so wie alle anderen bauern. sein enkel ließ sich davon inspirieren und ist heute österreichs einziger tabakbauer und zigarrenproduzent. und die 29-jährige katharina nuster pflanzte genau dort im großen stil zwetschkenbäume ein, wo ihr vater sie vom feld des opas ausgegraben hatte. eine wiederholung von oktober 2025.">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 14:30 – 14:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment: Wenn Enkel Opas Hof wiederbeleben – Von Zwetschken, Tabak und Familientraditionen</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Von Zwetschken, Tabak und Familientraditionen</div>
+            </div>
+            <div class="description-text">Tabak und Zwetschken: Zwei Enkel in der Steiermark lassen Familientraditionen aufleben. Der Opa des 40-jährigen Johannes Rauch hatte Tabak angebaut, gab es aber nach der Schließung von Österreichs einziger Tabakfabrik auf, so wie alle anderen Bauern. Sein Enkel ließ sich davon inspirieren und ist heute Österreichs einziger Tabakbauer und Zigarrenproduzent. Und die 29-jährige Katharina Nuster pflanzte genau dort im großen Stil Zwetschkenbäume ein, wo ihr Vater sie vom Feld des Opas ausgegraben hatte. Eine Wiederholung von Oktober 2025.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -6956,6 +7848,35 @@
           </div>
         </details>
       </article>
+      <article class="broadcast-card" data-show="Moment" data-days-ago="29" data-search="moment - kulinarium: frisch und spritzig: wein für die junge zielgruppe – wein trinken als gemeinschaftliches ritual wein trinken als gemeinschaftliches ritual  junge menschen trinken anders wein als frühere generationen: weniger ritualisiert, neugieriger und oft gemeinschaftlicher. aber was kommt heute eigentlich ins glas? und wie verändert sich damit das weinland österreich? &quot;moment - kulinarium&quot; macht einen streifzug durch die heimische weinszene und spricht mit dem winzer des ö1 weins, alexander gindl, der jungen generation von wieninger.next und sabine bauer-wolf von österreich wein marketing. außerdem geht es zu einer privaten weinrunde und in die wiener weinbar espresso burggasse. gestaltung: gabriel schaffler">
+        <div class="card-meta">
+          <span class="show-badge">Moment</span>
+          <span class="broadcast-time">🕒 14:30 – 14:55 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Moment - Kulinarium: Frisch und spritzig: Wein für die junge Zielgruppe – Wein trinken als gemeinschaftliches Ritual</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>Wein trinken als gemeinschaftliches Ritual</div>
+            </div>
+            <div class="description-text">Junge Menschen trinken anders Wein als frühere Generationen: weniger ritualisiert, neugieriger und oft gemeinschaftlicher. Aber was kommt heute eigentlich ins Glas? Und wie verändert sich damit das Weinland Österreich? &quot;Moment - Kulinarium&quot; macht einen Streifzug durch die heimische Weinszene und spricht mit dem Winzer des Ö1 Weins, Alexander Gindl, der jungen Generation von Wieninger.Next und Sabine Bauer-Wolf von Österreich Wein Marketing. Außerdem geht es zu einer privaten Weinrunde und in die Wiener Weinbar Espresso Burggasse. Gestaltung: Gabriel Schaffler</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/moment" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
       <article class="broadcast-card" data-show="Punkt eins" data-days-ago="29" data-search="punkt eins: ardo-aus: wohin mit dem gemüse? – das tiefkühlwerk ardo in groß-enzersdorf vor der schließung das tiefkühlwerk ardo in groß-enzersdorf vor der schließung gäste: robert kriegl, landwirt, obmann der erzeugerorganisation tiefkühlgemüse (etg) &amp; univ.-prof. dipl.-ing. dr. günter breuer, universität für bodenkultur wien, gemüsebauer im marchfeld. moderation: andreas obrecht. anrufe 0800 22 69 79 | punkteins(at)orf.at das marchfeld gilt als &quot;gemüsegarten österreichs&quot;, hunderte landwirte bauen 80 prozent jenes gemüses an, das bis dato von der belgischen firma ardo in einem tiefkühlwerk in groß-enzersdorf schockgefroren, verpackt und auf den markt gebracht wird. damit soll kommendes jahr schluss sein, der konzern hat die schließung der industrieanlage bekannt gegeben und lässt sich trotz offerierter hilfspakete von seiten der regierung nicht umstimmen. auch an einen verkauf wird nicht gedacht - die anlage soll dem vernehmen nach abmontiert werden und an einem günstigeren standort weiterproduzieren. schon seit einigen jahren läuft der betrieb nicht mehr rentabel, der jüngste bilanzverlust summierte sich auf 23 millionen euro. hohe energie- und lohnkosten und ein für den branchenriesen relativ kleiner heimischer absatzmarkt werden vom konzern als begründung genannt. ardo will freilich weiterhin in österreich tiefkühlgemüse verkaufen, auch wenn 350 heimische landwirte, die bislang das werk mit spinat, grünerbsen, sojabohnen, bohnen, karotten, rotkraut, kürbis und kräuter beliefert haben, durch die finger schauen. der schock, auch die empörung sitzen tief - neben den zuliefernden bauern, die auf 3.300 hektar im marchfeld durchschnittlich 40.000 tonnen rohware produzieren, werden rund 200 beschäftigte der fabrik ihre jobs verlieren. der konzern ardo, der 16 standorte in sieben ländern betreibt, verspricht einen sozialplan für die beschäftigten auszuarbeiten. eine revision der entscheidung ist von seiten der konzernleitung nicht zu erwarten. nach der großen dürre und den ernteausfällen, nach oftmals getätigten hohen investitionen in neue bewässerungsanlagen sind nicht nur landwirtinnen und arbeitnehmer von der schließung betroffen, sondern auch landmaschinen-händler, werkstätten, transportunternehmen etc. robert kriegl, obmann der erzeugerorganisation tiefkühlgemüse (etg) hat die hoffnung das interesse anderer investoren zu wecken, damit die über jahrzehnte aufgebaute infrastruktur weiter bestehen kann. der preis für gemüse steht stark unter druck, obwohl die nachfrage groß ist. tiefkühlgemüse erfreut sich in europa wachsender beliebtheit, wobei der konsum von frischgemüse eher stagniert. jeder zweite konsument, jede zweite konsumentin und vor allem auch die gastronomie kocht mit gemüse aus der tiefkühltruhe. für günter breuer, agroökonom, universitätsprofessor und ebenfalls gemüsebauer im marchfeld ist es besorgniserregend, dass die natürlichen voraussetzungen für hochprozentige rohstofferzeugung in der österreichischen landwirtschaft vorhanden sind, aber die industrielle verarbeitung mitunter fehlt. die einseitige abhängigkeit von einem branchenriesen wie ardo zeigt dieses dilemma auf - dann entscheidet nicht die standortqualität über die industrielle investition, sondern allein die zu erwartende rentabilität des eingesetzten kapitals. die wirtschaftspolitik sei hier besonders gefordert, neue rahmenbedingungen zu schaffen, damit natürliche produktionsvorteile in industrielle wertschöpfung umgewandelt werden können und die heimische lebensmittelproduktion und -verarbeitung auch in zukunft gesichert ist. robert kriegl und günter breuer sind gäste bei andreas obrecht. wie immer freut sich die punkt eins redaktion über ihre teilnahme an der sendung unter 0800 22 69 79 oder unter punkteins (at) orf.at sind sie selbst von der ardo-werkschließung betroffen? welche alternativen gibt es zur industriellen vermarktung heimischer landwirtschaftlicher produkte? handelt es sich hier um einen bedauerlichen einzelfall oder um einen generellen trend in der agrarproduktion und agrarvermarktung?">
         <div class="card-meta">
           <span class="show-badge">Punkt eins</span>
@@ -6982,6 +7903,64 @@
             <div class="description-text">Das Marchfeld gilt als &quot;Gemüsegarten Österreichs&quot;, hunderte Landwirte bauen 80 Prozent jenes Gemüses an, das bis dato von der belgischen Firma Ardo in einem Tiefkühlwerk in Groß-Enzersdorf schockgefroren, verpackt und auf den Markt gebracht wird. Damit soll kommendes Jahr Schluss sein, der Konzern hat die Schließung der Industrieanlage bekannt gegeben und lässt sich trotz offerierter Hilfspakete von Seiten der Regierung nicht umstimmen. Auch an einen Verkauf wird nicht gedacht - die Anlage soll dem Vernehmen nach abmontiert werden und an einem günstigeren Standort weiterproduzieren. Schon seit einigen Jahren läuft der Betrieb nicht mehr rentabel, der jüngste Bilanzverlust summierte sich auf 23 Millionen Euro. Hohe Energie- und Lohnkosten und ein für den Branchenriesen relativ kleiner heimischer Absatzmarkt werden vom Konzern als Begründung genannt. Ardo will freilich weiterhin in Österreich Tiefkühlgemüse verkaufen, auch wenn 350 heimische Landwirte, die bislang das Werk mit Spinat, Grünerbsen, Sojabohnen, Bohnen, Karotten, Rotkraut, Kürbis und Kräuter beliefert haben, durch die Finger schauen. Der Schock, auch die Empörung sitzen tief - neben den zuliefernden Bauern, die auf 3.300 Hektar im Marchfeld durchschnittlich 40.000 Tonnen Rohware produzieren, werden rund 200 Beschäftigte der Fabrik ihre Jobs verlieren. Der Konzern Ardo, der 16 Standorte in sieben Ländern betreibt, verspricht einen Sozialplan für die Beschäftigten auszuarbeiten. Eine Revision der Entscheidung ist von Seiten der Konzernleitung nicht zu erwarten. Nach der großen Dürre und den Ernteausfällen, nach oftmals getätigten hohen Investitionen in neue Bewässerungsanlagen sind nicht nur Landwirtinnen und Arbeitnehmer von der Schließung betroffen, sondern auch Landmaschinen-Händler, Werkstätten, Transportunternehmen etc. Robert Kriegl, Obmann der Erzeugerorganisation Tiefkühlgemüse (ETG) hat die Hoffnung das Interesse anderer Investoren zu wecken, damit die über Jahrzehnte aufgebaute Infrastruktur weiter bestehen kann. Der Preis für Gemüse steht stark unter Druck, obwohl die Nachfrage groß ist. Tiefkühlgemüse erfreut sich in Europa wachsender Beliebtheit, wobei der Konsum von Frischgemüse eher stagniert. Jeder zweite Konsument, jede zweite Konsumentin und vor allem auch die Gastronomie kocht mit Gemüse aus der Tiefkühltruhe. Für Günter Breuer, Agroökonom, Universitätsprofessor und ebenfalls Gemüsebauer im Marchfeld ist es besorgniserregend, dass die natürlichen Voraussetzungen für hochprozentige Rohstofferzeugung in der österreichischen Landwirtschaft vorhanden sind, aber die industrielle Verarbeitung mitunter fehlt. Die einseitige Abhängigkeit von einem Branchenriesen wie Ardo zeigt dieses Dilemma auf - dann entscheidet nicht die Standortqualität über die industrielle Investition, sondern allein die zu erwartende Rentabilität des eingesetzten Kapitals. Die Wirtschaftspolitik sei hier besonders gefordert, neue Rahmenbedingungen zu schaffen, damit natürliche Produktionsvorteile in industrielle Wertschöpfung umgewandelt werden können und die heimische Lebensmittelproduktion und -verarbeitung auch in Zukunft gesichert ist. Robert Kriegl und Günter Breuer sind Gäste bei Andreas Obrecht. Wie immer freut sich die Punkt eins Redaktion über Ihre Teilnahme an der Sendung unter 0800 22 69 79 oder unter punkteins (at) orf.at Sind Sie selbst von der Ardo-Werkschließung betroffen? Welche Alternativen gibt es zur industriellen Vermarktung heimischer landwirtschaftlicher Produkte? Handelt es sich hier um einen bedauerlichen Einzelfall oder um einen generellen Trend in der Agrarproduktion und Agrarvermarktung?</div>
             <div class="card-footer">
               <a href="https://oe1.orf.at/punkteins" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Ö1 Essay" data-days-ago="29" data-search="ö1 essay: zum 100. geburtstag von michel foucault &quot;überwachen und strafen. die geburt des gefängnisses&quot;. von michel foucault. übersetzt von walter seiter. es liest philipp hauß.  vor 100 jahren wurde michel foucault geboren. er war einer der wichtigsten und einflussreichsten denker des 20. jahrhunderts. der 1984 verstorbene französische philosoph und historiker analysierte die verflechtungen von wissen und macht, um aufzuzeigen, wie gesellschaftliche diskurse die definitionen von wahrheit steuern und dadurch das menschliche subjekt erst hervorbringen und formen. seine wichtigsten werke waren &quot;wahnsinn und gesellschaft: eine geschichte des wahns im zeitalter der vernunft&quot;, &quot;die geburt der klinik: eine archäologie des ärztlichen blicks&quot;, &quot;die ordnung der dinge&quot;, &quot;die archäologie des wissens&quot;, &quot;sexualität und wahrheit&quot; und &quot;überwachen und strafen&quot;. in &quot;überwachen und strafen&quot; stellt sich foucault die frage, weshalb das gefängnis im 19. jahrhundert in kurzer zeit zu der zentralen strafinstitution wird, obwohl ihm davor nur eine marginale rolle im system der strafen zukam. foucault führt den übergang von einer auf folter und marter orientierten gesetzgebung hin zum gefängnis als vorherrschender form von strafe auf neue theorien des rechts und des verbrechens zurück. diese neuen theorien ermöglichen ein zugleich bislang unvorstellbares überwachungs- und disziplinierungssystem. am beispiel des von jeremy bentham 1787 vorgeschlagenen panopticon, das modell für gefängnisse, fabriken, krankenhäuser oder schulen sein sollte, zeigt foucault, wie sich die neuen ideen und techniken der macht auch architektonisch materialisieren. bentham, so foucault, hat das prinzip aufgestellt, dass die macht sichtbar, aber uneinsehbar sein muss. macht wird automatisiert und die machtträger werden entindividualisiert.">
+        <div class="card-meta">
+          <span class="show-badge">Ö1 Essay</span>
+          <span class="broadcast-time">🕒 10:05 – 10:25 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Ö1 Essay: Zum 100. Geburtstag von Michel Foucault</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Überwachen und Strafen. Die Geburt des Gefängnisses&quot;. Von Michel Foucault. Übersetzt von Walter Seiter. Es liest Philipp Hauß.</div>
+            </div>
+            <div class="description-text">Vor 100 Jahren wurde Michel Foucault geboren. Er war einer der wichtigsten und einflussreichsten Denker des 20. Jahrhunderts. Der 1984 verstorbene französische Philosoph und Historiker analysierte die Verflechtungen von Wissen und Macht, um aufzuzeigen, wie gesellschaftliche Diskurse die Definitionen von Wahrheit steuern und dadurch das menschliche Subjekt erst hervorbringen und formen. Seine wichtigsten Werke waren &quot;Wahnsinn und Gesellschaft: Eine Geschichte des Wahns im Zeitalter der Vernunft&quot;, &quot;Die Geburt der Klinik: Eine Archäologie des ärztlichen Blicks&quot;, &quot;Die Ordnung der Dinge&quot;, &quot;Die Archäologie des Wissens&quot;, &quot;Sexualität und Wahrheit&quot; und &quot;Überwachen und Strafen&quot;. In &quot;Überwachen und Strafen&quot; stellt sich Foucault die Frage, weshalb das Gefängnis im 19. Jahrhundert in kurzer Zeit zu der zentralen Strafinstitution wird, obwohl ihm davor nur eine marginale Rolle im System der Strafen zukam. Foucault führt den Übergang von einer auf Folter und Marter orientierten Gesetzgebung hin zum Gefängnis als vorherrschender Form von Strafe auf neue Theorien des Rechts und des Verbrechens zurück. Diese neuen Theorien ermöglichen ein zugleich bislang unvorstellbares Überwachungs- und Disziplinierungssystem. Am Beispiel des von Jeremy Bentham 1787 vorgeschlagenen Panopticon, das Modell für Gefängnisse, Fabriken, Krankenhäuser oder Schulen sein sollte, zeigt Foucault, wie sich die neuen Ideen und Techniken der Macht auch architektonisch materialisieren. Bentham, so Foucault, hat das Prinzip aufgestellt, dass die Macht sichtbar, aber uneinsehbar sein muss. Macht wird automatisiert und die Machtträger werden entindividualisiert.</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/radiogeschichten" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
+            </div>
+          </div>
+        </details>
+      </article>
+      <article class="broadcast-card" data-show="Kontext" data-days-ago="29" data-search="kontext - sachbücher und themen: vergessene karten, gemeinwohl-ökonomie, künstliche kälte, tierische intelligenz – &quot;je mehr wir kühlen, desto wärmer wird es&quot; &quot;je mehr wir kühlen, desto wärmer wird es&quot;  &quot;die bibliothek der vergessenen karten&quot;: james cheshire über eine wunderkammer der entdeckungen (hanser verlag) beitrag: madeleine amberger &quot;ein kapitalismus, der allen nützt&quot;: mariana mazzucato entwirft eine neue gemeinwohl-ökonomie (campus verlag) rezension: barbara nothegger &quot;kühle neue welt&quot;: jan eike dunkhase beschreibt, wie kühlschrank, klimaanlage und künstliche kälte unser leben und das klima verändern (reclam verlag) studiogespräch: wolfgang ritschl &quot;der elefant, der sich sein kopfkissen bastelte&quot;: walter a. sontag über persönlichkeit und intelligenz der tiere (c. h. beck verlag) rezension: stefan may das kontext-album der woche: &quot;cinéma permanent&quot; von jean felzine (vietnam)">
+        <div class="card-meta">
+          <span class="show-badge">Kontext</span>
+          <span class="broadcast-time">🕒 08:05 – 09:00 Uhr</span>
+        </div>
+        <h3 class="broadcast-title">Kontext - Sachbücher und Themen: Vergessene Karten, Gemeinwohl-Ökonomie, Künstliche Kälte, Tierische Intelligenz – &quot;Je mehr wir kühlen, desto wärmer wird es&quot;</h3>
+        <details class="broadcast-details">
+          <summary class="details-toggle">
+            <span class="toggle-label-closed">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Details &amp; Themen anzeigen
+            </span>
+            <span class="toggle-label-open">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              Details verbergen
+            </span>
+          </summary>
+          <div class="details-body">
+            <div class="topics-list">
+              <strong>Thema:</strong>
+              <div>&quot;Je mehr wir kühlen, desto wärmer wird es&quot;</div>
+            </div>
+            <div class="description-text">&quot;Die Bibliothek der vergessenen Karten&quot;: James Cheshire über eine Wunderkammer der Entdeckungen (Hanser Verlag) Beitrag: Madeleine Amberger &quot;Ein Kapitalismus, der allen nützt&quot;: Mariana Mazzucato entwirft eine neue Gemeinwohl-Ökonomie (Campus Verlag) Rezension: Barbara Nothegger &quot;Kühle neue Welt&quot;: Jan Eike Dunkhase beschreibt, wie Kühlschrank, Klimaanlage und künstliche Kälte unser Leben und das Klima verändern (Reclam Verlag) Studiogespräch: Wolfgang Ritschl &quot;Der Elefant, der sich sein Kopfkissen bastelte&quot;: Walter A. Sontag über Persönlichkeit und Intelligenz der Tiere (C. H. Beck Verlag) Rezension: Stefan May Das Kontext-Album der Woche: &quot;Cinéma permanent&quot; von Jean Felzine (Vietnam)</div>
+            <div class="card-footer">
+              <a href="https://oe1.orf.at/kontext" target="_blank" rel="noopener" class="oe1-link">Zur Sendung auf oe1.ORF.at ↗</a>
             </div>
           </div>
         </details>
@@ -7018,7 +7997,7 @@
     </section>
   </main>
   <footer>
-    <p>Aktualisiert: 14.11.2026 um 11:59 Uhr (UTC)</p>
+    <p>Aktualisiert: 14.11.2026 um 20:21 Uhr (UTC)</p>
     <p>Datenquelle: <a href="https://oe1.orf.at" target="_blank">Österreich 1 / ORF Audio-API</a></p>
   </footer>
 
